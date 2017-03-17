@@ -22,17 +22,5 @@ namespace ShufflerPro.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Music Library\\La Dispute")]
-        public string FolderPath {
-            get {
-                return ((string)(this["FolderPath"]));
-            }
-            set {
-                this["FolderPath"] = value;
-            }
-        }
     }
 }

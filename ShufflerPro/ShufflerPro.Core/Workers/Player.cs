@@ -60,12 +60,13 @@ namespace ShufflerPro.Core.Workers
 
         public void Play()
         {
+            Stop();
             StartPlayer();
         }
 
         public void Stop()
         {
-            _outEvent.Stop();
+            _outEvent?.Stop();
         }
 
         public void Pause()
