@@ -5,8 +5,8 @@
         ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen"
         WindowStyle="SingleBorderWindow"
-        MaxHeight="500"
-        Width="600">
+        MaxHeight="600"
+        Width="700">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -5,11 +5,11 @@ namespace ShufflerPro.Core.Task
 {
     public class PlaylistTask
     {
-        public Queue<Song> Songs { get; }
+        public List<Song> Songs { get; }
 
-        public PlaylistTask(Queue<Song> songs)
+        public PlaylistTask(IEnumerable<Song> songs)
         {
-            Songs = songs;
+            Songs = new List<Song>(songs);
         }
     }
 }

@@ -43,6 +43,7 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public Queue<Song> Songs => FolderPath
             .GetFilesByExtenstion("mp3")
             .Select(file => _songFactory.Create(file))
+            .DistinctBy(s => s.Title)
             .Shuffle()
             .ToQueue();
 
@@ -74,6 +75,8 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
                 _player.Songs = songs;
                 _player.Play();
             });
+
+            NotifyOfPropertyChange(nameof(CanSkip));
         }
 
         public void Pause()

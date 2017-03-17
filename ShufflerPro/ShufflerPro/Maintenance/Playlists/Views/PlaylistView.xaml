@@ -25,7 +25,8 @@
                                     <DataTemplate>
                                         <StackPanel>
                                             <TextBlock
-                                                Margin="10,0,0,0"
+                                                FontSize="16"
+                                                Margin="15,2,2,2"
                                                 Text="{Binding Title}" />
                                         </StackPanel>
                                     </DataTemplate>

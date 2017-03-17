@@ -40,10 +40,8 @@ namespace ShufflerPro.Core.Workers
                     return;
 
                 _outEvent.Init(_audioFileReader);
-                _outEvent.PlaybackStopped += delegate
-                {
-                    ((IDisposable) _audioFileReader)?.Dispose();
-                };
+                _outEvent.PlaybackStopped += delegate { ((IDisposable) _audioFileReader)?.Dispose(); };
+
                 _outEvent.Play();
 
                 var songLength = _audioFileReader.TotalTime;
@@ -54,7 +52,7 @@ namespace ShufflerPro.Core.Workers
                     break;
                 }
 
-                ((IDisposable) _audioFileReader).Dispose();
+                ((IDisposable) _audioFileReader)?.Dispose();
             }
 
             Play();
