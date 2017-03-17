@@ -34,7 +34,7 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public bool CanPlay => true;
         public bool CanPrevious => false;
         public bool CanSkip => true;
-        public bool CanStop => false;
+        public bool CanStop => true;
 
         public string FolderPath { get; set; }
         public PlayingViewModel PlayingViewModel { get; set; }
@@ -62,11 +62,12 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
 
             Task.Run(() =>
             {
+                if(_player == null)
+                    _player = _playerFactory.Create(songs);
+
                 if (_player.Playing)
                 {
-                    _player.Stop();
-
-                    _player = null;
+                    Stop();
                     _player = _playerFactory.Create(songs);
                 }
 
@@ -83,6 +84,8 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public void Stop()
         {
             _player.Stop();
+            _player.Dispose();
+            _player = null;
         }
 
         public void Skip()

@@ -9,10 +9,10 @@ using ShufflerPro.Core.Task;
 
 namespace ShufflerPro.Core.Workers
 {
-    public class Player
+    public class Player : IDisposable
     {
         public Queue<Song> Songs { get; set; }
-        private readonly WaveOutEvent _outEvent;
+        private WaveOutEvent _outEvent;
         private AudioFileReader _audioFileReader;
         private readonly IEventAggregator _eventAggregator;
 
@@ -22,7 +22,7 @@ namespace ShufflerPro.Core.Workers
             _eventAggregator = eventAggregator;
         }
 
-        public bool Playing => _outEvent.PlaybackState == PlaybackState.Playing;    
+        public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;    
 
         private void StartPlayer()
         {
@@ -36,8 +36,14 @@ namespace ShufflerPro.Core.Workers
 
             using (_audioFileReader = new AudioFileReader(song.Path))
             {
+                if (_audioFileReader == null || _outEvent == null)
+                    return;
+
                 _outEvent.Init(_audioFileReader);
-                _outEvent.PlaybackStopped += delegate { DisposeUsings(_outEvent, _audioFileReader); };
+                _outEvent.PlaybackStopped += delegate
+                {
+                    ((IDisposable) _audioFileReader)?.Dispose();
+                };
                 _outEvent.Play();
 
                 var songLength = _audioFileReader.TotalTime;
@@ -48,16 +54,10 @@ namespace ShufflerPro.Core.Workers
                     break;
                 }
 
-                DisposeUsings(_outEvent, _audioFileReader);
+                ((IDisposable) _audioFileReader).Dispose();
             }
 
             Play();
-        }
-
-        private static void DisposeUsings(IWavePlayer output, IDisposable player)
-        {
-            output.Stop();
-            player.Dispose();
         }
 
         public void Play()
@@ -78,6 +78,15 @@ namespace ShufflerPro.Core.Workers
         public void Skip()
         {
             Stop();
+        }
+
+        public void Dispose()
+        {
+            _outEvent?.Dispose();
+            _audioFileReader?.Dispose();
+
+            _outEvent = null;
+            _audioFileReader = null;
         }
     }
 }
