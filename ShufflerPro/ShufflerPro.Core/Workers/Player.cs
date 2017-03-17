@@ -22,6 +22,8 @@ namespace ShufflerPro.Core.Workers
             _eventAggregator = eventAggregator;
         }
 
+        public bool Playing => _outEvent.PlaybackState == PlaybackState.Playing;    
+
         private void StartPlayer()
         {
             if (Songs == null)

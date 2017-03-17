@@ -34,8 +34,8 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public bool CanPrevious => false;
         public bool CanSkip => true;
         public bool CanStop => false;
-        public string FolderPath => Settings.Default.FolderPath;
 
+        public string FolderPath { get; set; }
         public PlayingViewModel PlayingViewModel { get; set; }
         public PlaylistViewModel PlaylistViewModel { get; set; }
 
@@ -53,13 +53,23 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
 
         public void Play()
         {
+            if (string.IsNullOrEmpty(FolderPath))
+                return;
+
             var songs = Songs;
             _eventAggregator.PublishOnUIThreadAsync(new PlaylistTask(songs));
 
             Task.Run(() =>
             {
-                _player.Songs = songs;
-                _player.Play();
+                if (_player.Playing)
+                {
+
+                }
+                else
+                {
+                    _player.Songs = songs;
+                    _player.Play();
+                }
             });
         }
 

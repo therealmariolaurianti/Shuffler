@@ -28,6 +28,8 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
 
         private void CreatePlaylists()
         {
+            Playlists.Clear();
+
             foreach (var artist in _artistsWithSongs)
             {
                 var songs = _artistsWithSongs[artist.Key].ToList();
