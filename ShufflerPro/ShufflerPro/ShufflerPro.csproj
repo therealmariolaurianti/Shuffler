@@ -123,5 +123,15 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\HelpfulCSProjs\Extensions\Helpers.Extensions\Helpers.Extensions.csproj">
+      <Project>{CB52A102-6E23-4EBD-A155-5EB8D79589B4}</Project>
+      <Name>Helpers.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ShufflerPro.Core\ShufflerPro.Core.csproj">
+      <Project>{158BBFB0-9FA1-4746-B5A4-A29B2C33FAA6}</Project>
+      <Name>ShufflerPro.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
