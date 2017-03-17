@@ -66,12 +66,17 @@ namespace ShufflerPro.Core.Workers
 
         public void Stop()
         {
-            _outEvent.Stop();
+            
         }
 
         public void Pause()
         {
-            _outEvent.Pause();
+            
+        }
+
+        public void Skip()
+        {
+            _outEvent.Stop();
         }
     }
 }

@@ -15,11 +15,11 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
 {
     public class ShellViewModel : PropertyChangedBase, IHandle<NowPlaying>
     {
-        private readonly ISongFactory _songFactory;
-        private readonly Player _player;
         private readonly IEventAggregator _eventAggregator;
+        private readonly Player _player;
+        private readonly ISongFactory _songFactory;
 
-        public ShellViewModel(ISongFactory songFactory, Player player, 
+        public ShellViewModel(ISongFactory songFactory, Player player,
             IEventAggregator eventAggregator)
         {
             eventAggregator.Subscribe(this);
@@ -29,15 +29,27 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
             PlaylistViewModel = new PlaylistViewModel(_eventAggregator);
         }
 
+        public bool CanPause => false;
+        public bool CanPlay => true;
+        public bool CanPrevious => false;
+        public bool CanSkip => true;
+        public bool CanStop => false;
         public string FolderPath => Settings.Default.FolderPath;
+
         public PlayingViewModel PlayingViewModel { get; set; }
         public PlaylistViewModel PlaylistViewModel { get; set; }
 
         public Queue<Song> Songs => FolderPath
-                .GetFilesByExtenstion("mp3")
-                .Select(file => _songFactory.Create(file))
-                .Shuffle()
-                .ToQueue();
+            .GetFilesByExtenstion("mp3")
+            .Select(file => _songFactory.Create(file))
+            .Shuffle()
+            .ToQueue();
+
+        public void Handle(NowPlaying nowPlaying)
+        {
+            PlayingViewModel = new PlayingViewModel(nowPlaying.Song);
+            NotifyOfPropertyChange(nameof(PlayingViewModel));
+        }
 
         public void Play()
         {
@@ -61,10 +73,13 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
             _player.Stop();
         }
 
-        public void Handle(NowPlaying nowPlaying)
+        public void Skip()
         {
-            PlayingViewModel = new PlayingViewModel(nowPlaying.Song);
-            NotifyOfPropertyChange(nameof(PlayingViewModel));
+            _player.Skip();
+        }
+
+        public void Previous()
+        {
         }
     }
 }

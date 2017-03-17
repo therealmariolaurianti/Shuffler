@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="FolderPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">D:\Music Library\Antiflag\For Blood And Empire</Value>
+      <Value Profile="(Default)">D:\Music Library\La Dispute</Value>
     </Setting>
   </Settings>
 </SettingsFile>

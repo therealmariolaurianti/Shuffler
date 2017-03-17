@@ -25,7 +25,7 @@ namespace ShufflerPro.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Music Library\\Antiflag\\For Blood And Empire")]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Music Library\\La Dispute")]
         public string FolderPath {
             get {
                 return ((string)(this["FolderPath"]));
