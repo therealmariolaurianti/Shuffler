@@ -8,47 +8,45 @@ namespace ShufflerPro.Core.Workers
 {
     public class Player
     {
-        private readonly Queue<Song> _songs;
+        public Queue<Song> Songs { get; set; }
+        private readonly WaveOutEvent _outEvent;
+        private AudioFileReader _audioFileReader;
 
-        public Player(Queue<Song> songs)
+        public Player(WaveOutEvent outEvent)
         {
-            _songs = songs;
+            _outEvent = outEvent;
         }
 
         private void StartPlayer()
         {
-            if (_songs.Count == 0)
+            if (Songs == null)
+                return;
+            if (Songs.Count == 0)
                 return;
 
-            var song = _songs.Dequeue();
+            var song = Songs.Dequeue();
 
-            using (var output = new WaveOutEvent())
-            using (var player = new AudioFileReader(song.Path))
+            using (_audioFileReader = new AudioFileReader(song.Path))
             {
-                output.Init(player);
-                output.PlaybackStopped += (send, evn) =>
-                {
-                    Play();
-                    DisposeUsings(output, player);
-                };
-                output.Play();
+                _outEvent.Init(_audioFileReader);
+                _outEvent.PlaybackStopped += delegate { DisposeUsings(_outEvent, _audioFileReader); };
+                _outEvent.Play();
 
-                var songLength = player.TotalTime;
-
-                while (output.PlaybackState == PlaybackState.Playing)
+                var songLength = _audioFileReader.TotalTime;
+                while (_outEvent.PlaybackState == PlaybackState.Playing)
                 {
-                    if (player.CurrentTime != songLength)
+                    if (_audioFileReader.CurrentTime != songLength)
                         continue;
                     break;
                 }
 
-                DisposeUsings(output, player);
+                DisposeUsings(_outEvent, _audioFileReader);
             }
 
             Play();
         }
 
-        private static void DisposeUsings(WaveOutEvent output, AudioFileReader player)
+        private static void DisposeUsings(IWavePlayer output, IDisposable player)
         {
             output.Stop();
             player.Dispose();
@@ -61,12 +59,12 @@ namespace ShufflerPro.Core.Workers
 
         public void Stop()
         {
-            throw new NotImplementedException();
+            _outEvent.Stop();
         }
 
         public void Pause()
         {
-            throw new NotImplementedException();
+            _outEvent.Pause();
         }
     }
 }

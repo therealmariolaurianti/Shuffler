@@ -1,7 +1,6 @@
 ﻿<Application x:Class="ShufflerPro.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:shufflerPro="clr-namespace:ShufflerPro"
              xmlns:bootstrapper="clr-namespace:ShufflerPro.Bootstrapper">
     <Application.Resources>
         <ResourceDictionary>

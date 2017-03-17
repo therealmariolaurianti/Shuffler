@@ -1,28 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Helpers.Extensions;
 using ShufflerPro.Core.Interfaces;
 using ShufflerPro.Core.Objects;
 using ShufflerPro.Core.Workers;
+using ShufflerPro.Properties;
 
 namespace ShufflerPro.Maintenance.Shell.ViewModels
 {
     public class ShellViewModel : PropertyChangedBase
     {
-        private readonly IPlayerFactory _playerFactory;
         private readonly ISongFactory _songFactory;
+        private readonly Player _player;
 
-        public ShellViewModel(IPlayerFactory playerFactory,
-            ISongFactory songFactory)
+        public ShellViewModel(ISongFactory songFactory, Player player)
         {
-            _playerFactory = playerFactory;
             _songFactory = songFactory;
+            _player = player;
         }
 
-        public string FolderPath { get; set; }
-
-        public Player Player => _playerFactory.Create(Songs);
+        public string FolderPath => Settings.Default.FolderPath;
 
         public Queue<Song> Songs => FolderPath
                 .GetFilesByExtenstion("mp3")
@@ -32,17 +31,21 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
 
         public void Play()
         {
-            Player.Play();
+            Task.Run(() =>
+            {
+                _player.Songs = Songs;
+                _player.Play();
+            });
         }
 
         public void Pause()
         {
-            Player.Pause();
+            _player.Pause();
         }
 
         public void Stop()
         {
-            Player.Stop();
+            _player.Stop();
         }
     }
 }
