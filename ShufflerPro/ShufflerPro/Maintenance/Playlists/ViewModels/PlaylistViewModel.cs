@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Caliburn.Micro;
 using ShufflerPro.Core.Objects;
@@ -9,6 +10,7 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
     public class PlaylistViewModel : PropertyChangedBase, IHandle<PlaylistTask>
     {
         private Dictionary<string, List<Song>> _artistsWithSongs = new Dictionary<string, List<Song>>();
+        private ObservableCollection<PlayList> _playlists = new ObservableCollection<PlayList>();
 
         public PlaylistViewModel(IEventAggregator eventAggregator)
         {
@@ -34,6 +36,15 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
             }
         }
 
-        public List<PlayList> Playlists { get; set; }
+        public ObservableCollection<PlayList> Playlists 
+        {
+            get { return _playlists; }
+            set
+            {
+                if (Equals(value, _playlists)) return;
+                _playlists = value;
+                NotifyOfPropertyChange();
+            }
+        }
     }
 }

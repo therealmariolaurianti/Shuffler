@@ -8,6 +8,7 @@ using ShufflerPro.Core.Objects;
 using ShufflerPro.Core.Task;
 using ShufflerPro.Core.Workers;
 using ShufflerPro.Maintenance.Playing.ViewModels;
+using ShufflerPro.Maintenance.Playlists.ViewModels;
 using ShufflerPro.Properties;
 
 namespace ShufflerPro.Maintenance.Shell.ViewModels
@@ -25,10 +26,12 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
             _songFactory = songFactory;
             _player = player;
             _eventAggregator = eventAggregator;
+            PlaylistViewModel = new PlaylistViewModel(_eventAggregator);
         }
 
         public string FolderPath => Settings.Default.FolderPath;
         public PlayingViewModel PlayingViewModel { get; set; }
+        public PlaylistViewModel PlaylistViewModel { get; set; }
 
         public Queue<Song> Songs => FolderPath
                 .GetFilesByExtenstion("mp3")
@@ -39,7 +42,7 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public void Play()
         {
             var songs = Songs;
-            _eventAggregator.PublishOnUIThread(new PlaylistTask(songs));
+            _eventAggregator.PublishOnUIThreadAsync(new PlaylistTask(songs));
 
             Task.Run(() =>
             {

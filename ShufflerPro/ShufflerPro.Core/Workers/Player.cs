@@ -37,7 +37,7 @@ namespace ShufflerPro.Core.Workers
                 _outEvent.PlaybackStopped += delegate { DisposeUsings(_outEvent, _audioFileReader); };
                 _outEvent.Play();
 
-                _eventAggregator.PublishOnUIThread(new NowPlaying(song));
+                _eventAggregator.PublishOnUIThreadAsync(new NowPlaying(song));
 
                 var songLength = _audioFileReader.TotalTime;
                 while (_outEvent.PlaybackState == PlaybackState.Playing)
