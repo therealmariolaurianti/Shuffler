@@ -1,52 +1,91 @@
 <Window x:Class="ShufflerPro.Maintenance.Shell.Views.ShellView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Height="300"
+        Height="280"
+        Title="Shuffler Pro"
         WindowStartupLocation="CenterScreen"
-        Width="600">
-    <Grid
-        VerticalAlignment="Center"
-        Background="White">
+        Width="500">
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-        </Grid.ColumnDefinitions>
-        <Label
+        <Grid
             Grid.Row="0"
-            Grid.Column="0"
-            Content="Music Folder" />
-        <TextBox
-            Name="FolderPath"
-            Margin="2"
-            Grid.Row="0"
-            Grid.Column="1" />
-        <StackPanel
-            Orientation="Horizontal"
-            Grid.Row="1"
-            Grid.Column="1">
-            <Button
-                Width="100"
+            Background="White">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                Content="Music Folder" />
+            <TextBox
+                Name="FolderPath"
                 Margin="2"
-                HorizontalAlignment="Left"
-                Content="Play"
-                Name="Play" />
-            <Button
-                Width="100"
-                Margin="2"
-                HorizontalAlignment="Left"
-                Content="Pause"
-                Name="Pause" />
-            <Button
-                Width="100"
-                Margin="2"
-                HorizontalAlignment="Left"
-                Content="Stop"
-                Name="Stop" />
-        </StackPanel>
+                Grid.Row="0"
+                Grid.Column="1" />
+            <Grid
+                Height="30"
+                Margin="5"
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Margin="2"
+                    Content="Play"
+                    Name="Play" />
+                <Button
+                    Grid.Column="1"
+                    Margin="2"
+                    Content="Pause"
+                    Name="Pause" />
+                <Button
+                    Grid.Column="2"
+                    Margin="2"
+                    Content="Stop"
+                    Name="Stop" />
+                <Button
+                    Grid.Column="3"
+                    Margin="2"
+                    Content="Next"
+                    Name="Skip" />
+                <Button
+                    Grid.Column="4"
+                    Margin="2"
+                    Content="Prev"
+                    Name="Previous" />
+            </Grid>
+        </Grid>
+        <Border
+            Margin="5,5,5,5"
+            BorderBrush="Black"
+            BorderThickness="1"
+            Grid.Row="1">
+            <ContentControl
+                Name="PlayingViewModel"/>
+        </Border>
+        <Border
+            Margin="5,5,5,10"
+            BorderBrush="Black"
+            BorderThickness="1"
+            Grid.Row="2">
+            <ContentControl
+                Name="PlaylistViewModel"/>
+        </Border>
     </Grid>
-
 </Window>

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using Caliburn.Micro;
 using NAudio.Wave;
 using ShufflerPro.Core.Objects;
+using ShufflerPro.Core.Task;
+
 // ReSharper disable AccessToDisposedClosure
 
 namespace ShufflerPro.Core.Workers
@@ -11,10 +14,12 @@ namespace ShufflerPro.Core.Workers
         public Queue<Song> Songs { get; set; }
         private readonly WaveOutEvent _outEvent;
         private AudioFileReader _audioFileReader;
+        private readonly IEventAggregator _eventAggregator;
 
-        public Player(WaveOutEvent outEvent)
+        public Player(WaveOutEvent outEvent, IEventAggregator eventAggregator)
         {
             _outEvent = outEvent;
+            _eventAggregator = eventAggregator;
         }
 
         private void StartPlayer()
@@ -31,6 +36,8 @@ namespace ShufflerPro.Core.Workers
                 _outEvent.Init(_audioFileReader);
                 _outEvent.PlaybackStopped += delegate { DisposeUsings(_outEvent, _audioFileReader); };
                 _outEvent.Play();
+
+                _eventAggregator.PublishOnUIThread(new NowPlaying(song));
 
                 var songLength = _audioFileReader.TotalTime;
                 while (_outEvent.PlaybackState == PlaybackState.Playing)

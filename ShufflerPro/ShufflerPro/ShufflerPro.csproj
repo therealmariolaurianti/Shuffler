@@ -92,11 +92,27 @@
     </ApplicationDefinition>
     <Compile Include="Bootstrapper\AppBootstrapper.cs" />
     <Compile Include="Bootstrapper\NinjectRegistration.cs" />
+    <Compile Include="Maintenance\Playing\ViewModels\PlayingViewModel.cs" />
+    <Compile Include="Maintenance\Playing\Views\PlayingView.xaml.cs">
+      <DependentUpon>PlayingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Maintenance\Playlists\ViewModels\PlaylistViewModel.cs" />
+    <Compile Include="Maintenance\Playlists\Views\PlaylistView.xaml.cs">
+      <DependentUpon>PlaylistView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Maintenance\Shell\ViewModels\ShellViewModel.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Maintenance\Playing\Views\PlayingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Maintenance\Playlists\Views\PlaylistView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Maintenance\Shell\Views\ShellView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -139,5 +155,6 @@
       <Name>ShufflerPro.Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
