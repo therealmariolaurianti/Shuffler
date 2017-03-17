@@ -19,6 +19,9 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
 
         public void Handle(PlaylistTask playlist)
         {
+            Playlists?.Clear();
+            _artistsWithSongs?.Clear();
+
             _artistsWithSongs = playlist.Songs
                 .GroupBy(song => song.Artist)
                 .ToDictionary(s => s.Key, g => g.ToList());
@@ -28,8 +31,6 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
 
         private void CreatePlaylists()
         {
-            Playlists.Clear();
-
             foreach (var artist in _artistsWithSongs)
             {
                 var songs = _artistsWithSongs[artist.Key].ToList();

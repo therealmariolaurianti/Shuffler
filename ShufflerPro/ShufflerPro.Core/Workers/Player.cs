@@ -32,14 +32,13 @@ namespace ShufflerPro.Core.Workers
                 return;
 
             var song = Songs.Dequeue();
+            _eventAggregator.PublishOnUIThreadAsync(new NowPlaying(song));
 
             using (_audioFileReader = new AudioFileReader(song.Path))
             {
                 _outEvent.Init(_audioFileReader);
                 _outEvent.PlaybackStopped += delegate { DisposeUsings(_outEvent, _audioFileReader); };
                 _outEvent.Play();
-
-                _eventAggregator.PublishOnUIThreadAsync(new NowPlaying(song));
 
                 var songLength = _audioFileReader.TotalTime;
                 while (_outEvent.PlaybackState == PlaybackState.Playing)
@@ -68,7 +67,7 @@ namespace ShufflerPro.Core.Workers
 
         public void Stop()
         {
-            
+            _outEvent.Stop();
         }
 
         public void Pause()
@@ -78,7 +77,7 @@ namespace ShufflerPro.Core.Workers
 
         public void Skip()
         {
-            _outEvent.Stop();
+            Stop();
         }
     }
 }

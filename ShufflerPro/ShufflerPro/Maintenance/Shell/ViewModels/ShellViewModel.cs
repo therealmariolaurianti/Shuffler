@@ -9,23 +9,24 @@ using ShufflerPro.Core.Task;
 using ShufflerPro.Core.Workers;
 using ShufflerPro.Maintenance.Playing.ViewModels;
 using ShufflerPro.Maintenance.Playlists.ViewModels;
-using ShufflerPro.Properties;
 
 namespace ShufflerPro.Maintenance.Shell.ViewModels
 {
     public class ShellViewModel : PropertyChangedBase, IHandle<NowPlaying>
     {
         private readonly IEventAggregator _eventAggregator;
-        private readonly Player _player;
         private readonly ISongFactory _songFactory;
+        private Player _player;
+        private readonly IPlayerFactory _playerFactory;
 
         public ShellViewModel(ISongFactory songFactory, Player player,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator, IPlayerFactory playerFactory)
         {
             eventAggregator.Subscribe(this);
             _songFactory = songFactory;
             _player = player;
             _eventAggregator = eventAggregator;
+            _playerFactory = playerFactory;
             PlaylistViewModel = new PlaylistViewModel(_eventAggregator);
         }
 
@@ -63,13 +64,14 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
             {
                 if (_player.Playing)
                 {
+                    _player.Stop();
 
+                    _player = null;
+                    _player = _playerFactory.Create(songs);
                 }
-                else
-                {
-                    _player.Songs = songs;
-                    _player.Play();
-                }
+
+                _player.Songs = songs;
+                _player.Play();
             });
         }
 
