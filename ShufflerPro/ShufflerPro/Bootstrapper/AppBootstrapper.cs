@@ -4,6 +4,7 @@ using System.Windows;
 using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
+using ShufflerPro.Core;
 using ShufflerPro.Maintenance.Shell.ViewModels;
 
 namespace ShufflerPro.Bootstrapper
@@ -50,7 +51,7 @@ namespace ShufflerPro.Bootstrapper
 
             Bootstrap.Bootstrapper
                 .Including.Assembly(typeof(AppBootstrapper).Assembly)
-                //.AndAssembly(typeof(NextId).Assembly)
+                .AndAssembly(typeof(NextId).Assembly)
                 .With.Ninject().WithContainer(_kernel).Start();
 
             DisplayRootViewFor<ShellViewModel>();
