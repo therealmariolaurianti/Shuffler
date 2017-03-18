@@ -30,7 +30,7 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
             PlaylistViewModel = new PlaylistViewModel(_eventAggregator);
         }
 
-        public bool CanPause => false;
+        public bool CanPause => true;
         public bool CanPlay => true;
         public bool CanPrevious => false;
         public bool CanSkip => true;
@@ -75,8 +75,6 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
                 _player.Songs = songs;
                 _player.Play();
             });
-
-            NotifyOfPropertyChange(nameof(CanSkip));
         }
 
         public void Pause()

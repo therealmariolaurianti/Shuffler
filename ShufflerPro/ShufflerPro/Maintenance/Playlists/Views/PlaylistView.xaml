@@ -26,8 +26,12 @@
                                         <StackPanel>
                                             <TextBlock
                                                 FontSize="16"
-                                                Margin="15,2,2,2"
-                                                Text="{Binding Title}" />
+                                                Margin="15,2,2,2">
+                                                <Run
+                                                    Text="{Binding Track, StringFormat=({0:}), Mode=OneWay}" />
+                                                <Run
+                                                    Text="{Binding Title, Mode=OneWay}" />
+                                            </TextBlock>
                                         </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Caliburn.Micro;
 using NAudio.Wave;
 using ShufflerPro.Core.Objects;
@@ -11,18 +12,27 @@ namespace ShufflerPro.Core.Workers
 {
     public class Player : IDisposable
     {
-        public Queue<Song> Songs { get; set; }
-        private WaveOutEvent _outEvent;
-        private AudioFileReader _audioFileReader;
         private readonly IEventAggregator _eventAggregator;
+        private AudioFileReader _audioFileReader;
+        private DirectSoundOut _outEvent;
 
-        public Player(WaveOutEvent outEvent, IEventAggregator eventAggregator)
+        public Player(DirectSoundOut outEvent, IEventAggregator eventAggregator)
         {
             _outEvent = outEvent;
             _eventAggregator = eventAggregator;
         }
 
-        public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;    
+        public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
+        public Queue<Song> Songs { get; set; }
+
+        public void Dispose()
+        {
+            _outEvent?.Dispose();
+            _audioFileReader?.Dispose();
+
+            _outEvent = null;
+            _audioFileReader = null;
+        }
 
         private void StartPlayer()
         {
@@ -40,12 +50,11 @@ namespace ShufflerPro.Core.Workers
                     return;
 
                 _outEvent.Init(_audioFileReader);
-                _outEvent.PlaybackStopped += delegate { ((IDisposable) _audioFileReader)?.Dispose(); };
-
+                _outEvent.PlaybackStopped += delegate {((IDisposable) _audioFileReader)?.Dispose();};
                 _outEvent.Play();
 
                 var songLength = _audioFileReader.TotalTime;
-                while (_outEvent.PlaybackState == PlaybackState.Playing)
+                while (Playing)
                 {
                     if (_audioFileReader.CurrentTime != songLength)
                         continue;
@@ -71,21 +80,12 @@ namespace ShufflerPro.Core.Workers
 
         public void Pause()
         {
-            
+            _outEvent?.Pause();
         }
 
         public void Skip()
         {
             Stop();
-        }
-
-        public void Dispose()
-        {
-            _outEvent?.Dispose();
-            _audioFileReader?.Dispose();
-
-            _outEvent = null;
-            _audioFileReader = null;
         }
     }
 }

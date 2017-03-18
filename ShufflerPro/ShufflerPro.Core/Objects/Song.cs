@@ -19,6 +19,7 @@ namespace ShufflerPro.Core.Objects
         public int Id { get; }
         public Tag SongFile => File.Create(Path).Tag;
         public string Title => SongFile.Title;
+        public string Track => SongFile.Track.ToString();
         public string Artist => SongFile.FirstAlbumArtist;
         public string Path { get; set; }
     }
