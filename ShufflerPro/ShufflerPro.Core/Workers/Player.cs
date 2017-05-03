@@ -14,9 +14,9 @@ namespace ShufflerPro.Core.Workers
     {
         private readonly IEventAggregator _eventAggregator;
         private AudioFileReader _audioFileReader;
-        private DirectSoundOut _outEvent;
+        private WaveOutEvent _outEvent;
 
-        public Player(DirectSoundOut outEvent, IEventAggregator eventAggregator)
+        public Player(WaveOutEvent outEvent, IEventAggregator eventAggregator)
         {
             _outEvent = outEvent;
             _eventAggregator = eventAggregator;

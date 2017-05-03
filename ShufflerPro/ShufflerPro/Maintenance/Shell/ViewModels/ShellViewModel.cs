@@ -39,13 +39,28 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public string FolderPath { get; set; }
         public PlayingViewModel PlayingViewModel { get; set; }
         public PlaylistViewModel PlaylistViewModel { get; set; }
+        public bool ShufffleSongs { get; set; }
 
-        public Queue<Song> Songs => FolderPath
-            .GetFilesByExtenstion("mp3")
-            .Select(file => _songFactory.Create(file))
-            .DistinctBy(s => s.Title)
-            .Shuffle()
-            .ToQueue();
+        public Queue<Song> Songs
+        {
+            get
+            {
+                var songs = ShufffleSongs ? FolderPath
+                    .GetFilesByExtenstion("mp3")
+                    .Select(file => _songFactory.Create(file))
+                    .DistinctBy(s => s.Title)
+                    .Shuffle()
+                    .ToQueue()
+                    : FolderPath
+                    .GetFilesByExtenstion("mp3")
+                    .Select(file => _songFactory.Create(file))
+                    .DistinctBy(s => s.Title)
+                    .OrderBy(s => s.Track)
+                    .ToQueue();
+
+                return songs;
+            }
+        }
 
         public void Handle(NowPlaying nowPlaying)
         {
@@ -63,7 +78,7 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
 
             Task.Run(() =>
             {
-                if(_player == null)
+                if (_player == null)
                     _player = _playerFactory.Create(songs);
 
                 if (_player.Playing)

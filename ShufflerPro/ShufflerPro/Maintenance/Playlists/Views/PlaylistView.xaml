@@ -30,6 +30,8 @@
                                                 <Run
                                                     Text="{Binding Track, StringFormat=({0:}), Mode=OneWay}" />
                                                 <Run
+                                                    Text="{Binding Album, Mode=OneWay}" />
+                                                <Run
                                                     Text="{Binding Title, Mode=OneWay}" />
                                             </TextBlock>
                                         </StackPanel>

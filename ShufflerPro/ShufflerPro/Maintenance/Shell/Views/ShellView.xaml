@@ -30,12 +30,21 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Content="Music Folder" />
-            <TextBox
-                Name="FolderPath"
-                Margin="2"
-                VerticalContentAlignment="Center"
+            <DockPanel
+                LastChildFill="True"
                 Grid.Row="0"
-                Grid.Column="1" />
+                Grid.Column="1">
+                
+                <CheckBox Content="Shuffle"
+                    Name="ShufffleSongs"
+                          DockPanel.Dock="Right"
+                          Margin="5,2"
+                          VerticalAlignment="Center"/>
+                <TextBox
+                    Name="FolderPath"
+                    Margin="2"
+                    VerticalContentAlignment="Center" />
+            </DockPanel>
             <Grid
                 Height="30"
                 Margin="5"
