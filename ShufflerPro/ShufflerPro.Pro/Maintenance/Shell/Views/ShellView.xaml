@@ -119,7 +119,7 @@
             <DataGrid
                 Margin="2"
                 RowHeight="23"
-                cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong('true')]"
+                cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
                 AutoGenerateColumns="False"
                 SelectedItem="{Binding SelectedSong}"
                 ItemsSource="{Binding Songs}"

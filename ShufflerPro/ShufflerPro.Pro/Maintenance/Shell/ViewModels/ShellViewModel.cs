@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -39,7 +40,7 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
         }
 
         
-        public void PlaySong(bool doubleClicked)
+        public void PlaySong()
         {
             Task.Run(async () =>
             {
@@ -50,25 +51,36 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
                 
             }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
             {
-                //TODO cant get double click and continuous play to work in sync
-                //TODO can only get one or the other
-                //if(!doubleClicked)
-                //{
-                //    SetCurrentSong();
-                //}
-                //
-                //PlaySong(!_player.CompletedSong);
+                if (!_player.IsCompleted)
+                {
+                    CurrentSong = SelectedSong;
+                    return;
+                }
+
+                _player.ReInitialize();
+                SetNextSong();
+                if (CurrentSong != null)
+                    PlaySong();
             });
         }
 
         public Song CurrentSong { get; set; }
 
-        private void SetCurrentSong()
+        private void SetNextSong()
         {
-            var song = Songs.Single(s => s.Title == CurrentSong.Title);
-            var songIndex = Songs.IndexOf(song);
-            var nextSong = Songs[songIndex + 1];
-            CurrentSong = nextSong;
+            try
+            {
+                var song = Songs.Single(s => s.Track == CurrentSong.Track);
+                var songIndex = Songs.IndexOf(song);
+                var nextSong = Songs[songIndex + 1];
+            
+                CurrentSong = nextSong;
+            }
+            catch (Exception ex)
+            {
+                //TODO log exception
+                CurrentSong = null;
+            }
         }
 
         public ObservableCollection<Song> Songs
