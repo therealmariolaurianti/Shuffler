@@ -5,7 +5,7 @@ using Caliburn.Micro;
 using Helpers.Extensions;
 using ShufflerPro.Core.Interfaces;
 using ShufflerPro.Core.Objects;
-using ShufflerPro.Core.Task;
+using ShufflerPro.Core.Tasks;
 using ShufflerPro.Core.Workers;
 using ShufflerPro.Maintenance.Playing.ViewModels;
 using ShufflerPro.Maintenance.Playlists.ViewModels;

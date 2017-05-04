@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using Caliburn.Micro;
 using Helpers.Extensions;
 using ShufflerPro.Core.Objects;
+using ShufflerPro.Core.Workers;
 using ShufflerPro.Loader;
 
 namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
@@ -15,21 +17,58 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
         private ObservableCollection<Song> _songs;
         private Album _selectedAlbum;
         private ObservableCollection<Album> _albums;
+        private Song _selectedSong;
+        private readonly Player _player;
 
-        public ShellViewModel(Runner runner)
+        public ShellViewModel(Runner runner, Player player)
         {
             _runner = runner;
+            _player = player;
         }
 
         protected override void OnInitialize()
         {
             DisplayName = "Shuffler Pro";
-            SongLibrary = _runner.SongLibrary;
+
+            Artists = _runner.Artists;
 
             Songs = AllSongs.ToObservableCollection();
             Albums = AllAlbums.ToObservableCollection();
 
             base.OnInitialize();
+        }
+
+        
+        public void PlaySong(bool doubleClicked)
+        {
+            Task.Run(async () =>
+            {
+                if (_player.Playing)
+                    _player.Cancel();
+
+                await _player.PlaySong(CurrentSong);
+                
+            }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
+            {
+                //TODO cant get double click and continuous play to work in sync
+                //TODO can only get one or the other
+                //if(!doubleClicked)
+                //{
+                //    SetCurrentSong();
+                //}
+                //
+                //PlaySong(!_player.CompletedSong);
+            });
+        }
+
+        public Song CurrentSong { get; set; }
+
+        private void SetCurrentSong()
+        {
+            var song = Songs.Single(s => s.Title == CurrentSong.Title);
+            var songIndex = Songs.IndexOf(song);
+            var nextSong = Songs[songIndex + 1];
+            CurrentSong = nextSong;
         }
 
         public ObservableCollection<Song> Songs
@@ -43,24 +82,7 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
             }
         }
 
-        private IEnumerable<Song> AllSongs
-        {
-            get
-            {
-                var songs = new List<Song>();
-                foreach (var songLibraryValue in SongLibrary.Values)
-                {
-                    foreach (var loadedSongs in songLibraryValue.Values)
-                    {
-                        songs.AddRange(loadedSongs);
-                    }
-                }
-                return songs;
-            }
-        }
-
-        public List<Artist> Artists => SongLibrary.Keys.Select(key => new Artist(key)).OrderBy(a => a.Name).ToList();
-
+        
         public ObservableCollection<Album> Albums
         {
             get => _albums;
@@ -72,22 +94,9 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
             }
         }
 
-        private IEnumerable<Album> AllAlbums
-        {
-            get
-            {
-                var albums = new List<Album>();
-                foreach (var song in SongLibrary.Values)
-                {
-                    var artist = song.Select(x => x.Value.First().Artist).First();
-                    albums.AddRange(song.Select(s => new Album(s.Key, artist)));
-                }
-
-                return albums.OrderBy(a => a.Name);
-            }
-        }
-
-        public Dictionary<string,Dictionary<string,List<Song>>> SongLibrary { get; set; }
+        public static List<Artist> Artists { get; set; }
+        private static IEnumerable<Song> AllSongs => AllAlbums.SelectMany(album => album.Songs);
+        private static IEnumerable<Album> AllAlbums => Artists.SelectMany(artist => artist.Albums);
 
         public Artist SelectedArtist
         {
@@ -117,7 +126,19 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
                 if (Equals(value, _selectedAlbum)) return;
                 _selectedAlbum = value;
                 NotifyOfPropertyChange();
-                FilterSongs(SelectedArtist.Name, value?.Name);
+                FilterSongs(SelectedArtist?.Name, value?.Name);
+            }
+        }
+
+        public Song SelectedSong
+        {
+            get => _selectedSong;
+            set
+            {
+                if (Equals(value, _selectedSong)) return;
+                _selectedSong = value;
+                NotifyOfPropertyChange();
+                CurrentSong = value;
             }
         }
 
@@ -131,28 +152,6 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
                 Songs = AllSongs.Where(s => s.Album == album).ToObservableCollection();
             if (artist != null && album != null)
                 Songs = AllSongs.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
-        }
-    }
-
-    public class Album
-    {
-        public string Name { get; }
-        public string Artist { get; set; }
-
-        public Album(string name, string artist)
-        {
-            Name = name;
-            Artist = artist;
-        }
-    }
-
-    public class Artist
-    {
-        public string Name { get; }
-
-        public Artist(string name)
-        {
-            Name = name;
         }
     }
 }

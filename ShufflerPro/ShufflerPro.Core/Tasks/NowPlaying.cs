@@ -1,6 +1,6 @@
 ﻿using ShufflerPro.Core.Objects;
 
-namespace ShufflerPro.Core.Task
+namespace ShufflerPro.Core.Tasks
 {
     public class NowPlaying
     {

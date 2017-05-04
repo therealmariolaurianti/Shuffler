@@ -83,11 +83,13 @@
     <Compile Include="Interfaces\IPlayerFactory.cs" />
     <Compile Include="Interfaces\ISongFactory.cs" />
     <Compile Include="NextId.cs" />
+    <Compile Include="Objects\Album.cs" />
+    <Compile Include="Objects\Artist.cs" />
     <Compile Include="Objects\Playlist.cs" />
     <Compile Include="Objects\Song.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Task\NowPlaying.cs" />
-    <Compile Include="Task\PlaylistTask.cs" />
+    <Compile Include="Tasks\NowPlaying.cs" />
+    <Compile Include="Tasks\PlaylistTask.cs" />
     <Compile Include="Workers\Player.cs" />
   </ItemGroup>
   <ItemGroup>

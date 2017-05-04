@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Caliburn.Micro;
 using ShufflerPro.Core.Objects;
-using ShufflerPro.Core.Task;
+using ShufflerPro.Core.Tasks;
 
 namespace ShufflerPro.Maintenance.Playlists.ViewModels
 {

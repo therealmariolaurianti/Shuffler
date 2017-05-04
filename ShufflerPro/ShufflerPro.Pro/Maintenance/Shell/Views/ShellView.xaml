@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewModels="clr-namespace:ShufflerPro.Pro.Maintenance.Shell.ViewModels"
+        xmlns:cal="http://www.caliburnproject.org"
         mc:Ignorable="d"
         Width="1000"
         d:DataContext="{d:DesignInstance viewModels:ShellViewModel }">
@@ -118,27 +119,30 @@
             <DataGrid
                 Margin="2"
                 RowHeight="23"
+                cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong('true')]"
                 AutoGenerateColumns="False"
+                SelectedItem="{Binding SelectedSong}"
                 ItemsSource="{Binding Songs}"
+                IsReadOnly="True"
                 CellStyle="{StaticResource GridContentAlign}"
                 Grid.Row="1">
                 <DataGrid.Columns>
                     <DataGridTextColumn 
                         Width="3*"
                         Header="Title"
-                        Binding="{Binding Title}"/>
+                        Binding="{Binding Title, Mode=OneTime, FallbackValue=null}"/>
                     <!--<DataGridTextColumn
                         Header="Time"
                         Binding="{Binding Time}" />-->
                     <DataGridTextColumn 
                         Header="Artist"
-                        Binding="{Binding Artist}"/>
+                        Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}"/>
                     <DataGridTextColumn
                         Header="Album"
-                        Binding="{Binding Album}"/>
+                        Binding="{Binding Album, Mode=OneTime, FallbackValue=null}"/>
                     <DataGridTextColumn
                         Header="Genre"
-                        Binding="{Binding Genre}" />
+                        Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

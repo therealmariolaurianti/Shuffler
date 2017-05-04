@@ -1,13 +1,10 @@
 ﻿using System.Diagnostics;
-using System.Globalization;
-using System.Threading.Tasks;
 using Helpers.Extensions;
-using NAudio.Wave;
 using TagLib;
 
 namespace ShufflerPro.Core.Objects
 {
-    [DebuggerDisplay("{Id}, {Artist}, {Title}")]
+    [DebuggerDisplay("{Title}")]
     public class Song
     {
         protected bool Equals(Song other)
@@ -38,17 +35,25 @@ namespace ShufflerPro.Core.Objects
             Artist = songFile.Tag.FirstAlbumArtist.ToTitleCase();
             Album = songFile.Tag.Album;
             Genre = songFile.Tag.FirstGenre;
+            Id = NextId.GetNext();
 
+#if DEBUG
             Debug.WriteLine(Id);
+#endif
         }
 
         public string Genre { get; }
-        public int Id => NextId.GetNext();
+        public int Id { get; }
         public string Title { get; }
         public int Track { get; }
-        public string Artist { get; }
+        public string Artist { get; private set; }
         public string Album { get; }
         public string Path { get; set; }
         public string Time { get; }
+
+        public void UpdateArtist(string artist)
+        {
+            Artist = artist;
+        }
     }
 }
