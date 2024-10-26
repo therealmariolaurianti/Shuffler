@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using NAudio.Wave;
 using ShufflerPro.Core.Objects;
 
-// ReSharper disable AccessToDisposedClosure
-
 namespace ShufflerPro.Core.Workers
 {
     public class Player : IDisposable
     {
         private AudioFileReader _audioFileReader;
+
+        private CancellationTokenSource _cancellationToken;
         private WaveOutEvent _outEvent;
 
         public Player(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
@@ -21,15 +21,7 @@ namespace ShufflerPro.Core.Workers
 
         public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
         public bool IsCanceled => _cancellationToken.IsCancellationRequested;
-
-        public void ReInitialize()
-        {
-            Dispose();
-
-            _outEvent = new WaveOutEvent();
-            _cancellationToken = new CancellationTokenSource();
-            IsCompleted = false;
-        }
+        public bool IsCompleted { get; set; }
 
         public void Dispose()
         {
@@ -41,15 +33,21 @@ namespace ShufflerPro.Core.Workers
             _audioFileReader = null;
             _cancellationToken = null;
         }
-        
+
+        public void ReInitialize()
+        {
+            Dispose();
+
+            _outEvent = new WaveOutEvent();
+            _cancellationToken = new CancellationTokenSource();
+            IsCompleted = false;
+        }
+
         public void Cancel()
         {
             _cancellationToken.Cancel();
             ReInitialize();
         }
-
-        private CancellationTokenSource _cancellationToken;
-        public bool IsCompleted { get; set; }
 
         private async Task PutTaskDelay(TimeSpan time)
         {
@@ -64,10 +62,7 @@ namespace ShufflerPro.Core.Workers
             {
                 using (_audioFileReader = new AudioFileReader(song.Path))
                 {
-                    if (_outEvent == null)
-                    {
-                        _outEvent = new WaveOutEvent();
-                    }
+                    if (_outEvent == null) _outEvent = new WaveOutEvent();
 
                     _outEvent.Init(_audioFileReader);
                     _outEvent.Play();
@@ -76,16 +71,15 @@ namespace ShufflerPro.Core.Workers
                     {
                         await PutTaskDelay(_audioFileReader.TotalTime);
                     }
-                    catch(Exception ex)
+                    catch (Exception)
                     {
-                        //TODO log error
                         // ignored
                     }
 
                     Dispose();
                 }
             }
-            catch(Exception ex)
+            catch (Exception)
             {
                 return false;
             }

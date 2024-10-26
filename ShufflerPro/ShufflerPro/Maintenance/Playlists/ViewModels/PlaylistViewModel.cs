@@ -17,6 +17,17 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
             eventAggregator.Subscribe(this);
         }
 
+        public ObservableCollection<PlayList> Playlists
+        {
+            get => _playlists;
+            set
+            {
+                if (Equals(value, _playlists)) return;
+                _playlists = value;
+                NotifyOfPropertyChange();
+            }
+        }
+
         public void Handle(PlaylistTask playlist)
         {
             Playlists?.Clear();
@@ -36,17 +47,6 @@ namespace ShufflerPro.Maintenance.Playlists.ViewModels
                 var songs = _artistsWithSongs[artist.Key].ToList();
                 var playlist = new PlayList(artist.Key, songs);
                 Playlists.Add(playlist);
-            }
-        }
-
-        public ObservableCollection<PlayList> Playlists 
-        {
-            get { return _playlists; }
-            set
-            {
-                if (Equals(value, _playlists)) return;
-                _playlists = value;
-                NotifyOfPropertyChange();
             }
         }
     }

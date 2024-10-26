@@ -7,7 +7,6 @@ namespace ShufflerPro.Bootstrapper
     {
         public void Register(IKernel container)
         {
-            
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using Helpers.Extensions;
 using ShufflerPro.Core.Objects;
 using ShufflerPro.Core.Workers;
 using ShufflerPro.Loader;
@@ -13,13 +12,13 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
 {
     public class ShellViewModel : Screen
     {
-        private readonly Runner _runner;
-        private Artist _selectedArtist;
-        private ObservableCollection<Song> _songs;
-        private Album _selectedAlbum;
-        private ObservableCollection<Album> _albums;
-        private Song _selectedSong;
         private readonly Player _player;
+        private readonly Runner _runner;
+        private ObservableCollection<Album> _albums;
+        private Album _selectedAlbum;
+        private Artist _selectedArtist;
+        private Song _selectedSong;
+        private ObservableCollection<Song> _songs;
 
         public ShellViewModel(Runner runner, Player player)
         {
@@ -27,61 +26,7 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
             _player = player;
         }
 
-        protected override void OnInitialize()
-        {
-            DisplayName = "Shuffler Pro";
-
-            Artists = _runner.Artists;
-
-            Songs = AllSongs.ToObservableCollection();
-            Albums = AllAlbums.ToObservableCollection();
-
-            base.OnInitialize();
-        }
-
-        
-        public void PlaySong()
-        {
-            Task.Run(async () =>
-            {
-                if (_player.Playing)
-                    _player.Cancel();
-
-                await _player.PlaySong(CurrentSong);
-                
-            }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
-            {
-                if (!_player.IsCompleted)
-                {
-                    CurrentSong = SelectedSong;
-                    return;
-                }
-
-                _player.ReInitialize();
-                SetNextSong();
-                if (CurrentSong != null)
-                    PlaySong();
-            });
-        }
-
         public Song CurrentSong { get; set; }
-
-        private void SetNextSong()
-        {
-            try
-            {
-                var song = Songs.Single(s => s.Track == CurrentSong.Track);
-                var songIndex = Songs.IndexOf(song);
-                var nextSong = Songs[songIndex + 1];
-            
-                CurrentSong = nextSong;
-            }
-            catch (Exception ex)
-            {
-                //TODO log exception
-                CurrentSong = null;
-            }
-        }
 
         public ObservableCollection<Song> Songs
         {
@@ -94,7 +39,7 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
             }
         }
 
-        
+
         public ObservableCollection<Album> Albums
         {
             get => _albums;
@@ -123,16 +68,9 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
             }
         }
 
-        private void FilterAlbums(string artist)
-        {
-            Albums = artist == null 
-                ? AllAlbums.ToObservableCollection() 
-                : AllAlbums.Where(a => a.Artist == artist).ToObservableCollection();
-        }
-
         public Album SelectedAlbum
         {
-            get { return _selectedAlbum; }
+            get => _selectedAlbum;
             set
             {
                 if (Equals(value, _selectedAlbum)) return;
@@ -152,6 +90,66 @@ namespace ShufflerPro.Pro.Maintenance.Shell.ViewModels
                 NotifyOfPropertyChange();
                 CurrentSong = value;
             }
+        }
+
+        protected override void OnInitialize()
+        {
+            DisplayName = "Shuffler Pro";
+
+            Artists = _runner.Artists;
+
+            Songs = AllSongs.ToObservableCollection();
+            Albums = AllAlbums.ToObservableCollection();
+
+            base.OnInitialize();
+        }
+
+
+        public void PlaySong()
+        {
+            Task.Run(async () =>
+            {
+                if (_player.Playing)
+                    _player.Cancel();
+
+                await _player.PlaySong(CurrentSong);
+            }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
+            {
+                if (!_player.IsCompleted)
+                {
+                    CurrentSong = SelectedSong;
+                    return;
+                }
+
+                _player.ReInitialize();
+                SetNextSong();
+                if (CurrentSong != null)
+                    PlaySong();
+            });
+        }
+
+        private void SetNextSong()
+        {
+            try
+            {
+                var song = Songs.Single(s => s.Track == CurrentSong.Track);
+                var songIndex = Songs.IndexOf(song);
+                var nextSong = Songs[songIndex + 1];
+
+                CurrentSong = nextSong;
+            }
+            catch (Exception ex)
+            {
+                //TODO log exception
+                CurrentSong = null;
+            }
+        }
+
+        private void FilterAlbums(string artist)
+        {
+            Albums = artist == null
+                ? AllAlbums.ToObservableCollection()
+                : AllAlbums.Where(a => a.Artist == artist).ToObservableCollection();
         }
 
         private void FilterSongs(string artist, string album = null)

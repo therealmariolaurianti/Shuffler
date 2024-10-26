@@ -9,10 +9,10 @@
         Width="700">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
             <RowDefinition
                 Height="Auto"
-                MinHeight="75.2"/>
+                MinHeight="75.2" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid
@@ -34,12 +34,12 @@
                 LastChildFill="True"
                 Grid.Row="0"
                 Grid.Column="1">
-                
+
                 <CheckBox Content="Shuffle"
-                    Name="ShufffleSongs"
+                          Name="ShufffleSongs"
                           DockPanel.Dock="Right"
                           Margin="5,2"
-                          VerticalAlignment="Center"/>
+                          VerticalAlignment="Center" />
                 <TextBox
                     Name="FolderPath"
                     Margin="2"
@@ -92,7 +92,7 @@
             BorderThickness="1"
             Grid.Row="1">
             <ContentControl
-                Name="PlayingViewModel"/>
+                Name="PlayingViewModel" />
         </Border>
         <Border
             Margin="5,5,5,10"
@@ -100,7 +100,7 @@
             BorderThickness="1"
             Grid.Row="2">
             <ContentControl
-                Name="PlaylistViewModel"/>
+                Name="PlaylistViewModel" />
         </Border>
     </Grid>
 </Window>

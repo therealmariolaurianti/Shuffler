@@ -1,11 +1,8 @@
-﻿using Ninject;
-using ShufflerPro.Core.Interfaces;
-
-namespace ShufflerPro.Loader
+﻿namespace ShufflerPro.Loader
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             var runner = new Runner();
             runner.Run();

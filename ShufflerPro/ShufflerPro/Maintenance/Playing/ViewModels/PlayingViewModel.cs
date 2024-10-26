@@ -4,7 +4,7 @@ namespace ShufflerPro.Maintenance.Playing.ViewModels
 {
     public class PlayingViewModel
     {
-        public PlayingViewModel(Song song )
+        public PlayingViewModel(Song song)
         {
             Song = song;
         }

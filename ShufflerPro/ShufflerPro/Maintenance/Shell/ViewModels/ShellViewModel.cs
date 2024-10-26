@@ -2,11 +2,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Caliburn.Micro;
-using Helpers.Extensions;
 using ShufflerPro.Core.Interfaces;
 using ShufflerPro.Core.Objects;
 using ShufflerPro.Core.Tasks;
 using ShufflerPro.Core.Workers;
+using ShufflerPro.Loader;
 using ShufflerPro.Maintenance.Playing.ViewModels;
 using ShufflerPro.Maintenance.Playlists.ViewModels;
 
@@ -15,9 +15,9 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
     public class ShellViewModel : PropertyChangedBase, IHandle<NowPlaying>
     {
         private readonly IEventAggregator _eventAggregator;
+        private readonly IPlayerFactory _playerFactory;
         private readonly ISongFactory _songFactory;
         private Player _player;
-        private readonly IPlayerFactory _playerFactory;
 
         public ShellViewModel(ISongFactory songFactory, Player player,
             IEventAggregator eventAggregator, IPlayerFactory playerFactory)
@@ -39,26 +39,26 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
         public string FolderPath { get; set; }
         public PlayingViewModel PlayingViewModel { get; set; }
         public PlaylistViewModel PlaylistViewModel { get; set; }
-        public bool ShufffleSongs { get; set; }
+        public bool ShuffleSongs { get; set; }
 
         public Queue<Song> Songs
         {
             get
             {
-                var songs = ShufffleSongs ? FolderPath
-                    .GetFilesByExtenstion("mp3")
-                    .Select(file => _songFactory.Create(file))
-                    .DistinctBy(s => s.Title)
-                    .Shuffle()
-                    .ToQueue()
-                    : FolderPath
-                    .GetFilesByExtenstion("mp3")
-                    .Select(file => _songFactory.Create(file))
-                    .DistinctBy(s => s.Title)
-                    .OrderBy(s => s.Track)
-                    .ToQueue();
+                var filesByExtension = FolderPath.GetFilesByExtension(new List<string> { "mp3" });
+                
+                
+                
+                var songs = ShuffleSongs
+                    ? filesByExtension
+                        .Select(file => _songFactory.Create(file))
+                        .Distinct()
+                    : filesByExtension
+                        .Select(file => _songFactory.Create(file))
+                        .Distinct()
+                        .OrderBy(s => s.Track);
 
-                return songs;
+                return new Queue<Song>(songs);
             }
         }
 
@@ -87,26 +87,26 @@ namespace ShufflerPro.Maintenance.Shell.ViewModels
                     _player = _playerFactory.Create(songs);
                 }
 
-                _player.Songs = songs;
-                _player.Play();
+               // _player.Songs = songs;
+               // _player.Play();
             });
         }
 
         public void Pause()
         {
-            _player.Pause();
+           // _player.Pause();
         }
 
         public void Stop()
         {
-            _player.Stop();
-            _player.Dispose();
-            _player = null;
+            //_player.Stop();
+            //_player.Dispose();
+            //_player = null;
         }
 
         public void Skip()
         {
-            _player.Skip();
+            //_player.Skip();
         }
 
         public void Previous()

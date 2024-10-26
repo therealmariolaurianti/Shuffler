@@ -3,7 +3,7 @@
 namespace ShufflerPro.Maintenance.Playlists.Views
 {
     /// <summary>
-    /// Interaction logic for PlaylistView.xaml
+    ///     Interaction logic for PlaylistView.xaml
     /// </summary>
     public partial class PlaylistView : UserControl
     {

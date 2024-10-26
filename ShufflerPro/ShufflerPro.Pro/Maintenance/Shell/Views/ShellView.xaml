@@ -8,34 +8,34 @@
         mc:Ignorable="d"
         Width="1000"
         d:DataContext="{d:DesignInstance viewModels:ShellViewModel }">
-<Window.Resources>
-    <Style
-        x:Key="GridContentAlign"
-        TargetType="{x:Type DataGridCell}">
-        <Setter
-            Property="Template">
-            <Setter.Value>
-                <ControlTemplate
-                    TargetType="{x:Type DataGridCell}">
-                    <Grid
-                        Background="{TemplateBinding Background}">
-                        <ContentPresenter
-                            VerticalAlignment="Center" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
+    <Window.Resources>
+        <Style
+            x:Key="GridContentAlign"
+            TargetType="{x:Type DataGridCell}">
+            <Setter
+                Property="Template">
+                <Setter.Value>
+                    <ControlTemplate
+                        TargetType="{x:Type DataGridCell}">
+                        <Grid
+                            Background="{TemplateBinding Background}">
+                            <ContentPresenter
+                                VerticalAlignment="Center" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <Grid Background="White">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="2*" />
             </Grid.RowDefinitions>
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
                 <Grid
@@ -127,19 +127,19 @@
                 CellStyle="{StaticResource GridContentAlign}"
                 Grid.Row="1">
                 <DataGrid.Columns>
-                    <DataGridTextColumn 
+                    <DataGridTextColumn
                         Width="3*"
                         Header="Title"
-                        Binding="{Binding Title, Mode=OneTime, FallbackValue=null}"/>
+                        Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
                     <!--<DataGridTextColumn
                         Header="Time"
                         Binding="{Binding Time}" />-->
-                    <DataGridTextColumn 
+                    <DataGridTextColumn
                         Header="Artist"
-                        Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}"/>
+                        Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
                     <DataGridTextColumn
                         Header="Album"
-                        Binding="{Binding Album, Mode=OneTime, FallbackValue=null}"/>
+                        Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
                     <DataGridTextColumn
                         Header="Genre"
                         Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
