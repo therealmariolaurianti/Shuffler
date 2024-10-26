@@ -1,11 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Documents;
 using Caliburn.Micro;
 using Ninject;
 using ShufflerPro.Upgraded.Objects;
+using ShufflerPro.Upgraded.Screens.Shell;
 
-namespace ShufflerPro.Upgraded;
+namespace ShufflerPro.Upgraded.Bootstrapper;
 
 public class AppBootstrapper : BootstrapperBase
 {
@@ -69,7 +71,7 @@ public static class Extensions
 
 public class Runner
 {
-    private readonly string _path = "C:\\Temp";
+    private readonly string _path = "X:\\";
     public List<Artist> Artists => Run();
 
     public List<Artist> Run()
@@ -80,9 +82,27 @@ public class Runner
 
         var folderPath = Path.GetFullPath(_path);
 
-        var songs = folderPath.GetFilesByExtension(new List<string> { "mp3" });
-        var songFiles = songs.Select(file => new Song(file)).ToList();
-        var distinctSongs = songFiles.Distinct().ToList();
+        var songs = folderPath.GetFilesByExtension(["mp3"]).Take(100);
+        //var songFiles = songs.Select(file => new Song(file)).ToList();
+
+        var songsx = new List<Song>();
+        foreach (var song in songs)
+        {
+            try
+            {
+                var songFile = TagLib.File.Create(song);
+                var newSong = new Song(songFile, song);
+                songsx.Add(newSong);
+            }
+            catch (Exception e)
+            {
+                continue;
+            }
+        }
+        
+        
+        
+        var distinctSongs = songsx.Distinct().ToList();
 
         var songFilesWithArtists = distinctSongs.Where(s => s.Artist != null).ToList();
         var songFilesWithoutArtists = distinctSongs.Except(songFilesWithArtists).ToList();

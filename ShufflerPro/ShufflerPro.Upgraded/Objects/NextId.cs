@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Upgraded
+﻿namespace ShufflerPro.Upgraded.Objects
 {
     public static class NextId
     {

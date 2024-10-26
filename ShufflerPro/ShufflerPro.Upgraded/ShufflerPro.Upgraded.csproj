@@ -16,8 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Page Update="ShellView.xaml">
+      <Page Update="Screens\Shell\ShellView.xaml">
         <Generator>MSBuild:Compile</Generator>
+        <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
     </ItemGroup>

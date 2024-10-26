@@ -1,14 +1,14 @@
-﻿using NAudio.Wave;
+﻿using System.Windows.Threading;
+using NAudio.Wave;
 using ShufflerPro.Upgraded.Objects;
 
 namespace ShufflerPro.Upgraded.Workers;
 
 public class Player : IDisposable
 {
-    private AudioFileReader _audioFileReader;
-
-    private CancellationTokenSource _cancellationToken;
-    private WaveOutEvent _outEvent;
+    private AudioFileReader? _audioFileReader;
+    private CancellationTokenSource? _cancellationToken;
+    private WaveOutEvent? _outEvent;
 
     public Player(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
     {
@@ -17,7 +17,6 @@ public class Player : IDisposable
     }
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
-    public bool IsCanceled => _cancellationToken.IsCancellationRequested;
     public bool IsCompleted { get; set; }
 
     public void Dispose()
@@ -42,38 +41,22 @@ public class Player : IDisposable
 
     public void Cancel()
     {
-        _cancellationToken.Cancel();
+        _cancellationToken?.Cancel();
         ReInitialize();
     }
 
-    private async Task PutTaskDelay(TimeSpan time)
-    {
-        var task = Task.Delay(time, _cancellationToken.Token);
-        await task;
-        IsCompleted = task.IsCompleted;
-    }
-
-    public async Task<bool> PlaySong(Song song)
+    public bool PlaySong(Song song)
     {
         try
         {
             using (_audioFileReader = new AudioFileReader(song.Path))
             {
-                if (_outEvent == null) _outEvent = new WaveOutEvent();
+                _outEvent ??= new WaveOutEvent();
 
                 _outEvent.Init(_audioFileReader);
                 _outEvent.Play();
 
-                try
-                {
-                    await PutTaskDelay(_audioFileReader.TotalTime);
-                }
-                catch (Exception)
-                {
-                    // ignored
-                }
-
-                Dispose();
+                DelayAction(_audioFileReader.TotalTime.Milliseconds, Dispose);
             }
         }
         catch (Exception)
@@ -82,5 +65,19 @@ public class Player : IDisposable
         }
 
         return true;
+    }
+
+    public static void DelayAction(int millisecond, Action action)
+    {
+        var timer = new DispatcherTimer();
+
+        timer.Tick += delegate
+        {
+            action.Invoke();
+            timer.Stop();
+        };
+
+        timer.Interval = TimeSpan.FromSeconds(millisecond);
+        timer.Start();
     }
 }

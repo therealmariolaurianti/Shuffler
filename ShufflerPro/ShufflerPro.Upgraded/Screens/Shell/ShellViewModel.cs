@@ -1,9 +1,10 @@
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
+using ShufflerPro.Upgraded.Bootstrapper;
 using ShufflerPro.Upgraded.Objects;
 using ShufflerPro.Upgraded.Workers;
 
-namespace ShufflerPro.Upgraded;
+namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : Screen
 {
@@ -102,24 +103,26 @@ public class ShellViewModel : Screen
 
     public void PlaySong()
     {
+        if (_player.Playing)
+            _player.Cancel();
+
+        _player.PlaySong(CurrentSong);
+        
         Task.Run(async () =>
         {
-            if (_player.Playing)
-                _player.Cancel();
-
-            await _player.PlaySong(CurrentSong);
+            
         }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
         {
-            if (!_player.IsCompleted)
-            {
-                CurrentSong = SelectedSong;
-                return;
-            }
-
-            _player.ReInitialize();
-            SetNextSong();
-            if (CurrentSong != null)
-                PlaySong();
+            // if (!_player.IsCompleted)
+            // {
+            //     CurrentSong = SelectedSong;
+            //     return;
+            // }
+            //
+            // _player.ReInitialize();
+            // SetNextSong();
+            // if (CurrentSong != null)
+            //     PlaySong();
         });
     }
 

@@ -6,21 +6,15 @@ namespace ShufflerPro.Upgraded.Objects;
 [DebuggerDisplay("{Title}")]
 public class Song
 {
-    public Song(string path)
+    public Song(File songFile, string path)
     {
         Path = path;
-
-        var songFile = File.Create(Path);
         Title = songFile.Tag.Title;
         Track = (int)songFile.Tag.Track;
         Artist = songFile.Tag.FirstAlbumArtist;
         Album = songFile.Tag.Album;
         Genre = songFile.Tag.FirstGenre;
         Id = NextId.GetNext();
-
-#if DEBUG
-        Debug.WriteLine(Id);
-#endif
     }
 
     public string Genre { get; }
@@ -30,14 +24,13 @@ public class Song
     public string Artist { get; private set; }
     public string Album { get; }
     public string Path { get; set; }
-    public string Time { get; }
 
     protected bool Equals(Song other)
     {
         return string.Equals(Title, other.Title);
     }
 
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
@@ -47,7 +40,7 @@ public class Song
 
     public override int GetHashCode()
     {
-        return Title != null ? Title.GetHashCode() : 0;
+        return Title.GetHashCode();
     }
 
     public void UpdateArtist(string artist)
