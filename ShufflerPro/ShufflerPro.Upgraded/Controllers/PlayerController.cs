@@ -2,19 +2,14 @@
 using NAudio.Wave;
 using ShufflerPro.Upgraded.Objects;
 
-namespace ShufflerPro.Upgraded.Workers;
+namespace ShufflerPro.Upgraded.Controllers;
 
-public class Player : IDisposable
+public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
+    : IDisposable
 {
     private AudioFileReader? _audioFileReader;
-    private CancellationTokenSource? _cancellationToken;
-    private WaveOutEvent? _outEvent;
-
-    public Player(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
-    {
-        _outEvent = outEvent;
-        _cancellationToken = cancellationToken;
-    }
+    private CancellationTokenSource? _cancellationToken = cancellationToken;
+    private WaveOutEvent? _outEvent = outEvent;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }

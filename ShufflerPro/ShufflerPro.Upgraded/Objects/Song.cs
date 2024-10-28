@@ -1,31 +1,33 @@
-﻿using System.Diagnostics;
-using TagLib;
+﻿using TagLib;
 
 namespace ShufflerPro.Upgraded.Objects;
 
-[DebuggerDisplay("{Title}")]
-public class Song
+public class SongFactory
 {
-    public Song(File songFile, string path)
+    public static Song Create(string songPath)
     {
-        Path = path;
-        Title = songFile.Tag.Title;
-        Track = (int)songFile.Tag.Track;
-        Artist = songFile.Tag.FirstAlbumArtist;
-        Album = songFile.Tag.Album;
-        Genre = songFile.Tag.FirstGenre;
-        Id = NextId.GetNext();
+        try
+        {
+            var songFile = File.Create(songPath);
+            return new Song(songFile, songPath);
+        }
+        catch (Exception)
+        {
+            return new Song(null, songPath);
+        }
     }
+}
 
-    public string Genre { get; }
-    public int Id { get; }
-    public string Title { get; }
-    public int Track { get; }
-    public string Artist { get; private set; }
-    public string Album { get; }
-    public string Path { get; set; }
+public struct Song(File? songFile, string path)
+{
+    public string? Genre { get; } = songFile?.Tag.FirstGenre;
+    public string? Title { get; } = songFile?.Tag.Title;
+    public int? Track { get; } = (int?)songFile?.Tag.Track;
+    public string Artist { get; private set; } = songFile?.Tag.FirstAlbumArtist ?? "Unknown Artist";
+    public string Album { get; } = songFile?.Tag.Album ?? "Unknown Album";
+    public string? Path { get; set; } = path;
 
-    protected bool Equals(Song other)
+    private bool Equals(Song other)
     {
         return string.Equals(Title, other.Title);
     }
@@ -40,11 +42,21 @@ public class Song
 
     public override int GetHashCode()
     {
-        return Title.GetHashCode();
+        return Title?.GetHashCode() ?? 0;
     }
 
     public void UpdateArtist(string artist)
     {
         Artist = artist;
+    }
+
+    public static bool operator ==(Song left, Song right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(Song left, Song right)
+    {
+        return !(left == right);
     }
 }

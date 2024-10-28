@@ -1,10 +1,10 @@
-﻿using ShufflerPro.Upgraded.Objects;
-using ShufflerPro.Upgraded.Workers;
+﻿using ShufflerPro.Upgraded.Controllers;
+using ShufflerPro.Upgraded.Objects;
 
 namespace ShufflerPro.Upgraded.Interfaces
 {
     public interface IPlayerFactory : IFactory
     {
-        Player Create(Queue<Song> songs);
+        PlayerController Create(Queue<Song> songs);
     }
 }

@@ -1,30 +1,30 @@
 using System.Collections.ObjectModel;
 using Caliburn.Micro;
 using ShufflerPro.Upgraded.Bootstrapper;
+using ShufflerPro.Upgraded.Controllers;
 using ShufflerPro.Upgraded.Objects;
-using ShufflerPro.Upgraded.Workers;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : Screen
 {
-    private readonly Player _player;
-    private readonly Runner _runner;
-    private ObservableCollection<Album> _albums;
-    private Album _selectedAlbum;
-    private Artist _selectedArtist;
-    private Song _selectedSong;
-    private ObservableCollection<Song> _songs;
+    private readonly MediaController _mediaController;
+    private readonly PlayerController _playerController;
+    private ObservableCollection<Album>? _albums;
+    private Album? _selectedAlbum;
+    private Artist? _selectedArtist;
+    private Song? _selectedSong;
+    private ObservableCollection<Song>? _songs;
 
-    public ShellViewModel(Runner runner, Player player)
+    public ShellViewModel(PlayerController playerController, MediaController mediaController)
     {
-        _runner = runner;
-        _player = player;
+        _playerController = playerController;
+        _mediaController = mediaController;
     }
 
-    public Song CurrentSong { get; set; }
+    public Song? CurrentSong { get; set; }
 
-    public ObservableCollection<Song> Songs
+    public ObservableCollection<Song>? Songs
     {
         get => _songs;
         set
@@ -36,7 +36,7 @@ public class ShellViewModel : Screen
     }
 
 
-    public ObservableCollection<Album> Albums
+    public ObservableCollection<Album>? Albums
     {
         get => _albums;
         set
@@ -47,11 +47,15 @@ public class ShellViewModel : Screen
         }
     }
 
-    public static List<Artist> Artists { get; set; }
-    private static IEnumerable<Song> AllSongs => AllAlbums.SelectMany(album => album.Songs);
-    private static IEnumerable<Album> AllAlbums => Artists.SelectMany(artist => artist.Albums);
+    public static IReadOnlyCollection<Artist>? Artists { get; set; }
 
-    public Artist SelectedArtist
+    private static IReadOnlyCollection<Song>? AllSongs =>
+        AllAlbums?.SelectMany(album => album.Songs).ToReadOnlyCollection();
+
+    private static IReadOnlyCollection<Album>? AllAlbums =>
+        Artists?.SelectMany(artist => artist.Albums).ToReadOnlyCollection();
+
+    public Artist? SelectedArtist
     {
         get => _selectedArtist;
         set
@@ -64,7 +68,7 @@ public class ShellViewModel : Screen
         }
     }
 
-    public Album SelectedAlbum
+    public Album? SelectedAlbum
     {
         get => _selectedAlbum;
         set
@@ -76,7 +80,7 @@ public class ShellViewModel : Screen
         }
     }
 
-    public Song SelectedSong
+    public Song? SelectedSong
     {
         get => _selectedSong;
         set
@@ -88,77 +92,56 @@ public class ShellViewModel : Screen
         }
     }
 
+    // protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
+    // {
+    
+    //
+    //     await base.OnInitializeAsync(cancellationToken);
+    // }
+
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "Shuffler Pro";
-
-        Artists = _runner.Artists;
-
-        Songs = AllSongs.ToObservableCollection();
-        Albums = AllAlbums.ToObservableCollection();
-
+        Load();
+        
         return base.OnInitializeAsync(cancellationToken);
     }
 
+    private void Load()
+    {
+        Artists = _mediaController.LoadArtists();
+
+        Songs = AllSongs?.ToObservableCollection();
+        Albums = AllAlbums?.ToObservableCollection();
+    }
 
     public void PlaySong()
     {
-        if (_player.Playing)
-            _player.Cancel();
+        if (CurrentSong is null)
+            return;
 
-        _player.PlaySong(CurrentSong);
-        
-        Task.Run(async () =>
-        {
-            
-        }).ConfigureAwait(true).GetAwaiter().OnCompleted(() =>
-        {
-            // if (!_player.IsCompleted)
-            // {
-            //     CurrentSong = SelectedSong;
-            //     return;
-            // }
-            //
-            // _player.ReInitialize();
-            // SetNextSong();
-            // if (CurrentSong != null)
-            //     PlaySong();
-        });
+        if (_playerController.Playing)
+            _playerController.Cancel();
+
+        _playerController.PlaySong(CurrentSong.Value);
     }
 
-    private void SetNextSong()
-    {
-        try
-        {
-            var song = Songs.Single(s => s.Track == CurrentSong.Track);
-            var songIndex = Songs.IndexOf(song);
-            var nextSong = Songs[songIndex + 1];
-
-            CurrentSong = nextSong;
-        }
-        catch (Exception ex)
-        {
-            //TODO log exception
-            CurrentSong = null;
-        }
-    }
-
-    private void FilterAlbums(string artist)
+    private void FilterAlbums(string? artist)
     {
         Albums = artist == null
-            ? AllAlbums.ToObservableCollection()
-            : AllAlbums.Where(a => a.Artist == artist).ToObservableCollection();
+            ? AllAlbums?.ToObservableCollection()
+            : AllAlbums?.Where(a => a.Artist == artist).ToObservableCollection();
     }
 
-    private void FilterSongs(string artist, string album = null)
+    private void FilterSongs(string? artist, string? album = null)
     {
         if (artist == null && album == null)
-            Songs = AllSongs.ToObservableCollection();
+            Songs = AllSongs?.ToObservableCollection();
         if (artist != null && album == null)
-            Songs = AllSongs.Where(s => s.Artist == artist).ToObservableCollection();
+            Songs = AllSongs?.Where(s => s.Artist == artist).ToObservableCollection();
         if (artist == null && album != null)
-            Songs = AllSongs.Where(s => s.Album == album).ToObservableCollection();
+            Songs = AllSongs?.Where(s => s.Album == album).ToObservableCollection();
         if (artist != null && album != null)
-            Songs = AllSongs.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
+            Songs = AllSongs?.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
     }
 }
