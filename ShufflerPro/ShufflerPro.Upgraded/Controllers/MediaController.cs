@@ -19,6 +19,7 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
     {
         var songsPaths = Path.GetFullPath(mediaLibraryPath)
             .GetFilesByExtension(["mp3", ".m4a"])
+            .Take(100)
             .ToHashSet();
 
         return songsPaths.AsParallel().Select(SongFactory.Create).ToList();

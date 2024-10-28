@@ -6,7 +6,10 @@
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:upgraded="clr-namespace:ShufflerPro.Upgraded.Screens.Shell"
         mc:Ignorable="d"
-        Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Width="1200"
+        Height="700"
+        Background="Gray"
         d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
     <Window.Resources>
         <Style
@@ -27,16 +30,18 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid Background="White">
+    <Grid>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="2.5*" />
+                <RowDefinition Height=".25*"/>
             </Grid.RowDefinitions>
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Grid
                     Grid.IsSharedSizeScope="True">
@@ -116,6 +121,15 @@
                     </ListBox>
                 </Grid>
             </Grid>
+            <GridSplitter
+                Grid.Row="1"
+                HorizontalAlignment="Stretch"
+                Margin="5"
+                HorizontalContentAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent"
+                VerticalContentAlignment="Stretch"
+                ResizeDirection="Rows" />
             <DataGrid
                 Margin="2"
                 RowHeight="23"
@@ -123,17 +137,18 @@
                 AutoGenerateColumns="False"
                 SelectedItem="{Binding SelectedSong}"
                 ItemsSource="{Binding Songs}"
+                AlternationCount="2"
+                AlternatingRowBackground="AntiqueWhite"
                 IsReadOnly="True"
                 CellStyle="{StaticResource GridContentAlign}"
-                Grid.Row="1">
+                Grid.Row="2">
                 <DataGrid.Columns>
                     <DataGridTextColumn
-                        Width="3*"
-                        Header="Title"
+                        Header="Song"
                         Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
-                    <!--<DataGridTextColumn
+                    <DataGridTextColumn
                         Header="Time"
-                        Binding="{Binding Time}" />-->
+                        Binding="{Binding Time, Mode=OneTime, FallbackValue=null}" />
                     <DataGridTextColumn
                         Header="Artist"
                         Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
@@ -145,6 +160,7 @@
                         Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
                 </DataGrid.Columns>
             </DataGrid>
+            
         </Grid>
     </Grid>
 

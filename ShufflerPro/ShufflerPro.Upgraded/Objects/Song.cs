@@ -26,6 +26,7 @@ public struct Song(File? songFile, string path)
     public string Artist { get; private set; } = songFile?.Tag.FirstAlbumArtist ?? "Unknown Artist";
     public string Album { get; } = songFile?.Tag.Album ?? "Unknown Album";
     public string? Path { get; set; } = path;
+    public string? Time { get; } = songFile?.Properties.Duration.ToString("mm':'ss");
 
     private bool Equals(Song other)
     {
@@ -43,11 +44,6 @@ public struct Song(File? songFile, string path)
     public override int GetHashCode()
     {
         return Title?.GetHashCode() ?? 0;
-    }
-
-    public void UpdateArtist(string artist)
-    {
-        Artist = artist;
     }
 
     public static bool operator ==(Song left, Song right)
