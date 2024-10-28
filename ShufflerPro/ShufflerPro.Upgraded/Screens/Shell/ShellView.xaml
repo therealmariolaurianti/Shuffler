@@ -30,137 +30,200 @@
             </Setter>
         </Style>
     </Window.Resources>
-    <Grid>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="20" />
-                <RowDefinition Height="2.5*" />
-                <RowDefinition Height=".25*"/>
-            </Grid.RowDefinitions>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Grid
-                    Grid.IsSharedSizeScope="True">
-                    <Grid.RowDefinitions>
-                        <RowDefinition
-                            Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition
-                                Width="225"
-                                SharedSizeGroup="NameColumn" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Margin="5"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Text="Artist" />
-                    </Grid>
-                    <ListBox
-                        Margin="2,0"
-                        Grid.Row="1"
-                        SelectedItem="{Binding SelectedArtist}"
-                        ItemsSource="{Binding Artists}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition
-                                            SharedSizeGroup="NameColumn" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Text="{Binding Name}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-                <Grid
-                    Grid.Column="1"
-                    Grid.IsSharedSizeScope="True">
-                    <Grid.RowDefinitions>
-                        <RowDefinition
-                            Height="Auto" />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition
-                                Width="Auto"
-                                SharedSizeGroup="NameColumn" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            Margin="5"
-                            FontSize="16"
-                            FontWeight="Bold"
-                            Text="Album" />
-                    </Grid>
-                    <ListBox
-                        Margin="2,0"
-                        Grid.Row="1"
-                        SelectedItem="{Binding SelectedAlbum}"
-                        ItemsSource="{Binding Albums}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition
-                                            SharedSizeGroup="NameColumn" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Text="{Binding Name}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </Grid>
-            </Grid>
-            <GridSplitter
-                Grid.Row="1"
-                HorizontalAlignment="Stretch"
-                Margin="5"
-                HorizontalContentAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="Transparent"
-                VerticalContentAlignment="Stretch"
-                ResizeDirection="Rows" />
-            <DataGrid
+    <Grid
+        Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height=".5*" />
+            <RowDefinition Height="2*" />
+        </Grid.RowDefinitions>
+        <Border
+            Margin="2"
+            BorderThickness="1"
+            BorderBrush="Black" />
+        <Grid
+            Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="3.5*" />
+            </Grid.ColumnDefinitions>
+            <Border
                 Margin="2"
-                RowHeight="23"
-                cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
-                AutoGenerateColumns="False"
-                SelectedItem="{Binding SelectedSong}"
-                ItemsSource="{Binding Songs}"
-                AlternationCount="2"
-                AlternatingRowBackground="AntiqueWhite"
-                IsReadOnly="True"
-                CellStyle="{StaticResource GridContentAlign}"
-                Grid.Row="2">
-                <DataGrid.Columns>
-                    <DataGridTextColumn
-                        Header="Song"
-                        Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
-                    <DataGridTextColumn
-                        Header="Time"
-                        Binding="{Binding Time, Mode=OneTime, FallbackValue=null}" />
-                    <DataGridTextColumn
-                        Header="Artist"
-                        Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
-                    <DataGridTextColumn
-                        Header="Album"
-                        Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
-                    <DataGridTextColumn
-                        Header="Genre"
-                        Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
-                </DataGrid.Columns>
-            </DataGrid>
-            
+                BorderBrush="Black"
+                BorderThickness="1">
+                <Grid
+                    Background="LightGray">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Margin="2"
+                        FontSize="16"
+                        TextAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="Source" />
+                    <ListBox
+                        Margin="2,0"
+                        Grid.Row="1">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition
+                                            SharedSizeGroup="NameColumn" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Text="{Binding Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </Border>
+            <Grid
+                Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="20" />
+                    <RowDefinition Height="2.5*" />
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        Margin="2,0,0,0"
+                        BorderBrush="Black"
+                        BorderThickness="1">
+                        <Grid
+                            Background="LightGray">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="2"
+                                FontSize="16"
+                                TextAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Artist" />
+                            <ListBox
+                                Margin="2,0"
+                                Grid.Row="1"
+                                SelectedItem="{Binding SelectedArtist}"
+                                ItemsSource="{Binding Artists}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition
+                                                    SharedSizeGroup="NameColumn" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Text="{Binding Name}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                    <Border
+                        Margin="0,0,2,0"
+                        Grid.Column="1"
+                        BorderThickness="1"
+                        BorderBrush="Black">
+                        <Grid
+                            Background="LightGray">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="2"
+                                FontSize="16"
+                                TextAlignment="Center"
+                                FontWeight="SemiBold"
+                                Text="Album" />
+                            <ListBox
+                                Margin="2,0"
+                                Grid.Row="1"
+                                SelectedItem="{Binding SelectedAlbum}"
+                                ItemsSource="{Binding Albums}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition
+                                                    SharedSizeGroup="NameColumn" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                Text="{Binding Name}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </Border>
+                </Grid>
+                <GridSplitter
+                    Grid.Row="1"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="Transparent"
+                    VerticalContentAlignment="Stretch"
+                    ResizeDirection="Rows" />
+                <DataGrid
+                    Margin="2"
+                    RowHeight="23"
+                    cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
+                    AutoGenerateColumns="False"
+                    SelectedItem="{Binding SelectedSong}"
+                    ItemsSource="{Binding Songs}"
+                    AlternationCount="2"
+                    AlternatingRowBackground="AntiqueWhite"
+                    IsReadOnly="True"
+                    CellStyle="{StaticResource GridContentAlign}"
+                    Grid.Row="2">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn
+                            Header=""
+                            Width="25" />
+                        <DataGridTextColumn
+                            Header="Song"
+                            Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
+                        <DataGridTextColumn
+                            Header="Time"
+                            Width="75"
+                            Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
+                            <DataGridTextColumn.HeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="HorizontalContentAlignment"
+                                            Value="Right" />
+                                </Style>
+                            </DataGridTextColumn.HeaderStyle>
+                            <DataGridTextColumn.ElementStyle>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="HorizontalAlignment" Value="Right" />
+                                    <Setter Property="Margin" Value="5,0" />
+                                </Style>
+                            </DataGridTextColumn.ElementStyle>
+                        </DataGridTextColumn>
+                        <DataGridTextColumn
+                            Header="Artist"
+                            Width="200"
+                            Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
+                        <DataGridTextColumn
+                            Header="Album"
+                            Width="150"
+                            Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
+                        <DataGridTextColumn
+                            Header="Genre"
+                            Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
         </Grid>
     </Grid>
 
