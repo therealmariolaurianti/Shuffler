@@ -35,11 +35,66 @@
         <Grid.RowDefinitions>
             <RowDefinition Height=".5*" />
             <RowDefinition Height="2*" />
+            <RowDefinition Height=".15*" />
         </Grid.RowDefinitions>
         <Border
             Margin="2"
             BorderThickness="1"
-            BorderBrush="Black" />
+            BorderBrush="Black">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border
+                    Grid.Column="1"
+                    Margin="10"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    CornerRadius="20">
+                    <StackPanel
+                        Margin="2"
+                        Orientation="Vertical"
+                        VerticalAlignment="Center">
+                        <TextBlock
+                            TextAlignment="Center"
+                            Text="{Binding CurrentSong.Title}" />
+                        <TextBlock
+                            TextAlignment="Center"
+                            Text="{Binding CurrentSong.Album}" />
+                        <TextBlock
+                            TextAlignment="Center"
+                            Text="{Binding CurrentSong.Artist}" />
+                        <Grid
+                            Margin="20,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Text="{Binding ElapsedRunningTimeDisplay}" />
+                            <Slider
+                                Margin="5"
+                                Grid.Column="1"
+                                IsEnabled="False"
+                                MinWidth="200"
+                                Minimum="0" 
+                                Interval="1000"
+                                Maximum="{Binding MaxRunTime}"
+                                Value="{Binding ElapsedRunningTime}"/>
+                            <TextBlock
+                                Grid.Column="2"
+                                VerticalAlignment="Center"
+                                Text="{Binding CurrentSongTime}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
         <Grid
             Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -67,14 +122,7 @@
                         Grid.Row="1">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition
-                                            SharedSizeGroup="NameColumn" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Text="{Binding Name}" />
-                                </Grid>
+                                <Grid />
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -174,57 +222,74 @@
                     Background="Transparent"
                     VerticalContentAlignment="Stretch"
                     ResizeDirection="Rows" />
-                <DataGrid
+                <Border
                     Margin="2"
-                    RowHeight="23"
-                    cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
-                    AutoGenerateColumns="False"
-                    SelectedItem="{Binding SelectedSong}"
-                    ItemsSource="{Binding Songs}"
-                    AlternationCount="2"
-                    AlternatingRowBackground="AntiqueWhite"
-                    IsReadOnly="True"
-                    CellStyle="{StaticResource GridContentAlign}"
+                    BorderThickness="1"
+                    BorderBrush="Black"
                     Grid.Row="2">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn
-                            Header=""
-                            Width="25" />
-                        <DataGridTextColumn
-                            Header="Song"
-                            Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
-                        <DataGridTextColumn
-                            Header="Time"
-                            Width="75"
-                            Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
-                            <DataGridTextColumn.HeaderStyle>
-                                <Style TargetType="DataGridColumnHeader">
-                                    <Setter Property="HorizontalContentAlignment"
-                                            Value="Right" />
-                                </Style>
-                            </DataGridTextColumn.HeaderStyle>
-                            <DataGridTextColumn.ElementStyle>
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="HorizontalAlignment" Value="Right" />
-                                    <Setter Property="Margin" Value="5,0" />
-                                </Style>
-                            </DataGridTextColumn.ElementStyle>
-                        </DataGridTextColumn>
-                        <DataGridTextColumn
-                            Header="Artist"
-                            Width="200"
-                            Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
-                        <DataGridTextColumn
-                            Header="Album"
-                            Width="150"
-                            Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
-                        <DataGridTextColumn
-                            Header="Genre"
-                            Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                    <DataGrid
+                        RowHeight="23"
+                        cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
+                        AutoGenerateColumns="False"
+                        SelectedItem="{Binding SelectedSong}"
+                        ItemsSource="{Binding Songs}"
+                        AlternationCount="2"
+                        AlternatingRowBackground="AntiqueWhite"
+                        IsReadOnly="True"
+                        CellStyle="{StaticResource GridContentAlign}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn
+                                Header=""
+                                Width="25" />
+                            <DataGridTextColumn
+                                Header="Song"
+                                Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
+                            <DataGridTextColumn
+                                Header="Time"
+                                Width="75"
+                                Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
+                                <DataGridTextColumn.HeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="HorizontalContentAlignment"
+                                                Value="Right" />
+                                    </Style>
+                                </DataGridTextColumn.HeaderStyle>
+                                <DataGridTextColumn.ElementStyle>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="HorizontalAlignment" Value="Right" />
+                                        <Setter Property="Margin" Value="5,0" />
+                                    </Style>
+                                </DataGridTextColumn.ElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTextColumn
+                                Header="Artist"
+                                Width="200"
+                                Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
+                            <DataGridTextColumn
+                                Header="Album"
+                                Width="150"
+                                Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
+                            <DataGridTextColumn
+                                Header="Genre"
+                                Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
             </Grid>
         </Grid>
+        <Border
+            Margin="2"
+            Grid.Row="2"
+            BorderBrush="Black"
+            BorderThickness="1">
+            <Grid
+                Background="LightGray">
+                <TextBlock
+                    TextAlignment="Center"
+                    VerticalAlignment="Center"
+                    Text="{Binding LibrarySummary, Mode=OneWay}" />
+            </Grid>
+        </Border>
     </Grid>
 
 </Window>

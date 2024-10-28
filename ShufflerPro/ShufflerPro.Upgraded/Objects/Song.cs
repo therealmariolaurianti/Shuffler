@@ -27,6 +27,7 @@ public struct Song(File? songFile, string path)
     public string Album { get; } = songFile?.Tag.Album ?? "Unknown Album";
     public string? Path { get; set; } = path;
     public string? Time { get; } = songFile?.Properties.Duration.ToString("mm':'ss");
+    public TimeSpan? Duration { get; } = songFile?.Properties.Duration;
 
     private bool Equals(Song other)
     {

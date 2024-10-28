@@ -10,19 +10,38 @@ public class ShellViewModel : Screen
 {
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
+
+    private readonly CountDownTimer _timer;
     private ObservableCollection<Album>? _albums;
+    private Song? _currentSong;
+    private double _elapsedRunningTime;
+    private string _elapsedRunningTimeDisplay;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
     private ObservableCollection<Song>? _songs;
 
-    public ShellViewModel(PlayerController playerController, MediaController mediaController)
+    public ShellViewModel(PlayerController playerController, MediaController mediaController, CountDownTimer timer)
     {
         _playerController = playerController;
         _mediaController = mediaController;
+        _timer = timer;
+
+        TimeSpan = new TimeSpan();
     }
 
-    public Song? CurrentSong { get; set; }
+    public Song? CurrentSong
+    {
+        get => _currentSong;
+        set
+        {
+            if (Nullable.Equals(value, _currentSong)) return;
+            _currentSong = value;
+            NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(MaxRunTime));
+            NotifyOfPropertyChange(nameof(CurrentSongTime));
+        }
+    }
 
     public ObservableCollection<Song>? Songs
     {
@@ -88,22 +107,53 @@ public class ShellViewModel : Screen
             if (Equals(value, _selectedSong)) return;
             _selectedSong = value;
             NotifyOfPropertyChange();
-            CurrentSong = value;
         }
     }
 
-    // protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
-    // {
-    
-    //
-    //     await base.OnInitializeAsync(cancellationToken);
-    // }
+    public string LibrarySummary
+    {
+        get
+        {
+            var totalSongs = AllSongs?.Count ?? 0;
+            var totalTime = TimeSpan.FromTicks(AllSongs?.Sum(s => s.Duration?.Ticks) ?? 0);
+
+            return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
+        }
+    }
+
+    public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
+
+    public double ElapsedRunningTime
+    {
+        get => _elapsedRunningTime;
+        set
+        {
+            if (value.Equals(_elapsedRunningTime)) return;
+            _elapsedRunningTime = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public string ElapsedRunningTimeDisplay
+    {
+        get => _elapsedRunningTimeDisplay;
+        set
+        {
+            if (value == _elapsedRunningTimeDisplay) return;
+            _elapsedRunningTimeDisplay = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public string CurrentSongTime => CurrentSong?.Time ?? TimeSpan.ToString("mm':'ss");
+
+    private TimeSpan TimeSpan { get; }
 
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
-        DisplayName = "Shuffler Pro";
+        DisplayName = "mTunes";
         Load();
-        
+
         return base.OnInitializeAsync(cancellationToken);
     }
 
@@ -113,15 +163,33 @@ public class ShellViewModel : Screen
 
         Songs = AllSongs?.ToObservableCollection();
         Albums = AllAlbums?.ToObservableCollection();
+
+        ElapsedRunningTime = 0;
+        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
     }
 
     public void PlaySong()
     {
-        if (CurrentSong is null)
+        if (SelectedSong is null)
             return;
+
+        if (_timer.IsRunning) _timer.Stop();
+
+        CurrentSong = SelectedSong;
+        ElapsedRunningTime = 0;
 
         if (_playerController.Playing)
             _playerController.Cancel();
+
+        _timer.SetTime(CurrentSong.Value.Duration!.Value);
+        _timer.Start();
+        _timer.TimeChanged += () =>
+        {
+            var timeSpan = CurrentSong.Value.Duration!.Value.Subtract(_timer.TimeLeft);
+
+            ElapsedRunningTime = timeSpan.TotalSeconds;
+            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+        };
 
         _playerController.PlaySong(CurrentSong.Value);
     }
