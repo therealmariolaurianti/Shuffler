@@ -1,4 +1,7 @@
 ﻿using System.Windows;
+using Bootstrap.AutoMapper;
+using Bootstrap.Extensions.StartupTasks;
+using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
 using ShufflerPro.Upgraded.Screens.Shell;
@@ -44,6 +47,12 @@ public class AppBootstrapper : BootstrapperBase
     {
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
+
+        Bootstrap.Bootstrapper
+            .With.Ninject().WithContainer(_kernel)
+            .With.StartupTasks()
+            .With.AutoMapper()
+            .Start();
 
         DisplayRootViewForAsync<ShellViewModel>();
     }

@@ -9,6 +9,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Bootstrapper" Version="2.0.3.13" />
+      <PackageReference Include="Bootstrapper.AutoMapper" Version="2.0.3.14" />
+      <PackageReference Include="Bootstrapper.Ninject" Version="2.0.3.13" />
       <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="Ninject" Version="3.3.6" />
@@ -25,10 +28,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ShufflerPro.Client\ShufflerPro.Client.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Extensions\" />
     </ItemGroup>
 
 </Project>
