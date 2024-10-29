@@ -50,9 +50,9 @@
             Grid.Row="1"
             Margin="5">
             <Grid.RowDefinitions>
-                <RowDefinition Height=".5*" />
+                <RowDefinition Height=".5*" MinHeight="115" MaxHeight="150" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height=".15*" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Border
                 Margin="2"

@@ -51,7 +51,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
                 _outEvent.Init(_audioFileReader);
                 _outEvent.Play();
 
-                DelayAction(_audioFileReader.TotalTime.Milliseconds, Dispose);
+                DelayAction(_audioFileReader.TotalTime.TotalMilliseconds, Dispose);
             }
         }
         catch (Exception)
@@ -62,7 +62,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
         return true;
     }
 
-    public static void DelayAction(int millisecond, Action action)
+    public static void DelayAction(double millisecond, Action action)
     {
         var timer = new Timer();
 
@@ -72,7 +72,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
             timer.Stop();
         };
 
-        timer.Interval = TimeSpan.FromSeconds(millisecond).TotalMilliseconds;
+        timer.Interval = millisecond;
         timer.Start();
     }
 }
