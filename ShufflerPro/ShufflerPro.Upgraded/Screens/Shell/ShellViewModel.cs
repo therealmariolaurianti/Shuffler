@@ -288,8 +288,7 @@ public class ShellViewModel : Screen
     {
         var treeItem = new TreeViewItem
         {
-            Header = sourceFolder.Header,
-            ToolTip = sourceFolder.ToolTip
+            Header = sourceFolder.Header
         };
 
         foreach (var sourceFolderItem in sourceFolder.Items)

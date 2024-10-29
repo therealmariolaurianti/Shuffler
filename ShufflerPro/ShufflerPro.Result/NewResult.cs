@@ -1,10 +1,7 @@
 ﻿namespace ShufflerPro.Result;
 
-public readonly struct NewResult<T>
+public class NewResult<T>
 {
-    public List<Exception> Exceptions { get; }
-    public T Item { get; }
-
     public NewResult(T item)
     {
         Item = item;
@@ -16,7 +13,17 @@ public readonly struct NewResult<T>
         Exceptions = new List<Exception> { exception };
     }
 
-    public bool Success => true; //Exceptions is { Count: 0 };
+    private NewResult(IEnumerable<Exception> exceptions)
+    {
+        Exceptions = exceptions.ToList();
+    }
+
+    public List<Exception> Exceptions { get; }
+    public T Item { get; }
+
+    public bool Success => Exceptions is { Count: 0 };
+
+    public bool Fail => !Success;
 
     public NewResult<T> Do(Action<T> f)
     {
@@ -50,18 +57,5 @@ public readonly struct NewResult<T>
         }
 
         return Exceptions.First();
-    }
-}
-
-public static class NewResultExtensions
-{
-    public static NewResult<T> CreateSuccess<T>(this T item)
-    {
-        return new NewResult<T>(item);
-    }
-
-    public static NewResult<T> CreateFail<T>(Exception exception)
-    {
-        return new NewResult<T>(exception);
     }
 }

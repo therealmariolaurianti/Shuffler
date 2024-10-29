@@ -53,6 +53,6 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
 
     public NewResult<Library?> LoadLibrary(Guid libraryGuid)
     {
-        return new NewResult<Library?>();
+        return new NewResult<Library?>((Library?)null);
     }
 }
