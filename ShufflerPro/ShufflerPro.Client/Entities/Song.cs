@@ -2,7 +2,7 @@
 
 namespace ShufflerPro.Client.Entities;
 
-public struct Song(File? songFile, string path)
+public class Song(File? songFile, string path)
 {
     public string? Genre { get; } = songFile?.Tag.FirstGenre;
     public string? Title { get; } = songFile?.Tag.Title;

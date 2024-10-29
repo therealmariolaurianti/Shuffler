@@ -246,17 +246,17 @@ public class ShellViewModel : Screen
         if (_playerController.Playing)
             _playerController.Cancel();
 
-        _timer.SetTime(CurrentSong.Value.Duration!.Value);
+        _timer.SetTime(CurrentSong.Duration!.Value);
         _timer.Start();
         _timer.TimeChanged += () =>
         {
-            var timeSpan = CurrentSong.Value.Duration!.Value.Subtract(_timer.TimeLeft);
+            var timeSpan = CurrentSong.Duration!.Value.Subtract(_timer.TimeLeft);
 
             ElapsedRunningTime = timeSpan.TotalSeconds;
             ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
         };
 
-        _playerController.PlaySong(CurrentSong.Value);
+        _playerController.PlaySong(SelectedAlbum!, CurrentSong);
     }
 
     private void FilterSongs(string? artist, string? album = null)

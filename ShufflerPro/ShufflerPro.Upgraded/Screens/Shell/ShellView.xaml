@@ -58,7 +58,8 @@
                 Margin="2"
                 BorderThickness="1"
                 BorderBrush="Black">
-                <Grid>
+                <Grid
+                    Background="White">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="2*" />
