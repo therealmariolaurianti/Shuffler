@@ -9,29 +9,20 @@ public class FolderBrowserController
     public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
         ICollection<SourceFolder> existingSourceFolders)
     {
-        var fullPath = Path.GetFullPath(folderPath);
-        var root = Path.GetPathRoot((string?)folderPath)?.Replace(Path.DirectorySeparatorChar, ' ').Trim();
-        if (root is null)
-            return new Exception("Failed to load source");
+        var result = FindRoot(folderPath, existingSourceFolders)
+            .Map(rootFolder =>
+            {
+                var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
+                var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
 
-        var rootFolder = existingSourceFolders.SingleOrDefault(sf => sf.IsRoot && sf.Header == root);
-        if (rootFolder == null)
-        {
-            rootFolder = new SourceFolder(root, root, true, null);
-            existingSourceFolders.Add(rootFolder);
-        }
+                Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath);
 
-        var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
-        allFolders.Add(rootFolder);
-
-        var levels = fullPath.Split(Path.DirectorySeparatorChar).ToList();
-
-        NewMethod(root, levels, rootFolder, allFolders, fullPath);
-
-        return existingSourceFolders.ToObservableCollection();
+                return existingSourceFolders.ToObservableCollection();
+            });
+        return result;
     }
 
-    private static void NewMethod(string root, List<string> levels, SourceFolder rootFolder,
+    private static void Build(string root, List<string> levels, SourceFolder rootFolder,
         List<SourceFolder> allFolders, string fullPath)
     {
         foreach (var level in levels)
@@ -66,7 +57,7 @@ public class FolderBrowserController
                     foreach (var directory in directories)
                     {
                         var x = directory.Split(Path.DirectorySeparatorChar).ToList();
-                        NewMethod(root, x, rootFolder, allFolders, directory);
+                        Build(root, x, rootFolder, allFolders, directory);
                     }
                 }
                 catch (Exception)
@@ -74,5 +65,22 @@ public class FolderBrowserController
                     //ignore
                 }
         }
+    }
+    
+    private NewResult<SourceFolder> FindRoot(string folderPath, ICollection<SourceFolder> existingSourceFolders)
+    {
+        var rootPath = Path.GetPathRoot((string?)folderPath)?.Replace(Path.DirectorySeparatorChar, ' ').Trim();
+        if (rootPath is null)
+            return new Exception("Failed to load source");
+
+        var root = existingSourceFolders.SingleOrDefault(sf => sf.IsRoot && sf.Header == rootPath);
+        return root ?? BuildRoot(rootPath, existingSourceFolders);
+    }
+
+    private NewResult<SourceFolder> BuildRoot(string rootPath, ICollection<SourceFolder> existingSourceFolders)
+    {
+        var root = new SourceFolder(rootPath, rootPath, true, null);
+        existingSourceFolders.Add(root);
+        return root;
     }
 }
