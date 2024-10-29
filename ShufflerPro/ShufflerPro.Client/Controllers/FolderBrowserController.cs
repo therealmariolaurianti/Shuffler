@@ -9,7 +9,7 @@ public class FolderBrowserController
     public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
         ICollection<SourceFolder> existingSourceFolders)
     {
-        var result = FindRoot(folderPath, existingSourceFolders)
+        return FindRoot(folderPath, existingSourceFolders)
             .Map(rootFolder =>
             {
                 var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
@@ -19,24 +19,31 @@ public class FolderBrowserController
 
                 return existingSourceFolders.ToObservableCollection();
             });
-        return result;
+    }
+
+    private static bool FolderExists(string root, string level, List<string> levels, List<SourceFolder> allFolders)
+    {
+        var index = levels.IndexOf(level);
+        var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
+
+        if (level == root || allFolders.Any(af => af.Header == level && af.FullPath == currentPath))
+            return true;
+        return false;
     }
 
     private static void Build(string root, List<string> levels, SourceFolder rootFolder,
         List<SourceFolder> allFolders, string fullPath)
     {
+        var lastLevel = levels.Last();
+
         foreach (var level in levels)
         {
-            var index = levels.IndexOf(level);
-            var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
-
-            if (level == root || allFolders.Any(af => af.Header == level && af.FullPath == currentPath))
+            if (FolderExists(root, level, levels, allFolders))
                 continue;
 
             var item = new SourceFolder(level, rootFolder, fullPath);
-
-            var existingFolder = allFolders.SingleOrDefault(f => f.Header == item.Header
-                                                                 && f.Parent?.Header == item.Parent?.Header);
+            var existingFolder =
+                allFolders.SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
             if (existingFolder is not null)
             {
                 rootFolder = existingFolder;
@@ -48,25 +55,31 @@ public class FolderBrowserController
                 allFolders.Add(item);
             }
 
-            if (levels.Last() == level)
-                try
-                {
-                    var directories = Directory.GetDirectories(fullPath);
-                    if (!directories.Any())
-                        continue;
-                    foreach (var directory in directories)
-                    {
-                        var x = directory.Split(Path.DirectorySeparatorChar).ToList();
-                        Build(root, x, rootFolder, allFolders, directory);
-                    }
-                }
-                catch (Exception)
-                {
-                    //ignore
-                }
+            if (lastLevel == level)
+                BuildChildDirectories(root, rootFolder, allFolders, fullPath);
         }
     }
-    
+
+    private static void BuildChildDirectories(string root, SourceFolder rootFolder, List<SourceFolder> allFolders,
+        string fullPath)
+    {
+        try
+        {
+            var directories = Directory.GetDirectories(fullPath);
+            if (!directories.Any())
+                return;
+            foreach (var directory in directories)
+            {
+                var x = directory.Split(Path.DirectorySeparatorChar).ToList();
+                Build(root, x, rootFolder, allFolders, directory);
+            }
+        }
+        catch (Exception)
+        {
+            //ignore
+        }
+    }
+
     private NewResult<SourceFolder> FindRoot(string folderPath, ICollection<SourceFolder> existingSourceFolders)
     {
         var rootPath = Path.GetPathRoot((string?)folderPath)?.Replace(Path.DirectorySeparatorChar, ' ').Trim();
