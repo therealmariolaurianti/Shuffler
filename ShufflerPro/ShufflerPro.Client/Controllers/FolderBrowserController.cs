@@ -13,6 +13,8 @@ public class FolderBrowserController
             .Map(rootFolder =>
             {
                 var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
+                allFolders.Add(rootFolder);
+                
                 var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
 
                 Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath);
