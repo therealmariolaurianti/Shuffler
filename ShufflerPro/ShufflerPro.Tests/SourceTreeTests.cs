@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using ShufflerPro.Client.Entities;
-using ShufflerPro.Result;
 
 namespace ShufflerPro.Tests;
 
@@ -41,9 +40,16 @@ public class SourceTreeTests : UnitTestBase
                 root.IsRoot.Should().Be(true);
 
                 root.Items[0].Header.Should().Be("Level1");
+                root.Items[0].FullPath.Should().Be(@"C:\Level1");
+
                 root.Items[0].Items[0].Header.Should().Be("Level2");
+                root.Items[0].Items[0].FullPath.Should().Be(@"C:\Level1\Level2");
+
                 root.Items[0].Items[0].Items[0].Header.Should().Be("Level3");
+                root.Items[0].Items[0].Items[0].FullPath.Should().Be(@"C:\Level1\Level2\Level3");
+
                 root.Items[0].Items[0].Items[0].Items[0].Header.Should().Be("Level4");
+                root.Items[0].Items[0].Items[0].Items[0].FullPath.Should().Be(@"C:\Level1\Level2\Level3\Level4");
             });
     }
 
@@ -156,10 +162,10 @@ public class SourceTreeTests : UnitTestBase
 
         var level1 = new SourceFolder(@"UnitTest", @"C:\UnitTest", false, root);
         root.Items.Add(level1);
-        
+
         var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
         level1.Items.Add(level2);
-        
+
         var library = new Library(Guid.NewGuid());
 
         mediaController

@@ -12,9 +12,9 @@ public class FolderBrowserController
         return FindRoot(folderPath, existingSourceFolders)
             .Map(rootFolder =>
             {
-                var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
-                allFolders.Add(rootFolder);
-                
+                var allFolders = new List<SourceFolder> { rootFolder };
+                FindAllFolders(rootFolder, allFolders);
+
                 var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
 
                 Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath);
@@ -23,14 +23,13 @@ public class FolderBrowserController
             });
     }
 
-    private static bool FolderExists(string root, string level, List<string> levels, List<SourceFolder> allFolders)
+    private static void FindAllFolders(SourceFolder rootFolder, List<SourceFolder> allFolders)
     {
-        var index = levels.IndexOf(level);
-        var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
-
-        if (level == root || allFolders.Any(af => af.Header == level && af.FullPath == currentPath))
-            return true;
-        return false;
+        foreach (var rootFolderItem in rootFolder.Items)
+        {
+            allFolders.Add(rootFolderItem);
+            FindAllFolders(rootFolderItem, allFolders);
+        }
     }
 
     private static void Build(string root, List<string> levels, SourceFolder rootFolder,
@@ -40,12 +39,22 @@ public class FolderBrowserController
 
         foreach (var level in levels)
         {
-            if (FolderExists(root, level, levels, allFolders))
+            var index = levels.IndexOf(level);
+            var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
+            
+            if (level == root)
                 continue;
-
-            var item = new SourceFolder(level, rootFolder, fullPath);
-            var existingFolder =
-                allFolders.SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
+            
+            var items = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
+            if (items is not null)
+            {
+                rootFolder = items;
+                continue;
+            }
+            
+            var item = new SourceFolder(level, rootFolder, currentPath);
+            var existingFolder = allFolders
+                .SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
             if (existingFolder is not null)
             {
                 rootFolder = existingFolder;
