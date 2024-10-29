@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
-using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 
@@ -16,7 +15,7 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
     private static List<Song> LoadSongsInPath(string mediaLibraryPath)
     {
         var songsPaths = Path.GetFullPath(mediaLibraryPath)
-            .GetFilesByExtension(Extensions.Extensions.DefaultExtensions)
+            .GetFilesByExtension(Extensions.DefaultExtensions)
             .ToHashSet();
 
         return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
@@ -52,15 +51,8 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
         return artists.ToReadOnlyCollection();
     }
 
-    public NewResult<Library> LoadLibrary(Guid libraryGuid)
+    public NewResult<Library?> LoadLibrary(Guid libraryGuid)
     {
-        return LoadFromFolderPath("X:\\A Day To Remember")
-            .Map(artists =>
-            {
-                var library = new Library();
-                library.AddArtists(artists);
-
-                return library;
-            });
+        return new NewResult<Library?>();
     }
 }

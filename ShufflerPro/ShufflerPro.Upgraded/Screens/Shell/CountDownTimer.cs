@@ -5,9 +5,9 @@ namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class CountDownTimer : IDisposable
 {
+    private readonly Stopwatch _stopWatch = new();
     private readonly Timer _timer = new();
     private TimeSpan _max = TimeSpan.FromMilliseconds(30000);
-    public Stopwatch _stpWatch = new();
 
     public Action? CountDownFinished;
     public Action? TimeChanged;
@@ -29,13 +29,11 @@ public class CountDownTimer : IDisposable
         set => _timer.Interval = value;
     }
 
-    public TimeSpan TimeLeft => _max.TotalMilliseconds - _stpWatch.ElapsedMilliseconds > 0
-        ? TimeSpan.FromMilliseconds(_max.TotalMilliseconds - _stpWatch.ElapsedMilliseconds)
+    public TimeSpan TimeLeft => _max.TotalMilliseconds - _stopWatch.ElapsedMilliseconds > 0
+        ? TimeSpan.FromMilliseconds(_max.TotalMilliseconds - _stopWatch.ElapsedMilliseconds)
         : TimeSpan.FromMilliseconds(0);
 
-    private bool _mustStop => _max.TotalMilliseconds - _stpWatch.ElapsedMilliseconds < 0;
-
-    public string TimeLeftStr => TimeLeft.ToString("mm':'ss");
+    private bool _mustStop => _max.TotalMilliseconds - _stopWatch.ElapsedMilliseconds < 0;
     public bool IsRunning => _timer.Enabled;
 
     public void Dispose()
@@ -50,7 +48,7 @@ public class CountDownTimer : IDisposable
         if (_mustStop)
         {
             CountDownFinished?.Invoke();
-            _stpWatch.Stop();
+            _stopWatch.Stop();
             _timer.Enabled = false;
         }
     }
@@ -67,21 +65,16 @@ public class CountDownTimer : IDisposable
         TimeChanged?.Invoke();
     }
 
-    public void SetTime(int min, int sec = 0)
-    {
-        SetTime(TimeSpan.FromSeconds(min * 60 + sec));
-    }
-
     public void Start()
     {
         _timer.Start();
-        _stpWatch.Start();
+        _stopWatch.Start();
     }
 
     public void Pause()
     {
         _timer.Stop();
-        _stpWatch.Stop();
+        _stopWatch.Stop();
     }
 
     public void Stop()
@@ -92,12 +85,12 @@ public class CountDownTimer : IDisposable
 
     public void Reset()
     {
-        _stpWatch.Reset();
+        _stopWatch.Reset();
     }
 
     public void Restart()
     {
-        _stpWatch.Reset();
+        _stopWatch.Reset();
         _timer.Start();
     }
 }

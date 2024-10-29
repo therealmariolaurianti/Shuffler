@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace ShufflerPro.Client.Extensions;
+namespace ShufflerPro.Client;
 
 public static class Extensions
 {

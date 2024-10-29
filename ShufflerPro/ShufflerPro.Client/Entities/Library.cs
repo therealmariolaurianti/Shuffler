@@ -2,9 +2,9 @@
 
 namespace ShufflerPro.Client.Entities;
 
-public class Library
+public class Library(Guid libraryGuid)
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; } = libraryGuid;
 
     public ReadOnlyCollection<Artist> Artists { get; private set; } = new(new List<Artist>());
     public IReadOnlyCollection<Song> Songs => Artists.SelectMany(al => al.Albums.SelectMany(s => s.Songs)).ToList();
@@ -19,15 +19,5 @@ public class Library
 
             return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
         }
-    }
-
-    public void AddArtists(IReadOnlyCollection<Artist> artists)
-    {
-        var list = new List<Artist>();
-
-        list.AddRange(artists);
-        list.AddRange(Artists);
-
-        Artists = new ReadOnlyCollection<Artist>(list);
     }
 }

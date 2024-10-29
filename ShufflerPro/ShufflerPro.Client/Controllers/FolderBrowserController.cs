@@ -1,37 +1,32 @@
 ﻿using System.Collections.ObjectModel;
+using ShufflerPro.Client.Entities;
+using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class FolderBrowserController(MediaController mediaController)
+public class FolderBrowserController
 {
-    private MediaController _mediaController = mediaController;
+    public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
+        ICollection<SourceFolder> existingSourceFolders)
+    {
+        var folderName = Path.GetFileName((string?)folderPath);
+        var fullPath = Path.GetFullPath(folderPath);
+        var root = Path.GetPathRoot((string?)folderPath);
 
-    // public void Add(ObservableCollection<SourceFolder> sourceFolders)
-    // {
-    //     using (var fbd = new FolderBrowserDialog())
-    //     {
-    //         var result = fbd.ShowDialog();
-    //
-    //         if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-    //         {
-    //             var folderName = Path.GetFileName((string?)fbd.SelectedPath);
-    //             var fullPath = Path.GetFullPath(fbd.SelectedPath);
-    //
-    //             var root = Path.GetPathRoot((string?)fbd.SelectedPath);
-    //             var rootFolder = sourceFolders.SingleOrDefault(sf => sf.IsRoot && (string?)sf.Header == root);
-    //             if (rootFolder is null)
-    //             {
-    //                 rootFolder = new SourceFolder(root, root, true);
-    //                 sourceFolders.Add(rootFolder);
-    //             }
-    //
-    //             var sourceFolder = new SourceFolder(folderName, fullPath, false);
-    //
-    //             var fileCount = fullPath.GetFilesByExtension(Extensions.Extensions.DefaultExtensions);
-    //             sourceFolder.Items.Add(new SourceFolder(fileCount.Count.ToString()));
-    //
-    //             rootFolder.Items.Add(sourceFolder);
-    //         }
-    //     }
-    // }
+        var rootFolder = existingSourceFolders.SingleOrDefault(sf => sf.IsRoot && sf.Header == root);
+        if (rootFolder == null)
+        {
+            rootFolder = new SourceFolder(root, root, true);
+            existingSourceFolders.Add(rootFolder);
+        }
+
+        var sourceFolder = new SourceFolder(folderName, fullPath, false);
+        rootFolder.Items.Add(sourceFolder);
+
+        return existingSourceFolders.ToObservableCollection();
+    }
 }
+
+
+// var fileCount = fullPath.GetFilesByExtension(Extensions.DefaultExtensions);
+// sourceFolder.Items.Add(new SourceFolder(fileCount.Count.ToString()));

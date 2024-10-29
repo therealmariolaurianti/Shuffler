@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
+using System.Windows.Forms;
+using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
-using ShufflerPro.Client.Extensions;
-using ShufflerPro.Upgraded.Objects;
+using ShufflerPro.Client.Factories;
 using Screen = Caliburn.Micro.Screen;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
@@ -10,6 +12,7 @@ namespace ShufflerPro.Upgraded.Screens.Shell;
 public class ShellViewModel : Screen
 {
     private readonly FolderBrowserController _folderBrowserController;
+    private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
 
@@ -23,16 +26,20 @@ public class ShellViewModel : Screen
     private Song? _selectedSong;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceFolder> _sourceFolders;
+    private ObservableCollection<TreeViewItem> _sourceTreeItems;
 
     public ShellViewModel(
         PlayerController playerController,
         CountDownTimer timer,
-        FolderBrowserController folderBrowserController, MediaController mediaController)
+        FolderBrowserController folderBrowserController,
+        MediaController mediaController,
+        LibraryFactory libraryFactory)
     {
         _playerController = playerController;
         _timer = timer;
         _folderBrowserController = folderBrowserController;
         _mediaController = mediaController;
+        _libraryFactory = libraryFactory;
 
         TimeSpan = new TimeSpan();
     }
@@ -147,6 +154,17 @@ public class ShellViewModel : Screen
 
     private TimeSpan TimeSpan { get; }
 
+    public ObservableCollection<TreeViewItem> SourceTreeItems
+    {
+        get => _sourceTreeItems;
+        set
+        {
+            if (Equals(value, _sourceTreeItems)) return;
+            _sourceTreeItems = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     public ObservableCollection<SourceFolder> SourceFolders
     {
         get => _sourceFolders;
@@ -163,6 +181,7 @@ public class ShellViewModel : Screen
         DisplayName = "mTunes";
         Load();
         SourceFolders = [];
+        SourceTreeItems = [];
 
         return base.OnInitializeAsync(cancellationToken);
     }
@@ -175,6 +194,8 @@ public class ShellViewModel : Screen
             .LoadLibrary(libraryGuid)
             .Do(library =>
             {
+                library ??= _libraryFactory.Create(libraryGuid);
+
                 Library = library;
 
                 Songs = AllSongs.ToObservableCollection();
@@ -245,6 +266,35 @@ public class ShellViewModel : Screen
 
     public void AddSource()
     {
-        //_folderBrowserController.Add(SourceFolders);
+        using (var fbd = new FolderBrowserDialog())
+        {
+            var result = fbd.ShowDialog();
+
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                _folderBrowserController
+                    .BuildSourceFolders(fbd.SelectedPath, SourceFolders)
+                    .Do(sourceFolders =>
+                    {
+                        SourceFolders = sourceFolders;
+
+                        SourceTreeItems.Clear();
+                        foreach (var sourceFolder in sourceFolders)
+                            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+                    });
+        }
+    }
+
+    private static TreeViewItem BuildTreeGridItem(SourceFolder sourceFolder)
+    {
+        var treeItem = new TreeViewItem
+        {
+            Header = sourceFolder.Header,
+            ToolTip = sourceFolder.ToolTip
+        };
+
+        foreach (var sourceFolderItem in sourceFolder.Items)
+            treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem));
+
+        return treeItem;
     }
 }
