@@ -1,8 +1,8 @@
-﻿using System.Windows.Threading;
-using NAudio.Wave;
-using ShufflerPro.Upgraded.Objects;
+﻿using NAudio.Wave;
+using ShufflerPro.Client.Entities;
+using Timer = System.Timers.Timer;
 
-namespace ShufflerPro.Upgraded.Controllers;
+namespace ShufflerPro.Client.Controllers;
 
 public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
     : IDisposable
@@ -64,15 +64,15 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
 
     public static void DelayAction(int millisecond, Action action)
     {
-        var timer = new DispatcherTimer();
+        var timer = new Timer();
 
-        timer.Tick += delegate
+        timer.Elapsed += delegate
         {
             action.Invoke();
             timer.Stop();
         };
 
-        timer.Interval = TimeSpan.FromSeconds(millisecond);
+        timer.Interval = TimeSpan.FromSeconds(millisecond).TotalMilliseconds;
         timer.Start();
     }
 }

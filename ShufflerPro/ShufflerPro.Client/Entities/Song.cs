@@ -1,22 +1,6 @@
-﻿using TagLib;
+﻿using File = TagLib.File;
 
-namespace ShufflerPro.Upgraded.Objects;
-
-public class SongFactory
-{
-    public static Song Create(string songPath)
-    {
-        try
-        {
-            var songFile = File.Create(songPath);
-            return new Song(songFile, songPath);
-        }
-        catch (Exception)
-        {
-            return new Song(null, songPath);
-        }
-    }
-}
+namespace ShufflerPro.Client.Entities;
 
 public struct Song(File? songFile, string path)
 {
@@ -37,7 +21,6 @@ public struct Song(File? songFile, string path)
     public override bool Equals(object? obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((Song)obj);
     }

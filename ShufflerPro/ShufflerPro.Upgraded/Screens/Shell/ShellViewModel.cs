@@ -1,13 +1,15 @@
 using System.Collections.ObjectModel;
-using Caliburn.Micro;
-using ShufflerPro.Upgraded.Bootstrapper;
-using ShufflerPro.Upgraded.Controllers;
+using ShufflerPro.Client.Controllers;
+using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Upgraded.Objects;
+using Screen = Caliburn.Micro.Screen;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : Screen
 {
+    private readonly FolderBrowserController _folderBrowserController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
 
@@ -20,12 +22,17 @@ public class ShellViewModel : Screen
     private Artist? _selectedArtist;
     private Song? _selectedSong;
     private ObservableCollection<Song>? _songs;
+    private ObservableCollection<SourceFolder> _sourceFolders;
 
-    public ShellViewModel(PlayerController playerController, MediaController mediaController, CountDownTimer timer)
+    public ShellViewModel(
+        PlayerController playerController,
+        CountDownTimer timer,
+        FolderBrowserController folderBrowserController, MediaController mediaController)
     {
         _playerController = playerController;
-        _mediaController = mediaController;
         _timer = timer;
+        _folderBrowserController = folderBrowserController;
+        _mediaController = mediaController;
 
         TimeSpan = new TimeSpan();
     }
@@ -66,13 +73,13 @@ public class ShellViewModel : Screen
         }
     }
 
-    public static IReadOnlyCollection<Artist>? Artists { get; set; }
+    public static Library Library { get; private set; }
 
-    private static IReadOnlyCollection<Song>? AllSongs =>
-        AllAlbums?.SelectMany(album => album.Songs).ToReadOnlyCollection();
+    public static IReadOnlyCollection<Artist> Artists => Library.Artists;
 
-    private static IReadOnlyCollection<Album>? AllAlbums =>
-        Artists?.SelectMany(artist => artist.Albums).ToReadOnlyCollection();
+    private static IReadOnlyCollection<Song> AllSongs => Library.Songs;
+
+    private static IReadOnlyCollection<Album> AllAlbums => Library.Albums;
 
     public Artist? SelectedArtist
     {
@@ -114,8 +121,8 @@ public class ShellViewModel : Screen
     {
         get
         {
-            var totalSongs = AllSongs?.Count ?? 0;
-            var totalTime = TimeSpan.FromTicks(AllSongs?.Sum(s => s.Duration?.Ticks) ?? 0);
+            var totalSongs = AllSongs.Count;
+            var totalTime = TimeSpan.FromTicks(AllSongs.Sum(s => s.Duration?.Ticks) ?? 0);
 
             return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
         }
@@ -149,23 +156,54 @@ public class ShellViewModel : Screen
 
     private TimeSpan TimeSpan { get; }
 
+    public ObservableCollection<SourceFolder> SourceFolders
+    {
+        get => _sourceFolders;
+        set
+        {
+            if (Equals(value, _sourceFolders)) return;
+            _sourceFolders = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "mTunes";
         Load();
+        SourceFolders = [];
 
         return base.OnInitializeAsync(cancellationToken);
     }
 
     private void Load()
     {
-        Artists = _mediaController.LoadArtists();
+        var libraryGuid = Guid.NewGuid();
 
-        Songs = AllSongs?.ToObservableCollection();
-        Albums = AllAlbums?.ToObservableCollection();
+        _mediaController
+            .LoadLibrary(libraryGuid)
+            .Do(library =>
+            {
+                Library = library;
 
-        ElapsedRunningTime = 0;
-        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
+                Songs = AllSongs.ToObservableCollection();
+                Albums = AllAlbums.ToObservableCollection();
+
+                ElapsedRunningTime = 0;
+                ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
+            });
+    }
+
+    public void PlayArtist()
+    {
+        SelectedSong = SelectedArtist?.Albums.FirstOrDefault().Songs.FirstOrDefault();
+        PlaySong();
+    }
+
+    public void PlayAlbum()
+    {
+        SelectedSong = SelectedAlbum?.Songs.FirstOrDefault();
+        PlaySong();
     }
 
     public void PlaySong()
@@ -173,7 +211,8 @@ public class ShellViewModel : Screen
         if (SelectedSong is null)
             return;
 
-        if (_timer.IsRunning) _timer.Stop();
+        if (_timer.IsRunning)
+            _timer.Stop();
 
         CurrentSong = SelectedSong;
         ElapsedRunningTime = 0;
@@ -197,19 +236,24 @@ public class ShellViewModel : Screen
     private void FilterAlbums(string? artist)
     {
         Albums = artist == null
-            ? AllAlbums?.ToObservableCollection()
-            : AllAlbums?.Where(a => a.Artist == artist).ToObservableCollection();
+            ? AllAlbums.ToObservableCollection()
+            : AllAlbums.Where(a => a.Artist == artist).ToObservableCollection();
     }
 
     private void FilterSongs(string? artist, string? album = null)
     {
         if (artist == null && album == null)
-            Songs = AllSongs?.ToObservableCollection();
+            Songs = AllSongs.ToObservableCollection();
         if (artist != null && album == null)
-            Songs = AllSongs?.Where(s => s.Artist == artist).ToObservableCollection();
+            Songs = AllSongs.Where(s => s.Artist == artist).ToObservableCollection();
         if (artist == null && album != null)
-            Songs = AllSongs?.Where(s => s.Album == album).ToObservableCollection();
+            Songs = AllSongs.Where(s => s.Album == album).ToObservableCollection();
         if (artist != null && album != null)
-            Songs = AllSongs?.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
+            Songs = AllSongs.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
+    }
+
+    public void AddSource()
+    {
+        //_folderBrowserController.Add(SourceFolders);
     }
 }

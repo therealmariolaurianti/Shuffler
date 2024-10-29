@@ -1,6 +1,6 @@
-using ShufflerPro.Upgraded.Objects;
+using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Upgraded.Factories;
+namespace ShufflerPro.Client.Factories;
 
 public class AlbumFactory
 {

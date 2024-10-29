@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Upgraded", "ShufflerPro.Upgraded\ShufflerPro.Upgraded.csproj", "{A90DEF9B-8E9E-48AE-98DA-302AA958381B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Client", "ShufflerPro.Client\ShufflerPro.Client.csproj", "{BACE64A1-3BF8-4695-B9F4-4202AE887C23}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Result", "ShufflerPro.Result\ShufflerPro.Result.csproj", "{2527F436-93E0-4CFD-B954-6CC2517A0851}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{A90DEF9B-8E9E-48AE-98DA-302AA958381B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A90DEF9B-8E9E-48AE-98DA-302AA958381B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A90DEF9B-8E9E-48AE-98DA-302AA958381B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BACE64A1-3BF8-4695-B9F4-4202AE887C23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BACE64A1-3BF8-4695-B9F4-4202AE887C23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BACE64A1-3BF8-4695-B9F4-4202AE887C23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BACE64A1-3BF8-4695-B9F4-4202AE887C23}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2527F436-93E0-4CFD-B954-6CC2517A0851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2527F436-93E0-4CFD-B954-6CC2517A0851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2527F436-93E0-4CFD-B954-6CC2517A0851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2527F436-93E0-4CFD-B954-6CC2517A0851}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

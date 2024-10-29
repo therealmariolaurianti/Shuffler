@@ -1,31 +1,28 @@
-﻿using System.IO;
-using ShufflerPro.Upgraded.Bootstrapper;
-using ShufflerPro.Upgraded.Factories;
-using ShufflerPro.Upgraded.Objects;
+﻿using System.Collections.ObjectModel;
+using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
+using ShufflerPro.Client.Factories;
+using ShufflerPro.Result;
 
-namespace ShufflerPro.Upgraded.Controllers;
+namespace ShufflerPro.Client.Controllers;
 
 public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFactory)
 {
-    private readonly List<string> _mediaLibraryPaths = ["X:\\"];
-
-    public IReadOnlyCollection<Artist> LoadArtists()
+    public IReadOnlyCollection<Artist> LoadFromFolderPath(string folderPath)
     {
-        var allArtists = _mediaLibraryPaths.SelectMany(path => Process(LoadSongsInPath(path)));
-        return allArtists.ToReadOnlyCollection();
+        return Process(LoadSongsInPath(folderPath));
     }
 
     private static List<Song> LoadSongsInPath(string mediaLibraryPath)
     {
         var songsPaths = Path.GetFullPath(mediaLibraryPath)
-            .GetFilesByExtension(["mp3", ".m4a"])
-            .Take(100)
+            .GetFilesByExtension(Extensions.Extensions.DefaultExtensions)
             .ToHashSet();
 
         return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
     }
 
-    private List<Artist> Process(List<Song> songs)
+    private ReadOnlyCollection<Artist> Process(List<Song> songs)
     {
         var songFilesWithArtists = songs
             .Distinct()
@@ -52,6 +49,11 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
             .Select(album => artistFactory.Create(album.Key, album.Value)).OrderBy(a => a.Name)
             .ToList();
 
-        return artists;
+        return artists.ToReadOnlyCollection();
+    }
+
+    public NewResult<Library> LoadLibrary(Guid library)
+    {
+        return new NewResult<Library>();
     }
 }

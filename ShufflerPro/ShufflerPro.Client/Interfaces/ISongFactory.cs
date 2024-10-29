@@ -1,6 +1,6 @@
-﻿using ShufflerPro.Upgraded.Objects;
+﻿using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Upgraded.Interfaces
+namespace ShufflerPro.Client.Interfaces
 {
     public interface ISongFactory : IFactory
     {

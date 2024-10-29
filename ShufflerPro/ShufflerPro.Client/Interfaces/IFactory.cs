@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Upgraded.Interfaces
+﻿namespace ShufflerPro.Client.Interfaces
 {
     public interface IFactory
     {

@@ -1,4 +1,4 @@
-namespace ShufflerPro.Upgraded.Objects;
+namespace ShufflerPro.Client.Entities;
 
 public struct Album
 {

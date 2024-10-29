@@ -1,10 +1,11 @@
 ﻿using System.Collections.ObjectModel;
-using System.IO;
 
-namespace ShufflerPro.Upgraded.Bootstrapper;
+namespace ShufflerPro.Client.Extensions;
 
 public static class Extensions
 {
+    public static List<string> DefaultExtensions => ["mp3", ".m4a"];
+
     public static List<string> GetFilesByExtension(this string path, List<string> extensions)
     {
         return Directory
