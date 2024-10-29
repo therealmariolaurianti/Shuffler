@@ -11,15 +11,16 @@ namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : Screen
 {
-    private readonly FolderBrowserController _folderBrowserController;
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
+    private readonly SourceFolderController _sourceFolderController;
     private ObservableCollection<Album>? _albums;
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private Library _library;
+    private Artist _playingArtist;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
@@ -31,12 +32,12 @@ public class ShellViewModel : Screen
 
     public ShellViewModel(
         PlayerController playerController,
-        FolderBrowserController folderBrowserController,
+        SourceFolderController sourceFolderController,
         MediaController mediaController,
         LibraryFactory libraryFactory)
     {
         _playerController = playerController;
-        _folderBrowserController = folderBrowserController;
+        _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
         _libraryFactory = libraryFactory;
 
@@ -269,19 +270,25 @@ public class ShellViewModel : Screen
         _timer.SetTime(CurrentSong.Duration!.Value);
         _timer.Start();
 
-        _playerController.PlaySong(SelectedArtist!, SelectedAlbum, CurrentSong);
+        _playerController.PlaySong(CurrentSong, Songs!.ToList());
     }
 
-    private void FilterSongs(string? artist, string? album = null)
+    private void FilterSongs(string? artist = null, string? album = null)
     {
-        if (artist == null && album == null)
-            Songs = AllSongs.ToObservableCollection();
+        var filteredSongs = AllSongs.AsEnumerable();
+
         if (artist != null && album == null)
-            Songs = AllSongs.Where(s => s.Artist == artist).ToObservableCollection();
+            filteredSongs = AllSongs.Where(s => s.Artist == artist);
         if (artist == null && album != null)
-            Songs = AllSongs.Where(s => s.Album == album).ToObservableCollection();
+            filteredSongs = AllSongs.Where(s => s.Album == album);
         if (artist != null && album != null)
-            Songs = AllSongs.Where(s => s.Artist == artist && s.Album == album).ToObservableCollection();
+            filteredSongs = AllSongs.Where(s => s.Artist == artist && s.Album == album);
+
+        Songs = filteredSongs
+            .OrderBy(s => s.Artist)
+            .ThenBy(s => s.Album)
+            .ThenBy(s => s.Track)
+            .ToObservableCollection();
     }
 
     public void AddSource()
@@ -291,7 +298,7 @@ public class ShellViewModel : Screen
             var result = fbd.ShowDialog();
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                _folderBrowserController
+                _sourceFolderController
                     .BuildSourceFolders(fbd.SelectedPath, SourceFolders)
                     .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
                     .Do(sourceFolders =>
@@ -301,6 +308,8 @@ public class ShellViewModel : Screen
                         SourceTreeItems.Clear();
                         foreach (var sourceFolder in sourceFolders)
                             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+
+                        FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
 
                         NotifyCollectionsChanged();
                     });

@@ -11,10 +11,10 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
     private CancellationTokenSource? _cancellationToken = cancellationToken;
     private WaveOutEvent? _outEvent = outEvent;
 
+    public Action<Song> SongChanged;
+
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
-
-    public Action<Song> SongChanged;
 
     public void Dispose()
     {
@@ -27,22 +27,10 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
         _cancellationToken = null;
     }
 
-    private void OnSongComplete(Song currentSong, Artist selectedArtist, Album? album)
+    private void OnSongComplete(Song currentSong, List<Song> songs)
     {
-        Song? nextTrack;
-
-        if (album is not null)
-        {
-            var tracks = album.Songs.OrderBy(s => s.Track);
-            var index = album.Songs.IndexOf(currentSong) + 1;
-            nextTrack = tracks.Skip(index).FirstOrDefault();
-        }
-        else
-        {
-            var songs = selectedArtist.Songs.OrderBy(s => s.Album).ThenBy(s => s.Track).ToList();
-            var index = songs.IndexOf(currentSong) + 1;
-            nextTrack = songs.Skip(index).FirstOrDefault();
-        }
+        var index = songs.IndexOf(currentSong) + 1;
+        var nextTrack = songs.Skip(index).FirstOrDefault();
 
         if (nextTrack is null)
             Dispose();
@@ -65,7 +53,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
         ReInitialize();
     }
 
-    public bool PlaySong(Artist selectedArtist, Album? selectedAlbum, Song song)
+    public bool PlaySong(Song song, List<Song> songs)
     {
         try
         {
@@ -76,8 +64,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
                 _outEvent.Init(_audioFileReader);
                 _outEvent.Play();
 
-                DelayAction(_audioFileReader.TotalTime.TotalMilliseconds, () => OnSongComplete(song,
-                    selectedArtist, selectedAlbum));
+                DelayAction(song.Duration!.Value.TotalMilliseconds, () => OnSongComplete(song, songs));
             }
         }
         catch (Exception)

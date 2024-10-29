@@ -12,6 +12,9 @@ public class Song(File? songFile, string path)
     public string? Path { get; set; } = path;
     public string? Time { get; } = songFile?.Properties.Duration.ToString("mm':'ss");
     public TimeSpan? Duration { get; } = songFile?.Properties.Duration;
+    
+    public Album AlbumItem { get; set; }
+    public Artist ArtistItem { get; set; }
 
     private bool Equals(Song other)
     {

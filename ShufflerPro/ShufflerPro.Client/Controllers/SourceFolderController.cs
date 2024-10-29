@@ -4,7 +4,7 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class FolderBrowserController
+public class SourceFolderController
 {
     public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
         ICollection<SourceFolder> existingSourceFolders)
