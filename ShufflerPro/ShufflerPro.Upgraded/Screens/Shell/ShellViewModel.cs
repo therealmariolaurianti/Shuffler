@@ -15,8 +15,6 @@ public class ShellViewModel : Screen
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
-
-    private readonly CountDownTimer _timer;
     private ObservableCollection<Album>? _albums;
     private Song? _currentSong;
     private double _elapsedRunningTime;
@@ -29,20 +27,23 @@ public class ShellViewModel : Screen
     private ObservableCollection<SourceFolder> _sourceFolders;
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
 
+    private CountDownTimer _timer;
+
     public ShellViewModel(
         PlayerController playerController,
-        CountDownTimer timer,
         FolderBrowserController folderBrowserController,
         MediaController mediaController,
         LibraryFactory libraryFactory)
     {
         _playerController = playerController;
-        _timer = timer;
         _folderBrowserController = folderBrowserController;
         _mediaController = mediaController;
         _libraryFactory = libraryFactory;
 
         TimeSpan = new TimeSpan();
+
+        _playerController.SongChanged += OnSongChanged;
+        WireTimer();
     }
 
     public Song? CurrentSong
@@ -50,7 +51,7 @@ public class ShellViewModel : Screen
         get => _currentSong;
         set
         {
-            if (Nullable.Equals(value, _currentSong)) return;
+            if (Equals(value, _currentSong)) return;
             _currentSong = value;
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(MaxRunTime));
@@ -100,7 +101,7 @@ public class ShellViewModel : Screen
             _selectedArtist = value;
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(Albums));
-            
+
             FilterSongs(value?.Name);
         }
     }
@@ -180,6 +181,18 @@ public class ShellViewModel : Screen
         }
     }
 
+    private void WireTimer()
+    {
+        _timer = new CountDownTimer();
+        _timer.TimeChanged += () =>
+        {
+            var timeSpan = CurrentSong!.Duration!.Value.Subtract(_timer.TimeLeft);
+
+            ElapsedRunningTime = timeSpan.TotalSeconds;
+            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+        };
+    }
+
     private void NotifyCollectionsChanged()
     {
         NotifyOfPropertyChange(nameof(Library));
@@ -232,6 +245,13 @@ public class ShellViewModel : Screen
         PlaySong();
     }
 
+    private void OnSongChanged(Song obj)
+    {
+        SelectedSong = obj;
+        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
+        PlaySong();
+    }
+
     public void PlaySong()
     {
         if (SelectedSong is null)
@@ -248,15 +268,8 @@ public class ShellViewModel : Screen
 
         _timer.SetTime(CurrentSong.Duration!.Value);
         _timer.Start();
-        _timer.TimeChanged += () =>
-        {
-            var timeSpan = CurrentSong.Duration!.Value.Subtract(_timer.TimeLeft);
 
-            ElapsedRunningTime = timeSpan.TotalSeconds;
-            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
-        };
-
-        _playerController.PlaySong(SelectedAlbum!, CurrentSong);
+        _playerController.PlaySong(SelectedArtist!, SelectedAlbum, CurrentSong);
     }
 
     private void FilterSongs(string? artist, string? album = null)

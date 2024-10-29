@@ -59,7 +59,7 @@
                 BorderThickness="1"
                 BorderBrush="Black">
                 <Grid
-                    Background="White">
+                    Background="LightGray">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="2*" />
@@ -68,7 +68,7 @@
                     <Border
                         Grid.Column="1"
                         Margin="10"
-                        Background="LightGray"
+                        Background="DarkGray"
                         BorderBrush="Black"
                         BorderThickness="1"
                         CornerRadius="20">
