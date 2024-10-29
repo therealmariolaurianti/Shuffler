@@ -27,16 +27,18 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
 
     private void ProcessPath(Library library, SourceFolder sourceFolder)
     {
-        if (sourceFolder is { IsRoot: false, IsProcessed: false })
+        if (sourceFolder is { IsRoot: false, IsProcessed: false, Items.Count: 0})
         {
             var path = sourceFolder.FullPath;
             var loadSongsInPath = LoadSongsInPath(path);
-            library.AddArtists(Process(loadSongsInPath));
+            var readOnlyCollection = Process(loadSongsInPath);
+            
+            library.AddArtists(readOnlyCollection);
         }
 
         sourceFolder.IsProcessed = true;
 
-        foreach (var folderItem in sourceFolder.Items) 
+        foreach (var folderItem in sourceFolder.Items)
             ProcessPath(library, folderItem);
     }
 

@@ -9,7 +9,7 @@ public static class Extensions
     public static List<string> GetFilesByExtension(this string path, List<string> extensions)
     {
         return Directory
-            .EnumerateFiles(path, "*.*", SearchOption.AllDirectories)
+            .EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
             .Where(s => extensions.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
             .ToList();
     }

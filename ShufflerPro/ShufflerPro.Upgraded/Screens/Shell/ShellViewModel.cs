@@ -21,13 +21,13 @@ public class ShellViewModel : Screen
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
+    private Library _library;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceFolder> _sourceFolders;
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
-    private Library _library;
 
     public ShellViewModel(
         PlayerController playerController,
@@ -70,16 +70,8 @@ public class ShellViewModel : Screen
     }
 
 
-    public ObservableCollection<Album>? Albums
-    {
-        get => _albums;
-        set
-        {
-            if (Equals(value, _albums)) return;
-            _albums = value;
-            NotifyOfPropertyChange();
-        }
-    }
+    public ObservableCollection<Album> Albums =>
+        SelectedArtist?.Albums.ToObservableCollection() ?? AllAlbums.ToObservableCollection();
 
     public Library Library
     {
@@ -91,16 +83,6 @@ public class ShellViewModel : Screen
             NotifyOfPropertyChange();
             NotifyCollectionsChanged();
         }
-    }
-
-    private void NotifyCollectionsChanged()
-    {
-        NotifyOfPropertyChange(nameof(Library));
-        NotifyOfPropertyChange(nameof(LibrarySummary));
-        NotifyOfPropertyChange(nameof(Artists));
-        NotifyOfPropertyChange(nameof(AllSongs));
-        NotifyOfPropertyChange(nameof(AllAlbums));
-        NotifyOfPropertyChange(nameof(LibrarySummary));
     }
 
     public IReadOnlyCollection<Artist> Artists => Library.Artists;
@@ -117,7 +99,8 @@ public class ShellViewModel : Screen
             if (Equals(value, _selectedArtist)) return;
             _selectedArtist = value;
             NotifyOfPropertyChange();
-            FilterAlbums(value?.Name);
+            NotifyOfPropertyChange(nameof(Albums));
+            
             FilterSongs(value?.Name);
         }
     }
@@ -197,6 +180,19 @@ public class ShellViewModel : Screen
         }
     }
 
+    private void NotifyCollectionsChanged()
+    {
+        NotifyOfPropertyChange(nameof(Library));
+        NotifyOfPropertyChange(nameof(SelectedArtist));
+        NotifyOfPropertyChange(nameof(LibrarySummary));
+        NotifyOfPropertyChange(nameof(Artists));
+        NotifyOfPropertyChange(nameof(Albums));
+        NotifyOfPropertyChange(nameof(Songs));
+        NotifyOfPropertyChange(nameof(AllSongs));
+        NotifyOfPropertyChange(nameof(AllAlbums));
+        NotifyOfPropertyChange(nameof(LibrarySummary));
+    }
+
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "mTunes";
@@ -219,9 +215,6 @@ public class ShellViewModel : Screen
 
                 Library = library;
 
-                Songs = AllSongs.ToObservableCollection();
-                Albums = AllAlbums.ToObservableCollection();
-
                 ElapsedRunningTime = 0;
                 ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
             });
@@ -229,7 +222,7 @@ public class ShellViewModel : Screen
 
     public void PlayArtist()
     {
-        SelectedSong = SelectedArtist?.Albums.FirstOrDefault().Songs.FirstOrDefault();
+        SelectedSong = SelectedArtist?.Albums.FirstOrDefault()?.Songs.FirstOrDefault();
         PlaySong();
     }
 
@@ -266,13 +259,6 @@ public class ShellViewModel : Screen
         _playerController.PlaySong(CurrentSong.Value);
     }
 
-    private void FilterAlbums(string? artist)
-    {
-        Albums = artist == null
-            ? AllAlbums.ToObservableCollection()
-            : AllAlbums.Where(a => a.Artist == artist).ToObservableCollection();
-    }
-
     private void FilterSongs(string? artist, string? album = null)
     {
         if (artist == null && album == null)
@@ -302,7 +288,7 @@ public class ShellViewModel : Screen
                         SourceTreeItems.Clear();
                         foreach (var sourceFolder in sourceFolders)
                             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
-                        
+
                         NotifyCollectionsChanged();
                     });
         }

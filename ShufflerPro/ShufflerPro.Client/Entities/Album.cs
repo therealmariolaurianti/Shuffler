@@ -1,6 +1,6 @@
 namespace ShufflerPro.Client.Entities;
 
-public struct Album
+public class Album
 {
     public Album(string artist, string name, List<Song> songs)
     {

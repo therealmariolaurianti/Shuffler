@@ -6,7 +6,7 @@ public class Library(Guid libraryGuid)
 {
     public Guid Id { get; set; } = libraryGuid;
 
-    public ReadOnlyCollection<Artist> Artists { get; private set; } = new(new List<Artist>());
+    public ObservableCollection<Artist> Artists { get; } = new();
     public IReadOnlyCollection<Song> Songs => Artists.SelectMany(al => al.Albums.SelectMany(s => s.Songs)).ToList();
     public IReadOnlyCollection<Album> Albums => Artists.SelectMany(al => al.Albums).ToList();
 
@@ -20,14 +20,16 @@ public class Library(Guid libraryGuid)
             return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
         }
     }
-    
+
     public void AddArtists(IReadOnlyCollection<Artist> artists)
     {
-        var list = new List<Artist>();
-
-        list.AddRange(artists);
-        list.AddRange(Artists);
-
-        Artists = new ReadOnlyCollection<Artist>(list);
+        foreach (var artist in artists)
+        {
+            var existingArtist = Artists.SingleOrDefault(a => a.Name == artist.Name);
+            if (existingArtist is not null)
+                existingArtist.Albums.AddRange(artist.Albums);
+            else
+                Artists.Add(artist);
+        }
     }
 }
