@@ -25,6 +25,9 @@ public class SourceFolder
     public bool IsRoot { get; }
     public List<SourceFolder> Items { get; set; }
     public SourceFolder? Parent { get; set; }
+    public bool IsProcessed { get; set; }
+    
+    
 
     private static string BuildHeader(string header)
     {

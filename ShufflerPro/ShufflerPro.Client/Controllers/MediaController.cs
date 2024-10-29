@@ -7,9 +7,37 @@ namespace ShufflerPro.Client.Controllers;
 
 public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFactory)
 {
-    private NewResult<IReadOnlyCollection<Artist>> LoadFromFolderPath(string folderPath)
+    public NewResult<Library?> LoadLibrary(Guid libraryGuid)
     {
-        return Process(LoadSongsInPath(folderPath));
+        return new NewResult<Library?>((Library?)null);
+    }
+
+    public NewResult<NewUnit> LoadFromFolderPath(ICollection<SourceFolder> sourceFolders,
+        Library library)
+    {
+        return NewResultExtensions.Try(() =>
+        {
+            var roots = sourceFolders.Where(sf => sf.IsRoot);
+            foreach (var root in roots)
+                ProcessPath(library, root);
+
+            return NewUnit.Default;
+        });
+    }
+
+    private void ProcessPath(Library library, SourceFolder sourceFolder)
+    {
+        if (sourceFolder is { IsRoot: false, IsProcessed: false })
+        {
+            var path = sourceFolder.FullPath;
+            var loadSongsInPath = LoadSongsInPath(path);
+            library.AddArtists(Process(loadSongsInPath));
+        }
+
+        sourceFolder.IsProcessed = true;
+
+        foreach (var folderItem in sourceFolder.Items) 
+            ProcessPath(library, folderItem);
     }
 
     private static List<Song> LoadSongsInPath(string mediaLibraryPath)
@@ -49,10 +77,5 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
             .ToList();
 
         return artists.ToReadOnlyCollection();
-    }
-
-    public NewResult<Library?> LoadLibrary(Guid libraryGuid)
-    {
-        return new NewResult<Library?>((Library?)null);
     }
 }

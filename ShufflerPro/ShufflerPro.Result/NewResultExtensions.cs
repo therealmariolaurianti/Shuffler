@@ -11,4 +11,16 @@ public static class NewResultExtensions
     {
         return new NewResult<T>(ex);
     }
+    
+    public static NewResult<T> Try<T>(Func<T> func)
+    {
+        try
+        {
+            return func();
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+    }
 }

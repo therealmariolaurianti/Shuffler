@@ -20,4 +20,14 @@ public class Library(Guid libraryGuid)
             return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
         }
     }
+    
+    public void AddArtists(IReadOnlyCollection<Artist> artists)
+    {
+        var list = new List<Artist>();
+
+        list.AddRange(artists);
+        list.AddRange(Artists);
+
+        Artists = new ReadOnlyCollection<Artist>(list);
+    }
 }

@@ -27,6 +27,7 @@ public class ShellViewModel : Screen
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceFolder> _sourceFolders;
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
+    private Library _library;
 
     public ShellViewModel(
         PlayerController playerController,
@@ -80,13 +81,33 @@ public class ShellViewModel : Screen
         }
     }
 
-    public static Library Library { get; private set; }
+    public Library Library
+    {
+        get => _library;
+        private set
+        {
+            if (Equals(value, _library)) return;
+            _library = value;
+            NotifyOfPropertyChange();
+            NotifyCollectionsChanged();
+        }
+    }
 
-    public static IReadOnlyCollection<Artist> Artists => Library.Artists;
+    private void NotifyCollectionsChanged()
+    {
+        NotifyOfPropertyChange(nameof(Library));
+        NotifyOfPropertyChange(nameof(LibrarySummary));
+        NotifyOfPropertyChange(nameof(Artists));
+        NotifyOfPropertyChange(nameof(AllSongs));
+        NotifyOfPropertyChange(nameof(AllAlbums));
+        NotifyOfPropertyChange(nameof(LibrarySummary));
+    }
 
-    private static IReadOnlyCollection<Song> AllSongs => Library.Songs;
+    public IReadOnlyCollection<Artist> Artists => Library.Artists;
 
-    private static IReadOnlyCollection<Album> AllAlbums => Library.Albums;
+    private IReadOnlyCollection<Song> AllSongs => Library.Songs;
+
+    private IReadOnlyCollection<Album> AllAlbums => Library.Albums;
 
     public Artist? SelectedArtist
     {
@@ -273,6 +294,7 @@ public class ShellViewModel : Screen
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                 _folderBrowserController
                     .BuildSourceFolders(fbd.SelectedPath, SourceFolders)
+                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
                     .Do(sourceFolders =>
                     {
                         SourceFolders = sourceFolders;
@@ -280,6 +302,8 @@ public class ShellViewModel : Screen
                         SourceTreeItems.Clear();
                         foreach (var sourceFolder in sourceFolders)
                             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+                        
+                        NotifyCollectionsChanged();
                     });
         }
     }
