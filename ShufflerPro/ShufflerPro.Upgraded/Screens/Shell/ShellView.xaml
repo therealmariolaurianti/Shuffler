@@ -66,6 +66,37 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Border
+                        Margin="10"
+                        Background="DarkGray"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        CornerRadius="20">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button 
+                                Width="50"
+                                Height="50"
+                                Style="{StaticResource CircleButton}" 
+                                Background="#FF7C7C7C" 
+                                Content="Pre" />
+                            <Button
+                                Width="70"
+                                Height="70"
+                                Style="{StaticResource CircleButton}"
+                                Name="PlayPause"
+                                Background="#FF7C7C7C"
+                                Content="{Binding PlayPauseText}" />
+                            <Button 
+                                Width="50"
+                                Height="50"
+                                Style="{StaticResource CircleButton}" 
+                                Background="#FF7C7C7C" 
+                                Content="Nxt" />
+                            </StackPanel>
+                    </Border>
+                    <Border
                         Grid.Column="1"
                         Margin="10"
                         Background="DarkGray"
@@ -112,6 +143,13 @@
                             </Grid>
                         </StackPanel>
                     </Border>
+                    <Border
+                        Margin="10"
+                        Grid.Column="2"
+                        Background="DarkGray"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        CornerRadius="20" />
                 </Grid>
             </Border>
             <Grid

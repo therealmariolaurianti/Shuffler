@@ -182,6 +182,8 @@ public class ShellViewModel : Screen
         }
     }
 
+    public string PlayPauseText => _playerController.Playing ? "Pause" : "Play";
+
     private void WireTimer()
     {
         _timer = new CountDownTimer();
@@ -249,8 +251,18 @@ public class ShellViewModel : Screen
     private void OnSongChanged(Song obj)
     {
         SelectedSong = obj;
-        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
         PlaySong();
+    }
+
+    public void PlayPause()
+    {
+        if(_playerController.Playing)
+            _timer.Pause();
+        else
+            _timer.Start();
+            
+        _playerController.PlayPause();
+        NotifyOfPropertyChange(nameof(PlayPauseText));
     }
 
     public void PlaySong()
@@ -262,7 +274,9 @@ public class ShellViewModel : Screen
             _timer.Stop();
 
         CurrentSong = SelectedSong;
+        
         ElapsedRunningTime = 0;
+        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
 
         if (_playerController.Playing)
             _playerController.Cancel();
@@ -271,6 +285,8 @@ public class ShellViewModel : Screen
         _timer.Start();
 
         _playerController.PlaySong(CurrentSong, Songs!.ToList());
+        
+        NotifyOfPropertyChange(nameof(PlayPauseText));
     }
 
     private void FilterSongs(string? artist = null, string? album = null)

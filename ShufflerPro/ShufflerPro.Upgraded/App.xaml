@@ -1,7 +1,6 @@
 ﻿<Application x:Class="ShufflerPro.Upgraded.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ShufflerPro.Upgraded"
              xmlns:bootstrapper="clr-namespace:ShufflerPro.Upgraded.Bootstrapper">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +8,7 @@
                 <ResourceDictionary>
                     <bootstrapper:AppBootstrapper x:Key="bootstrapper" />
                 </ResourceDictionary>
+                <ResourceDictionary Source="/ShufflerPro.Upgraded;component/ResourceDictionaries/Resources.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -12,6 +12,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
     private WaveOutEvent? _outEvent = outEvent;
 
     public Action<Song> SongChanged;
+    private static Timer _timer;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
@@ -77,15 +78,36 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
 
     public static void DelayAction(double millisecond, Action action)
     {
-        var timer = new Timer();
+        _timer = new Timer();
 
-        timer.Elapsed += delegate
+        _timer.Elapsed += delegate
         {
             action.Invoke();
-            timer.Stop();
+            _timer.Stop();
         };
 
-        timer.Interval = millisecond;
-        timer.Start();
+        _timer.Interval = millisecond;
+        _timer.Start();
+    }
+
+    public void PlayPause()
+    {
+        if (Playing)
+        {
+            _outEvent?.Pause();
+            _timer.Stop();
+            return;
+        }
+
+        if (!Playing)
+            try
+            {
+                _outEvent?.Play();
+                _timer.Start();
+            }
+            catch (Exception)
+            {
+                //ignored
+            }
     }
 }
