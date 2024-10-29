@@ -117,16 +117,7 @@ public class ShellViewModel : Screen
         }
     }
 
-    public string LibrarySummary
-    {
-        get
-        {
-            var totalSongs = AllSongs.Count;
-            var totalTime = TimeSpan.FromTicks(AllSongs.Sum(s => s.Duration?.Ticks) ?? 0);
-
-            return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
-        }
-    }
+    public string LibrarySummary => Library.Summary;
 
     public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
 

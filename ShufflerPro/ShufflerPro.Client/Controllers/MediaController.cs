@@ -8,7 +8,7 @@ namespace ShufflerPro.Client.Controllers;
 
 public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFactory)
 {
-    public IReadOnlyCollection<Artist> LoadFromFolderPath(string folderPath)
+    private NewResult<IReadOnlyCollection<Artist>> LoadFromFolderPath(string folderPath)
     {
         return Process(LoadSongsInPath(folderPath));
     }
@@ -52,8 +52,15 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
         return artists.ToReadOnlyCollection();
     }
 
-    public NewResult<Library> LoadLibrary(Guid library)
+    public NewResult<Library> LoadLibrary(Guid libraryGuid)
     {
-        return new NewResult<Library>();
+        return LoadFromFolderPath("X:\\A Day To Remember")
+            .Map(artists =>
+            {
+                var library = new Library();
+                library.AddArtists(artists);
+
+                return library;
+            });
     }
 }
