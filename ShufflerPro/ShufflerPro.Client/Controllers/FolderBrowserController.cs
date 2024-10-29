@@ -17,11 +17,13 @@ public class FolderBrowserController
         var rootFolder = existingSourceFolders.SingleOrDefault(sf => sf.IsRoot && sf.Header == root);
         if (rootFolder == null)
         {
-            rootFolder = new SourceFolder(root, root, true);
+            rootFolder = new SourceFolder(root, root, true, null);
             existingSourceFolders.Add(rootFolder);
         }
 
         var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
+        allFolders.Add(rootFolder);
+
         var levels = fullPath.Split(Path.DirectorySeparatorChar).ToList();
 
         NewMethod(root, levels, rootFolder, allFolders, fullPath);
@@ -34,12 +36,16 @@ public class FolderBrowserController
     {
         foreach (var level in levels)
         {
-            if (level == root || level == rootFolder.Header)
+            var index = levels.IndexOf(level);
+            var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
+
+            if (level == root || allFolders.Any(af => af.Header == level && af.FullPath == currentPath))
                 continue;
 
-            var item = new SourceFolder(level);
+            var item = new SourceFolder(level, rootFolder, fullPath);
 
-            var existingFolder = allFolders.SingleOrDefault(f => f.Header == level);
+            var existingFolder = allFolders.SingleOrDefault(f => f.Header == item.Header
+                                                                 && f.Parent?.Header == item.Parent?.Header);
             if (existingFolder is not null)
             {
                 rootFolder = existingFolder;
@@ -48,10 +54,10 @@ public class FolderBrowserController
             {
                 rootFolder.Items.Add(item);
                 rootFolder = item;
+                allFolders.Add(item);
             }
 
             if (levels.Last() == level)
-            {
                 try
                 {
                     var directories = Directory.GetDirectories(fullPath);
@@ -67,7 +73,6 @@ public class FolderBrowserController
                 {
                     //ignore
                 }
-            }
         }
     }
 }

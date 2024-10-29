@@ -2,19 +2,21 @@
 
 public class SourceFolder
 {
-    public SourceFolder(string header)
+    public SourceFolder(string header, SourceFolder parent, string fullPath)
     {
         Header = BuildHeader(header);
-        FullPath = string.Empty;
+        FullPath = fullPath;
         IsRoot = false;
+        Parent = parent;
         Items = new List<SourceFolder>();
     }
 
-    public SourceFolder(string name, string fullPath, bool isRoot)
+    public SourceFolder(string name, string fullPath, bool isRoot, SourceFolder? parent)
     {
         Header = BuildHeader(name);
         FullPath = fullPath;
         IsRoot = isRoot;
+        Parent = parent;
         Items = new List<SourceFolder>();
     }
 
@@ -22,6 +24,7 @@ public class SourceFolder
     public string FullPath { get; }
     public bool IsRoot { get; }
     public List<SourceFolder> Items { get; set; }
+    public SourceFolder? Parent { get; set; }
 
     private static string BuildHeader(string header)
     {
