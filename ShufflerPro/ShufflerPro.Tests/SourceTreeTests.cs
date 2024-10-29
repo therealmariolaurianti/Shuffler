@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Tests;
@@ -112,12 +111,35 @@ public class SourceTreeTests : UnitTestBase
                 root.Items[0].Items[1].Header.Should().Be("SubLevel2");
             });
     }
-}
-
-public class UnitTestBase
-{
-    public FolderBrowserController CreateFolderBrowserController()
+    
+    [TestCase]
+    public void Load_Top_Level_Folder_With_Children()
     {
-        return new FolderBrowserController();
+        var folderBrowserController = CreateFolderBrowserController();
+        var existingSourceFolders = new List<SourceFolder>();
+        
+        folderBrowserController
+            .BuildSourceFolders(@"C:\UnitTest", existingSourceFolders)
+            .Do(sourceFolders =>
+            {
+                var root = sourceFolders.First();
+                
+                root.Header.Should().Be("C:");
+                root.IsRoot.Should().Be(true);
+
+                root.Items[0].Header.Should().Be("UnitTest");
+                
+                root.Items[0].Items[0].Header.Should().Be("Folder_1");
+                root.Items[0].Items[0].Items[0].Header.Should().Be("SubFolder_1");
+                root.Items[0].Items[0].Items[1].Header.Should().Be("SubFolder_2");
+                
+                root.Items[0].Items[1].Header.Should().Be("Folder_2");
+                root.Items[0].Items[1].Items[0].Header.Should().Be("SubFolder_1");
+                root.Items[0].Items[1].Items[1].Header.Should().Be("SubFolder_2");
+                
+                root.Items[0].Items[2].Header.Should().Be("Folder_3");
+                root.Items[0].Items[2].Items[0].Header.Should().Be("SubFolder_1");
+                root.Items[0].Items[2].Items[1].Header.Should().Be("SubFolder_2");
+            });
     }
 }

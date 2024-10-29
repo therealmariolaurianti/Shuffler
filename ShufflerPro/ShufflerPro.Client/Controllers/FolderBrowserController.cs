@@ -22,19 +22,52 @@ public class FolderBrowserController
         }
 
         var allFolders = existingSourceFolders.SelectMany(s => s.Items).ToList();
-
         var levels = fullPath.Split(Path.DirectorySeparatorChar).ToList();
+
+        NewMethod(root, levels, rootFolder, allFolders, fullPath);
+
+        return existingSourceFolders.ToObservableCollection();
+    }
+
+    private static void NewMethod(string root, List<string> levels, SourceFolder rootFolder,
+        List<SourceFolder> allFolders, string fullPath)
+    {
         foreach (var level in levels)
         {
-            if (level == rootFolder.Header)
+            if (level == root || level == rootFolder.Header)
                 continue;
 
             var item = new SourceFolder(level);
-            
-            rootFolder.Items.Add(item);
-            rootFolder = item;
-        }
 
-        return existingSourceFolders.ToObservableCollection();
+            var existingFolder = allFolders.SingleOrDefault(f => f.Header == level);
+            if (existingFolder is not null)
+            {
+                rootFolder = existingFolder;
+            }
+            else
+            {
+                rootFolder.Items.Add(item);
+                rootFolder = item;
+            }
+
+            if (levels.Last() == level)
+            {
+                try
+                {
+                    var directories = Directory.GetDirectories(fullPath);
+                    if (!directories.Any())
+                        continue;
+                    foreach (var directory in directories)
+                    {
+                        var x = directory.Split(Path.DirectorySeparatorChar).ToList();
+                        NewMethod(root, x, rootFolder, allFolders, directory);
+                    }
+                }
+                catch (Exception)
+                {
+                    //ignore
+                }
+            }
+        }
     }
 }
