@@ -2,7 +2,7 @@
 using System.Windows.Media.Imaging;
 using TagLib;
 
-namespace ShufflerPro.Upgraded;
+namespace ShufflerPro.Upgraded.Framework;
 
 public class BinaryHelper
 {

@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace ShufflerPro.Upgraded;
+namespace ShufflerPro.Upgraded.Framework;
 
 public sealed class NotifyTaskCompletion : INotifyPropertyChanged
 {

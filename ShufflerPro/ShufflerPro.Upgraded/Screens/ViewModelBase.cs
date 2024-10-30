@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using ShufflerPro.Upgraded.Framework;
 using Action = System.Action;
 
 namespace ShufflerPro.Upgraded.Screens;

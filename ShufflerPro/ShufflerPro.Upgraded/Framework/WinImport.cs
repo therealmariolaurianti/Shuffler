@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace ShufflerPro.Upgraded;
+namespace ShufflerPro.Upgraded.Framework;
 
 public static class WinImport
 {

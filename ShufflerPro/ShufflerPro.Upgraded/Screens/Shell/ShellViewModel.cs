@@ -6,6 +6,7 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
+using ShufflerPro.Upgraded.Framework;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
