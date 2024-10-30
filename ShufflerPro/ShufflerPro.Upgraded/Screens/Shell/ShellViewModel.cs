@@ -255,14 +255,20 @@ public class ShellViewModel : Screen
         PlaySong();
     }
 
+    public bool IsPlaying => _playerController.Playing;
+
     public void PlayPause()
     {
         if (_playerController.Playing)
+        {
             _timer?.Pause();
+        }
         else
             _timer?.Start();
 
         _playerController.PlayPause();
+        
+        NotifyOfPropertyChange(nameof(IsPlaying));
     }
 
     public void PlaySong()
@@ -278,9 +284,6 @@ public class ShellViewModel : Screen
 
         WireTimer();
 
-        NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
-        NotifyOfPropertyChange(nameof(ElapsedRunningTime));
-
         _playerController.PlaySong(CurrentSong, AllSongs.ToList());
 
         var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
@@ -288,6 +291,10 @@ public class ShellViewModel : Screen
             playingNow.IsPlaying = false;
 
         CurrentSong.IsPlaying = true;
+        
+        NotifyOfPropertyChange(nameof(IsPlaying));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTime));
     }
 
     private void FilterSongs(string? artist = null, string? album = null)

@@ -4,28 +4,30 @@ using Timer = System.Timers.Timer;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource cancellationToken)
-    : IDisposable
+public class PlayerController(WaveOutEvent outEvent) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
-    private CancellationTokenSource? _cancellationToken = cancellationToken;
     private WaveOutEvent? _outEvent = outEvent;
+    private Timer? _timer;
 
-    public Action<Song> SongChanged;
-    private static Timer _timer;
+    public required Action<Song> SongChanged;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
 
     public void Dispose()
     {
+        _outEvent?.Stop();
         _outEvent?.Dispose();
+        
         _audioFileReader?.Dispose();
-        _cancellationToken?.Dispose();
+        
+        _timer?.Stop();
+        _timer?.Dispose();
 
+        _timer = null;
         _outEvent = null;
         _audioFileReader = null;
-        _cancellationToken = null;
     }
 
     private void OnSongComplete(Song currentSong, List<Song> songs)
@@ -41,16 +43,15 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
 
     public void ReInitialize()
     {
+        
         Dispose();
 
         _outEvent = new WaveOutEvent();
-        _cancellationToken = new CancellationTokenSource();
         IsCompleted = false;
     }
 
     public void Cancel()
     {
-        _cancellationToken?.Cancel();
         ReInitialize();
     }
 
@@ -76,7 +77,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
         return true;
     }
 
-    public static void DelayAction(double millisecond, Action action)
+    public void DelayAction(double millisecond, Action action)
     {
         _timer = new Timer();
 
@@ -95,7 +96,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
         if (Playing)
         {
             _outEvent?.Pause();
-            _timer.Stop();
+            _timer?.Stop();
             return;
         }
 
@@ -103,7 +104,7 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
             try
             {
                 _outEvent?.Play();
-                _timer.Start();
+                _timer?.Start();
             }
             catch (Exception)
             {
