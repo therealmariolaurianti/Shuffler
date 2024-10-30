@@ -14,6 +14,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
+    public bool IsPaused { get; private set; }
 
     public void Dispose()
     {
@@ -97,6 +98,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         {
             _outEvent?.Pause();
             _timer?.Stop();
+            IsPaused = true;
             return;
         }
 
@@ -105,6 +107,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
             {
                 _outEvent?.Play();
                 _timer?.Start();
+                IsPaused = false;
             }
             catch (Exception)
             {

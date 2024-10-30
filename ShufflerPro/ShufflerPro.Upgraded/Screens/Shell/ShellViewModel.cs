@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -11,11 +12,13 @@ namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : Screen
 {
+    private readonly BinaryHelper _binaryHelper;
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
     private readonly SourceFolderController _sourceFolderController;
     private ObservableCollection<Album>? _albums;
+    private int _applicationVolumeLevel;
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
@@ -34,12 +37,13 @@ public class ShellViewModel : Screen
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        LibraryFactory libraryFactory)
+        LibraryFactory libraryFactory, BinaryHelper binaryHelper)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
         _libraryFactory = libraryFactory;
+        _binaryHelper = binaryHelper;
 
         TimeSpan = new TimeSpan();
 
@@ -72,7 +76,8 @@ public class ShellViewModel : Screen
 
 
     public ObservableCollection<Album> Albums =>
-        SelectedArtist?.Albums.ToObservableCollection() ?? AllAlbums.ToObservableCollection();
+        SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
+        AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
 
     public Library Library
     {
@@ -86,7 +91,7 @@ public class ShellViewModel : Screen
         }
     }
 
-    public IReadOnlyCollection<Artist> Artists => Library.Artists;
+    public IReadOnlyCollection<Artist> Artists => Library.Artists.OrderBy(a => a.Name).ToReadOnlyCollection();
 
     private IReadOnlyCollection<Song> AllSongs => Library.Songs;
 
@@ -181,6 +186,22 @@ public class ShellViewModel : Screen
         }
     }
 
+    public bool IsPlaying => _playerController.Playing;
+
+    public BitmapImage? CurrentSongPicture => _binaryHelper.ToImage(CurrentSong?.Picture);
+
+    public int ApplicationVolumeLevel
+    {
+        get => _applicationVolumeLevel;
+        set
+        {
+            if (value.Equals(_applicationVolumeLevel)) return;
+            _applicationVolumeLevel = value;
+            NotifyOfPropertyChange();
+            NotifyOfPropertyChange();
+        }
+    }
+
     private void WireTimer()
     {
         _timer = new CountDownTimer();
@@ -216,8 +237,17 @@ public class ShellViewModel : Screen
         Load();
         SourceFolders = [];
         SourceTreeItems = [];
+        InitializeApplicationVolume();
 
         return base.OnInitializeAsync(cancellationToken);
+    }
+
+    private void InitializeApplicationVolume()
+    {
+        WinImport.waveOutGetVolume(IntPtr.Zero, out var currentVolume);
+
+        var calculatedVolume = (ushort)(currentVolume & 0x0000ffff);
+        ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10);
     }
 
     private void Load()
@@ -255,20 +285,24 @@ public class ShellViewModel : Screen
         PlaySong();
     }
 
-    public bool IsPlaying => _playerController.Playing;
-
     public void PlayPause()
     {
         if (_playerController.Playing)
-        {
             _timer?.Pause();
-        }
         else
             _timer?.Start();
 
         _playerController.PlayPause();
-        
+
         NotifyOfPropertyChange(nameof(IsPlaying));
+    }
+
+    public void AdjustApplicationVolume()
+    {
+        var newVolume = ushort.MaxValue / 10 * ApplicationVolumeLevel;
+        var newVolumeAllChannels = ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
+
+        WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
     }
 
     public void PlaySong()
@@ -276,7 +310,7 @@ public class ShellViewModel : Screen
         if (SelectedSong is null)
             return;
 
-        if (_playerController.Playing)
+        if (_playerController.Playing || _playerController.IsPaused)
             _playerController.Cancel();
 
         CurrentSong = SelectedSong;
@@ -291,10 +325,11 @@ public class ShellViewModel : Screen
             playingNow.IsPlaying = false;
 
         CurrentSong.IsPlaying = true;
-        
+
         NotifyOfPropertyChange(nameof(IsPlaying));
         NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
+        NotifyOfPropertyChange(nameof(CurrentSongPicture));
     }
 
     private void FilterSongs(string? artist = null, string? album = null)
@@ -350,5 +385,13 @@ public class ShellViewModel : Screen
             treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem));
 
         return treeItem;
+    }
+
+    public void Take()
+    {
+    }
+
+    public void Skip()
+    {
     }
 }

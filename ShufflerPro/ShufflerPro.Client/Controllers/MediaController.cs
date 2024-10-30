@@ -48,7 +48,7 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
             .GetFilesByExtension(Extensions.DefaultExtensions)
             .ToHashSet();
 
-        return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
+        return songsPaths.Select(SongFactory.Create).ToList();
     }
 
     private ReadOnlyCollection<Artist> Process(List<Song> songs)
