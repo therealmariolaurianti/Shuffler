@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:cal="http://www.caliburnproject.org"
         xmlns:upgraded="clr-namespace:ShufflerPro.Upgraded.Screens.Shell"
+        xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Width="1200"
@@ -382,15 +383,25 @@
                             IsReadOnly="True"
                             CellStyle="{StaticResource GridContentAlign}">
                             <DataGrid.Columns>
-                                <DataGridTextColumn
-                                    Header=""
-                                    Width="25" />
+                                <DataGridTemplateColumn
+                                    Width="25"
+                                    CanUserResize="False"
+                                    IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image
+                                                Visibility="{calcBinding:Binding 'IsPlaying'}"
+                                                Width="10"
+                                                Height="10"
+                                                Source="{StaticResource VolumeLoudImage}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                                 <DataGridTextColumn
                                     Header="Song"
                                     Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Time"
-                                    Width="75"
                                     Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
                                     <DataGridTextColumn.HeaderStyle>
                                         <Style TargetType="DataGridColumnHeader">
@@ -407,17 +418,16 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn
                                     Header="Artist"
-                                    Width="200"
                                     Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Album"
-                                    Width="150"
                                     Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Genre"
                                     Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="#"
+                                    CanUserResize="False"
                                     Binding="{Binding Track, Mode=OneTime, FallbackValue=null}"
                                     Width="25">
                                     <DataGridTextColumn.ElementStyle>

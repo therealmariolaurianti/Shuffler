@@ -1,9 +1,12 @@
-﻿using File = TagLib.File;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using File = TagLib.File;
 
 namespace ShufflerPro.Client.Entities;
 
-public class Song(File? songFile, string path)
+public class Song(File? songFile, string path) : INotifyPropertyChanged
 {
+    private bool _isPlaying;
     public string? Genre { get; } = songFile?.Tag.FirstGenre;
     public string? Title { get; } = songFile?.Tag.Title;
     public int? Track { get; } = (int?)songFile?.Tag.Track;
@@ -12,9 +15,19 @@ public class Song(File? songFile, string path)
     public string? Path { get; set; } = path;
     public string? Time { get; } = songFile?.Properties.Duration.ToString("mm':'ss");
     public TimeSpan? Duration { get; } = songFile?.Properties.Duration;
-    
-    public Album AlbumItem { get; set; }
-    public Artist ArtistItem { get; set; }
+
+    public bool IsPlaying
+    {
+        get => _isPlaying;
+        set
+        {
+            if (value == _isPlaying) return;
+            _isPlaying = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private bool Equals(Song other)
     {
@@ -41,5 +54,18 @@ public class Song(File? songFile, string path)
     public static bool operator !=(Song left, Song right)
     {
         return !(left == right);
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 }

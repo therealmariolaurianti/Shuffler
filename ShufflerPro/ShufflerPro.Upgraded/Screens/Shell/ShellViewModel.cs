@@ -282,6 +282,12 @@ public class ShellViewModel : Screen
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
 
         _playerController.PlaySong(CurrentSong, AllSongs.ToList());
+
+        var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
+        if (playingNow is not null)
+            playingNow.IsPlaying = false;
+
+        CurrentSong.IsPlaying = true;
     }
 
     private void FilterSongs(string? artist = null, string? album = null)
