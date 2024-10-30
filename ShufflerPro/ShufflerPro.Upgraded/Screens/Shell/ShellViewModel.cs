@@ -22,6 +22,7 @@ public class ShellViewModel : ViewModelBase
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
+    private bool _isLoadingSourceFolders;
     private Library _library;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
@@ -31,7 +32,6 @@ public class ShellViewModel : ViewModelBase
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
-    private bool _isLoadingSourceFolders;
 
     public ShellViewModel(
         PlayerController playerController,
@@ -203,6 +203,18 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public bool IsLoadingSourceFolders
+    {
+        get => _isLoadingSourceFolders;
+        set
+        {
+            if (value == _isLoadingSourceFolders) return;
+            _isLoadingSourceFolders = value;
+            NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(SyncText));
+        }
+    }
+
     private void WireTimer()
     {
         _timer = new CountDownTimer();
@@ -349,18 +361,6 @@ public class ShellViewModel : ViewModelBase
             .ThenBy(s => s.Album)
             .ThenBy(s => s.Track)
             .ToObservableCollection();
-    }
-
-    public bool IsLoadingSourceFolders
-    {
-        get => _isLoadingSourceFolders;
-        set
-        {
-            if (value == _isLoadingSourceFolders) return;
-            _isLoadingSourceFolders = value;
-            NotifyOfPropertyChange();
-            NotifyOfPropertyChange(nameof(SyncText));
-        }
     }
 
     public void AddSource()
