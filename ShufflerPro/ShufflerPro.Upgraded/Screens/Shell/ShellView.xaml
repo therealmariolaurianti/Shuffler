@@ -398,7 +398,7 @@
                             SelectedItem="{Binding SelectedSong}"
                             ItemsSource="{Binding Songs}"
                             AlternationCount="2"
-                            AlternatingRowBackground="AntiqueWhite"
+                            AlternatingRowBackground="LightGray"
                             IsReadOnly="True"
                             CellStyle="{StaticResource GridContentAlign}">
                             <DataGrid.Columns>

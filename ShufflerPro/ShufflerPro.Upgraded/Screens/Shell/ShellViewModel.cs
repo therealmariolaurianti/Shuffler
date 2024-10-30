@@ -6,24 +6,21 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
-using Screen = Caliburn.Micro.Screen;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
-public class ShellViewModel : Screen
+public class ShellViewModel : ViewModelBase
 {
     private readonly BinaryHelper _binaryHelper;
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
     private readonly SourceFolderController _sourceFolderController;
-    private ObservableCollection<Album>? _albums;
     private int _applicationVolumeLevel;
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private Library _library;
-    private Artist _playingArtist;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
@@ -357,20 +354,23 @@ public class ShellViewModel : Screen
             var result = fbd.ShowDialog();
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                _sourceFolderController.BuildSourceFolders(fbd.SelectedPath, SourceFolders)
-                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
-                    .Do(sourceFolders =>
-                    {
-                        SourceFolders = sourceFolders;
+                RunAsync(async () =>
+                {
+                    _sourceFolderController.BuildSourceFolders(fbd.SelectedPath, SourceFolders)
+                        .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
+                        .Do(sourceFolders =>
+                        {
+                            SourceFolders = sourceFolders;
 
-                        SourceTreeItems.Clear();
-                        foreach (var sourceFolder in sourceFolders)
-                            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+                            SourceTreeItems.Clear();
+                            foreach (var sourceFolder in sourceFolders)
+                                SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
 
-                        FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                            FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
 
-                        NotifyCollectionsChanged();
-                    });
+                            NotifyCollectionsChanged();
+                        });
+                });
         }
     }
 
