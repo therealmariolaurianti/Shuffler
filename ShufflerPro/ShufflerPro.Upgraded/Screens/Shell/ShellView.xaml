@@ -86,7 +86,7 @@
                             <Button
                                 Width="50"
                                 Height="50"
-                                Name="Take"
+                                Name="PreviousSong"
                                 Style="{StaticResource CircleButton}"
                                 Background="#FF7C7C7C">
                                 <StackPanel
@@ -123,6 +123,7 @@
                             <Button
                                 Width="50"
                                 Height="50"
+                                Name="NextSong"
                                 Style="{StaticResource CircleButton}"
                                 Background="#FF7C7C7C">
                                 <StackPanel

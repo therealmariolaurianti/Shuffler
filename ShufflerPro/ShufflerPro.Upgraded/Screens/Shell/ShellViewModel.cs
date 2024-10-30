@@ -215,6 +215,10 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    private List<Song> AllSongsOrdered => AllSongs.OrderBy(s => s.Artist)
+        .ThenBy(s => s.Album)
+        .ThenBy(s => s.Track).ToList();
+
     private void WireTimer()
     {
         _timer = new CountDownTimer();
@@ -331,8 +335,7 @@ public class ShellViewModel : ViewModelBase
 
         WireTimer();
 
-        _playerController.PlaySong(CurrentSong, AllSongs.ToList());
-
+        _playerController.PlaySong(CurrentSong, AllSongsOrdered);
         var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
         if (playingNow is not null)
             playingNow.IsPlaying = false;
@@ -419,11 +422,19 @@ public class ShellViewModel : ViewModelBase
         return treeItem;
     }
 
-    public void Take()
+    public void PreviousSong()
     {
+        if (CurrentSong is null)
+            return;
+        
+        _playerController.Previous(CurrentSong, AllSongsOrdered, ElapsedRunningTime);
     }
 
-    public void Skip()
+    public void NextSong()
     {
+        if (CurrentSong is null)
+            return;
+
+        _playerController.Skip(CurrentSong, AllSongsOrdered);
     }
 }

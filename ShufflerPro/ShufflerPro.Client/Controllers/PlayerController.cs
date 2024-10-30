@@ -20,9 +20,9 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     {
         _outEvent?.Stop();
         _outEvent?.Dispose();
-        
+
         _audioFileReader?.Dispose();
-        
+
         _timer?.Stop();
         _timer?.Dispose();
 
@@ -33,8 +33,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
     private void OnSongComplete(Song currentSong, List<Song> songs)
     {
-        var index = songs.IndexOf(currentSong) + 1;
-        var nextTrack = songs.Skip(index).FirstOrDefault();
+        var nextTrack = GetNextTrack(currentSong, songs);
 
         if (nextTrack is null)
             Dispose();
@@ -42,9 +41,22 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
             SongChanged.Invoke(nextTrack);
     }
 
+    private static Song? GetNextTrack(Song currentSong, List<Song> songs)
+    {
+        var index = songs.IndexOf(currentSong) + 1;
+        var nextTrack = songs.Skip(index).FirstOrDefault();
+        return nextTrack;
+    }
+
+    private static Song? GetPreviousTrack(Song currentSong, List<Song> songs)
+    {
+        var index = songs.IndexOf(currentSong) - 1;
+        var nextTrack = songs.Skip(index).FirstOrDefault();
+        return nextTrack;
+    }
+
     public void ReInitialize()
     {
-        
         Dispose();
 
         _outEvent = new WaveOutEvent();
@@ -113,5 +125,26 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
             {
                 //ignored
             }
+    }
+
+    public void Skip(Song currentSong, List<Song> allSongs)
+    {
+        var nextTrack = GetNextTrack(currentSong, allSongs);
+        if (nextTrack is not null)
+            SongChanged.Invoke(nextTrack);
+    }
+
+    public void Previous(Song currentSong, List<Song> allSongsOrdered, double elapsedRunningTime)
+    {
+        if (elapsedRunningTime >= 5)
+        {
+            SongChanged.Invoke(currentSong);
+        }
+        else
+        {
+            var previousTrack = GetPreviousTrack(currentSong, allSongsOrdered);
+            if (previousTrack is not null)
+                SongChanged.Invoke(previousTrack);
+        }
     }
 }
