@@ -6,6 +6,7 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
+using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
@@ -353,26 +354,37 @@ public class ShellViewModel : ViewModelBase
         using (var fbd = new FolderBrowserDialog())
         {
             var result = fbd.ShowDialog();
+            var folderPath = fbd.SelectedPath;
 
-            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                RunAsync(async () =>
-                {
-                    _sourceFolderController.BuildSourceFolders(fbd.SelectedPath, SourceFolders)
-                        .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
-                        .Do(sourceFolders =>
-                        {
-                            SourceFolders = sourceFolders;
-
-                            SourceTreeItems.Clear();
-                            foreach (var sourceFolder in sourceFolders)
-                                SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
-
-                            FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
-
-                            NotifyCollectionsChanged();
-                        });
-                });
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
+                RunAsync(async () => await BuildSourceFolders(folderPath).Do(_ => ProcessSourceFolders()));
         }
+    }
+
+    private async Task<NewResult<NewUnit>> BuildSourceFolders(string folderPath)
+    {
+        return await NewResultExtensions.Try(async () =>
+        {
+            await Task.Run(() =>
+            {
+                _sourceFolderController.BuildSourceFolders(folderPath, SourceFolders)
+                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
+                    .Do(sourceFolders => SourceFolders = sourceFolders);
+            }).ConfigureAwait(true);
+
+            return NewUnit.Default;
+        });
+    }
+
+    private void ProcessSourceFolders()
+    {
+        SourceTreeItems.Clear();
+        foreach (var sourceFolder in SourceFolders)
+            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+
+        FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+
+        NotifyCollectionsChanged();
     }
 
     private static TreeViewItem BuildTreeGridItem(SourceFolder sourceFolder)

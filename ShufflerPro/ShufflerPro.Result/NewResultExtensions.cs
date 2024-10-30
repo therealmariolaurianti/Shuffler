@@ -11,7 +11,7 @@ public static class NewResultExtensions
     {
         return new NewResult<T>(ex);
     }
-    
+
     public static NewResult<T> Try<T>(Func<T> func)
     {
         try
@@ -22,5 +22,25 @@ public static class NewResultExtensions
         {
             return e;
         }
+    }
+
+    public static async Task<NewResult<T1>> Try<T1>(Func<Task<T1>> func)
+    {
+        try
+        {
+            var newResult = await func();
+            return newResult;
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+    }
+
+    public static async Task<NewResult<T>> Do<T>(this Task<NewResult<T>> ma, Action<T> f)
+    {
+        var item = await ma;
+        item.IfSuccess(f);
+        return item;
     }
 }

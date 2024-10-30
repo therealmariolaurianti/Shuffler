@@ -58,4 +58,11 @@ public class NewResult<T>
 
         return Exceptions.First();
     }
+    
+    public NewResult<T> IfSuccess(Action<T> action)
+    {
+        if (Success)
+            action(Item);
+        return this;
+    }
 }
