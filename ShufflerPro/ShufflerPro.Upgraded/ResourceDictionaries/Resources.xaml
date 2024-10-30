@@ -1,5 +1,15 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <BitmapImage x:Key="MuteImage" UriSource="/Images/mute.png" />
+    <BitmapImage x:Key="NextImage" UriSource="/Images/next.png" />
+    <BitmapImage x:Key="PauseImage" UriSource="/Images/pause.png" />
+    <BitmapImage x:Key="PlayImage" UriSource="/Images/play.png" />
+    <BitmapImage x:Key="PreviousImage" UriSource="/Images/previous.png" />
+    <BitmapImage x:Key="VolumeLoudImage" UriSource="/Images/volume_loud.png" />
+    <BitmapImage x:Key="VolumeSoftImage" UriSource="/Images/volume_soft.png" />
+
+
     <Style x:Key="MyFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -40,7 +50,7 @@
                                 </RadialGradientBrush>
                             </Ellipse.Fill>
                         </Ellipse>
-                        <Ellipse Margin="10" x:Name="highlightCircle">
+                        <Ellipse Margin="7" x:Name="highlightCircle">
                             <Ellipse.Fill>
                                 <LinearGradientBrush>
                                     <GradientStop Offset="0" Color="#50FFFFFF" />

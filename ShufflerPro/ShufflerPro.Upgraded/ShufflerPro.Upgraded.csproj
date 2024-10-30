@@ -30,4 +30,21 @@
       <ProjectReference Include="..\ShufflerPro.Client\ShufflerPro.Client.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Images\mute.png" />
+      <Resource Include="Images\mute.png" />
+      <None Remove="Images\next.png" />
+      <Resource Include="Images\next.png" />
+      <None Remove="Images\pause.png" />
+      <Resource Include="Images\pause.png" />
+      <None Remove="Images\play.png" />
+      <Resource Include="Images\play.png" />
+      <None Remove="Images\previous.png" />
+      <Resource Include="Images\previous.png" />
+      <None Remove="Images\volume_loud.png" />
+      <Resource Include="Images\volume_loud.png" />
+      <None Remove="Images\volume_soft.png" />
+      <Resource Include="Images\volume_soft.png" />
+    </ItemGroup>
+
 </Project>

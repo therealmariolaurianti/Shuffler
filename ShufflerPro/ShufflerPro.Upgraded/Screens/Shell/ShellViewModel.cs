@@ -181,12 +181,10 @@ public class ShellViewModel : Screen
         }
     }
 
-    public string PlayPauseText => _playerController.Playing ? "Pause" : "Play";
-
     private void WireTimer()
     {
         _timer = new CountDownTimer();
-        
+
         _timer!.SetTime(CurrentSong!.Duration!.Value);
         _timer.TimeChanged += () =>
         {
@@ -195,7 +193,7 @@ public class ShellViewModel : Screen
             ElapsedRunningTime = timeSpan?.TotalSeconds ?? 0;
             ElapsedRunningTimeDisplay = timeSpan?.ToString("mm':'ss") ?? TimeSpan.ToString("mm':'ss");
         };
-        
+
         _timer!.Start();
     }
 
@@ -265,23 +263,21 @@ public class ShellViewModel : Screen
             _timer?.Start();
 
         _playerController.PlayPause();
-        NotifyOfPropertyChange(nameof(PlayPauseText));
     }
 
     public void PlaySong()
     {
         if (SelectedSong is null)
             return;
-        
+
         if (_playerController.Playing)
             _playerController.Cancel();
-        
+
         CurrentSong = SelectedSong;
         ElapsedRunningTime = 0;
 
         WireTimer();
 
-        NotifyOfPropertyChange(nameof(PlayPauseText));
         NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
 
