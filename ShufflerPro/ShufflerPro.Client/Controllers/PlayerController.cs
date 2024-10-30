@@ -82,8 +82,8 @@ public class PlayerController(WaveOutEvent outEvent, CancellationTokenSource can
 
         _timer.Elapsed += delegate
         {
-            action.Invoke();
             _timer.Stop();
+            action.Invoke();
         };
 
         _timer.Interval = millisecond;

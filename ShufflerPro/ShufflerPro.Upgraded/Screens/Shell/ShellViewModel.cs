@@ -28,7 +28,7 @@ public class ShellViewModel : Screen
     private ObservableCollection<SourceFolder> _sourceFolders;
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
 
-    private CountDownTimer _timer;
+    private CountDownTimer? _timer;
 
     public ShellViewModel(
         PlayerController playerController,
@@ -44,7 +44,6 @@ public class ShellViewModel : Screen
         TimeSpan = new TimeSpan();
 
         _playerController.SongChanged += OnSongChanged;
-        WireTimer();
     }
 
     public Song? CurrentSong
@@ -187,13 +186,17 @@ public class ShellViewModel : Screen
     private void WireTimer()
     {
         _timer = new CountDownTimer();
+        
+        _timer!.SetTime(CurrentSong!.Duration!.Value);
         _timer.TimeChanged += () =>
         {
-            var timeSpan = CurrentSong!.Duration!.Value.Subtract(_timer.TimeLeft);
+            var timeSpan = CurrentSong?.Duration!.Value.Subtract(_timer.TimeLeft);
 
-            ElapsedRunningTime = timeSpan.TotalSeconds;
-            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+            ElapsedRunningTime = timeSpan?.TotalSeconds ?? 0;
+            ElapsedRunningTimeDisplay = timeSpan?.ToString("mm':'ss") ?? TimeSpan.ToString("mm':'ss");
         };
+        
+        _timer!.Start();
     }
 
     private void NotifyCollectionsChanged()
@@ -256,11 +259,11 @@ public class ShellViewModel : Screen
 
     public void PlayPause()
     {
-        if(_playerController.Playing)
-            _timer.Pause();
+        if (_playerController.Playing)
+            _timer?.Pause();
         else
-            _timer.Start();
-            
+            _timer?.Start();
+
         _playerController.PlayPause();
         NotifyOfPropertyChange(nameof(PlayPauseText));
     }
@@ -269,24 +272,20 @@ public class ShellViewModel : Screen
     {
         if (SelectedSong is null)
             return;
-
-        if (_timer.IsRunning)
-            _timer.Stop();
-
-        CurrentSong = SelectedSong;
         
-        ElapsedRunningTime = 0;
-        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
-
         if (_playerController.Playing)
             _playerController.Cancel();
-
-        _timer.SetTime(CurrentSong.Duration!.Value);
-        _timer.Start();
-
-        _playerController.PlaySong(CurrentSong, Songs!.ToList());
         
+        CurrentSong = SelectedSong;
+        ElapsedRunningTime = 0;
+
+        WireTimer();
+
         NotifyOfPropertyChange(nameof(PlayPauseText));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTime));
+
+        _playerController.PlaySong(CurrentSong, AllSongs.ToList());
     }
 
     private void FilterSongs(string? artist = null, string? album = null)
@@ -314,8 +313,7 @@ public class ShellViewModel : Screen
             var result = fbd.ShowDialog();
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                _sourceFolderController
-                    .BuildSourceFolders(fbd.SelectedPath, SourceFolders)
+                _sourceFolderController.BuildSourceFolders(fbd.SelectedPath, SourceFolders)
                     .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
                     .Do(sourceFolders =>
                     {

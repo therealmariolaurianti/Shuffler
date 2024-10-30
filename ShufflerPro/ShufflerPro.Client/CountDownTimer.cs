@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Timer = System.Timers.Timer;
 
-namespace ShufflerPro.Upgraded.Screens.Shell;
+namespace ShufflerPro.Client;
 
 public class CountDownTimer : IDisposable
 {
@@ -47,9 +47,10 @@ public class CountDownTimer : IDisposable
 
         if (_mustStop)
         {
-            CountDownFinished?.Invoke();
             _stopWatch.Stop();
             _timer.Enabled = false;
+            
+            CountDownFinished?.Invoke();
         }
     }
 
