@@ -54,7 +54,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height=".5*" MinHeight="115" MaxHeight="150" />
                 <RowDefinition Height="2*" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height=".2*" />
             </Grid.RowDefinitions>
             <Border
                 Margin="2"
@@ -255,7 +255,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
-                            <RowDefinition Height=".6*" MaxHeight="300"/>
+                            <RowDefinition Height=".6*" MaxHeight="300" />
                         </Grid.RowDefinitions>
                         <TextBlock
                             Margin="2"
@@ -467,6 +467,20 @@
                 BorderThickness="1">
                 <Grid
                     Background="LightGray">
+                    <Grid
+                        IsEnabled="False"
+                        HorizontalAlignment="Left">
+                        <ProgressBar
+                            Grid.Column="0"
+                            Width="200"
+                            Margin="10"
+                            IsIndeterminate="{Binding IsLoadingSourceFolders}"/>
+                        <TextBlock
+                            Text="{Binding SyncText}"
+                            Foreground="Gray"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                    </Grid>
                     <TextBlock
                         TextAlignment="Center"
                         VerticalAlignment="Center"

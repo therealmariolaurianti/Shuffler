@@ -31,6 +31,7 @@ public class ShellViewModel : ViewModelBase
     private ObservableCollection<TreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
+    private bool _isLoadingSourceFolders;
 
     public ShellViewModel(
         PlayerController playerController,
@@ -73,6 +74,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public string SyncText => IsLoadingSourceFolders ? "Syncing" : "Synced";
 
     public ObservableCollection<Album> Albums =>
         SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
@@ -349,6 +351,18 @@ public class ShellViewModel : ViewModelBase
             .ToObservableCollection();
     }
 
+    public bool IsLoadingSourceFolders
+    {
+        get => _isLoadingSourceFolders;
+        set
+        {
+            if (value == _isLoadingSourceFolders) return;
+            _isLoadingSourceFolders = value;
+            NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(SyncText));
+        }
+    }
+
     public void AddSource()
     {
         using (var fbd = new FolderBrowserDialog())
@@ -356,8 +370,11 @@ public class ShellViewModel : ViewModelBase
             var result = fbd.ShowDialog();
             var folderPath = fbd.SelectedPath;
 
+            IsLoadingSourceFolders = true;
+
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
-                RunAsync(async () => await BuildSourceFolders(folderPath).Do(_ => ProcessSourceFolders()));
+                RunAsync(async () => await BuildSourceFolders(folderPath)
+                    .Do(_ => ProcessSourceFolders()));
         }
     }
 
@@ -385,6 +402,8 @@ public class ShellViewModel : ViewModelBase
         FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
 
         NotifyCollectionsChanged();
+
+        IsLoadingSourceFolders = false;
     }
 
     private static TreeViewItem BuildTreeGridItem(SourceFolder sourceFolder)

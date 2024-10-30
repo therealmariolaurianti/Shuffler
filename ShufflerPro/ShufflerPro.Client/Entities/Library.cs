@@ -15,9 +15,9 @@ public class Library(Guid libraryGuid)
         get
         {
             var totalSongs = Songs.Count;
-            var totalTime = TimeSpan.FromTicks(Songs.Sum(s => s.Duration?.Ticks) ?? 0);
-
-            return $"{totalSongs} songs, {totalTime:mm':'ss} total time";
+            var totalSpan = Songs
+                .Aggregate(TimeSpan.Zero, (sumSoFar, nextMyObject) => (TimeSpan)(sumSoFar + nextMyObject.Duration)!);
+            return $"{totalSongs} songs, {totalSpan.Duration()} total time";
         }
     }
 
