@@ -378,6 +378,8 @@ public class ShellViewModel : ViewModelBase
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
                 RunAsync(async () => await BuildSourceFolders(folderPath)
                     .Do(_ => ProcessSourceFolders()));
+            else
+                IsLoadingSourceFolders = false;
         }
     }
 
