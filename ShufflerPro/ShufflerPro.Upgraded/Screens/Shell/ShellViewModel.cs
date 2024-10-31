@@ -507,8 +507,8 @@ public class ShellViewModel : ViewModelBase
         if (messageResult == MessageBoxResult.Yes)
             RunAsync(async () => await _sourceFolderController
                 .Remove(Library!, _selectedTreeViewItem.SourceFolder)
-                .IfFail(_ => MessageBox.Show(_.Message))
-                .Do(_ =>
+                .IfFail(exception => MessageBox.Show(exception.Message))
+                .IfSuccess(_ =>
                 {
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
                         parent.Items.Remove(_selectedTreeViewItem);

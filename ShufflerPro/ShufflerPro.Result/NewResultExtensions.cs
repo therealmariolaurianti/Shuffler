@@ -57,7 +57,7 @@ public static class NewResultExtensions
             return ex;
         }
     }
-    
+
     public static async Task<NewResult<T1>> Bind<T, T1>(this Task<NewResult<T>> ma,
         Func<T, Task<NewResult<T1>>> func)
     {
@@ -71,17 +71,24 @@ public static class NewResultExtensions
             return ex;
         }
     }
-    
+
     public static async Task<NewResult<T1>> Map1<T, T1>(this Task<NewResult<T>> ma,
         Func<T, T1> func)
     {
         var item = await ma;
         return item.Map(func);
     }
-    
+
     public static async Task<NewResult<T>> IfFail<T>(this Task<NewResult<T>> ma, Action<Exception> f)
     {
         var item = await ma;
         return item.IfFail(ex => f(ex));
+    }
+
+    public static async Task<NewResult<T>> IfSuccess<T>(this Task<NewResult<T>> task, Action<T> f)
+    {
+        var item = await task;
+        item.IfSuccess(f);
+        return item;
     }
 }
