@@ -166,7 +166,7 @@ public class SourceTreeTests : UnitTestBase
         var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
         level1.Items.Add(level2);
 
-        var library = new Library(Guid.NewGuid());
+        var library = new Library();
 
         mediaController
             .LoadFromFolderPath(sourceFolders, library)

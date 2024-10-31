@@ -4,8 +4,8 @@ namespace ShufflerPro.Client.Factories;
 
 public class LibraryFactory
 {
-    public Library Create(Guid libraryGuid)
+    public Library Create()
     {
-        return new Library(libraryGuid);
+        return new Library();
     }
 }

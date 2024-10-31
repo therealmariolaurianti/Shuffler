@@ -18,7 +18,6 @@ public class ShellViewModel : ViewModelBase
     private readonly BinaryHelper _binaryHelper;
 
     private readonly LibraryController _libraryController;
-    private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
     private readonly SourceFolderController _sourceFolderController;
@@ -43,12 +42,11 @@ public class ShellViewModel : ViewModelBase
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        LibraryFactory libraryFactory, BinaryHelper binaryHelper, LibraryController libraryController)
+        BinaryHelper binaryHelper, LibraryController libraryController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
-        _libraryFactory = libraryFactory;
         _binaryHelper = binaryHelper;
         _libraryController = libraryController;
 
@@ -316,16 +314,11 @@ public class ShellViewModel : ViewModelBase
 
     private async Task Load()
     {
-        var libraryGuid = Guid.NewGuid();
-
         await _libraryController
-            .LoadLibrary(libraryGuid)
+            .LoadLibrary()
             .Do(library =>
             {
-                library ??= _libraryFactory.Create(libraryGuid);
-
                 Library = library;
-
                 ElapsedRunningTime = 0;
                 ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
             });

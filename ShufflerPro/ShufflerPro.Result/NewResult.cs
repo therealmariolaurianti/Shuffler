@@ -25,6 +25,8 @@ public class NewResult<T>
 
     public bool Fail => !Success;
 
+    private Exception FirstException => Exceptions.First();
+
     public NewResult<T> Do(Action<T> f)
     {
         if (Success)
@@ -58,11 +60,16 @@ public class NewResult<T>
 
         return Exceptions.First();
     }
-    
+
     public NewResult<T> IfSuccess(Action<T> action)
     {
         if (Success)
             action(Item);
         return this;
+    }
+
+    public NewResult<T1> Bind<T1>(Func<T, NewResult<T1>> func)
+    {
+        return !Success ? NewResultExtensions.CreateFail<T1>(FirstException) : func(Item);
     }
 }

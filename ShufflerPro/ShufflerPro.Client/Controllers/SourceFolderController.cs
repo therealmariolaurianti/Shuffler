@@ -6,6 +6,19 @@ namespace ShufflerPro.Client.Controllers;
 
 public class SourceFolderController
 {
+    public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(List<string> folderPaths,
+        ICollection<SourceFolder> existingSourceFolders)
+    {
+        foreach (var folderPath in folderPaths)
+        {
+            var result = BuildSourceFolders(folderPath, existingSourceFolders);
+            if (result.Fail)
+                return result;
+        }
+
+        return existingSourceFolders.ToObservableCollection();
+    }
+
     public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
         ICollection<SourceFolder> existingSourceFolders)
     {
@@ -41,17 +54,17 @@ public class SourceFolderController
         {
             var index = levels.IndexOf(level);
             var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
-            
+
             if (level == root)
                 continue;
-            
+
             var items = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
             if (items is not null)
             {
                 rootFolder = items;
                 continue;
             }
-            
+
             var item = new SourceFolder(level, rootFolder, currentPath);
             var existingFolder = allFolders
                 .SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);

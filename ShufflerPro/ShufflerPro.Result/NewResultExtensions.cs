@@ -43,4 +43,25 @@ public static class NewResultExtensions
         item.IfSuccess(f);
         return item;
     }
+
+    public static async Task<NewResult<T1>> Bind<T, T1>(this Task<NewResult<T>> ma,
+        Func<T, NewResult<T1>> func)
+    {
+        try
+        {
+            var result = await ma;
+            return result.Bind(func);
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+    
+    public static async Task<NewResult<T1>> Map1<T, T1>(this Task<NewResult<T>> ma,
+        Func<T, T1> func)
+    {
+        var item = await ma;
+        return item.Map(func);
+    }
 }
