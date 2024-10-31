@@ -44,8 +44,7 @@ public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFact
 
     private static List<Song> LoadSongsInPath(string mediaLibraryPath)
     {
-        var songsPaths = Path.GetFullPath(mediaLibraryPath)
-            .GetFilesByExtension(Extensions.DefaultExtensions)
+        var songsPaths = Path.GetFullPath(mediaLibraryPath).GetFilesByExtension()
             .ToHashSet();
 
         return songsPaths.Select(SongFactory.Create).ToList();

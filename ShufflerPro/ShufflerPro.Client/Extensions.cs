@@ -6,11 +6,11 @@ public static class Extensions
 {
     public static List<string> DefaultExtensions => ["mp3", "m4a"];
 
-    public static List<string> GetFilesByExtension(this string path, List<string> extensions)
+    public static List<string> GetFilesByExtension(this string path)
     {
         return Directory
             .EnumerateFiles(path, "*.*", SearchOption.TopDirectoryOnly)
-            .Where(s => extensions.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
+            .Where(s => DefaultExtensions.Contains(Path.GetExtension(s).TrimStart('.').ToLowerInvariant()))
             .ToList();
     }
 
@@ -22,5 +22,10 @@ public static class Extensions
     public static ReadOnlyCollection<T> ToReadOnlyCollection<T>(this IEnumerable<T> items)
     {
         return new ReadOnlyCollection<T>(new List<T>(items));
+    }
+    
+    public static TimeSpan StripMilliseconds(this TimeSpan time)
+    {
+        return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds);
     }
 }
