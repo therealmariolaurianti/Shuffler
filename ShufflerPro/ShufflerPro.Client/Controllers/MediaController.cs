@@ -5,13 +5,10 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFactory)
+public class MediaController(
+    ArtistFactory artistFactory,
+    AlbumFactory albumFactory)
 {
-    public NewResult<Library?> LoadLibrary(Guid libraryGuid)
-    {
-        return new NewResult<Library?>((Library?)null);
-    }
-
     public NewResult<NewUnit> LoadFromFolderPath(ICollection<SourceFolder> sourceFolders,
         Library library)
     {

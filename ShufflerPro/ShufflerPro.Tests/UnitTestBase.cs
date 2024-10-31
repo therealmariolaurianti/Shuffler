@@ -1,5 +1,6 @@
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Factories;
+using ShufflerPro.Database;
 
 namespace ShufflerPro.Tests;
 

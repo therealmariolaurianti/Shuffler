@@ -16,6 +16,8 @@ namespace ShufflerPro.Upgraded.Screens.Shell;
 public class ShellViewModel : ViewModelBase
 {
     private readonly BinaryHelper _binaryHelper;
+
+    private readonly LibraryController _libraryController;
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
@@ -41,13 +43,14 @@ public class ShellViewModel : ViewModelBase
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        LibraryFactory libraryFactory, BinaryHelper binaryHelper)
+        LibraryFactory libraryFactory, BinaryHelper binaryHelper, LibraryController libraryController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
         _libraryFactory = libraryFactory;
         _binaryHelper = binaryHelper;
+        _libraryController = libraryController;
 
         TimeSpan = new TimeSpan();
 
@@ -292,17 +295,15 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(LibrarySummary));
     }
 
-    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+    protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "mTunes";
         SourceFolders = [];
         SourceTreeItems = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
-        
-        Load();
 
-        return base.OnInitializeAsync(cancellationToken);
+        await Load();
     }
 
     private void InitializeApplicationVolume()
@@ -313,11 +314,11 @@ public class ShellViewModel : ViewModelBase
         ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10);
     }
 
-    private void Load()
+    private async Task Load()
     {
         var libraryGuid = Guid.NewGuid();
 
-        _mediaController
+        await _libraryController
             .LoadLibrary(libraryGuid)
             .Do(library =>
             {
