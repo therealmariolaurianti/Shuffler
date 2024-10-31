@@ -6,7 +6,6 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Enums;
-using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
@@ -26,7 +25,7 @@ public class ShellViewModel : ViewModelBase
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
-    private Library _library;
+    private Library? _library;
     private LibrarySearchType _librarySearchType;
     private string _searchText;
     private Album? _selectedAlbum;
@@ -85,7 +84,7 @@ public class ShellViewModel : ViewModelBase
         SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
         AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
 
-    public Library Library
+    public Library? Library
     {
         get => _library;
         private set
@@ -97,11 +96,12 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public IReadOnlyCollection<Artist> Artists => Library.Artists.OrderBy(a => a.Name).ToReadOnlyCollection();
+    public IReadOnlyCollection<Artist> Artists => Library?.Artists.OrderBy(a => a.Name).ToReadOnlyCollection()
+                                                  ?? new ReadOnlyCollection<Artist>(new List<Artist>());
 
-    private IReadOnlyCollection<Song> AllSongs => Library.Songs;
+    private IReadOnlyCollection<Song> AllSongs => Library?.Songs ?? new ReadOnlyCollection<Song>(new List<Song>());
 
-    private IReadOnlyCollection<Album> AllAlbums => Library.Albums;
+    private IReadOnlyCollection<Album> AllAlbums => Library?.Albums ?? new ReadOnlyCollection<Album>(new List<Album>());
 
     public Artist? SelectedArtist
     {
@@ -140,7 +140,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string LibrarySummary => Library.Summary;
+    public string LibrarySummary => Library?.Summary ?? string.Empty;
 
     public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
 
@@ -445,7 +445,7 @@ public class ShellViewModel : ViewModelBase
             await Task.Run(() =>
             {
                 _sourceFolderController.BuildSourceFolders(folderPath, SourceFolders)
-                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library))
+                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library!))
                     .Do(sourceFolders => SourceFolders = sourceFolders);
             }).ConfigureAwait(true);
 

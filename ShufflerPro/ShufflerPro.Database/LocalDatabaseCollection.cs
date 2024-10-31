@@ -1,61 +1,45 @@
-using LiteDB;
-using ShufflerPro.Result;
+using LiteDB.Async;
 
 namespace ShufflerPro.Database;
 
-public class LocalDatabaseCollection<T> : ILocalDatabaseCollection<T>
+public class LocalDatabaseCollection<T>
 {
-    private readonly ILiteCollection<T> _collection;
+    private readonly ILiteCollectionAsync<T> _collection;
 
-    public LocalDatabaseCollection(ILiteCollection<T> collection)
+    public LocalDatabaseCollection(ILiteCollectionAsync<T> collection)
     {
         _collection = collection;
     }
 
-    public T FindById(LocalDatabaseKey id)
+    public async Task<T> FindById(LocalDatabaseKey id)
     {
         var bsonValue = id.AsBsonValue();
-        return _collection.FindById(bsonValue);
+        return await _collection.FindByIdAsync(bsonValue);
     }
 
-    public NewResult<T> TryFindById(LocalDatabaseKey id)
+    public async Task<LocalDatabaseKey> Insert(T item)
     {
-        return NewResultExtensions.Try(() =>
-        {
-            var bsonValue = id.AsBsonValue();
-            return _collection.FindById(bsonValue);
-        });
-    }
-
-
-    public LocalDatabaseKey Insert(T item)
-    {
-        var value = _collection.Insert(item);
+        var value = await _collection.InsertAsync(item);
         return new LocalDatabaseKey(value);
     }
 
-    public bool Upsert(T item)
+    public async Task<bool> Upsert(T item)
     {
-        return _collection.Upsert(item);
+        return await _collection.UpsertAsync(item);
     }
 
-    public bool Update(T item)
+    public async Task<bool> Update(T item)
     {
-        return _collection.Update(item);
+        return await _collection.UpdateAsync(item);
     }
 
-    public IEnumerable<T> FindAll()
+    public async Task<IEnumerable<T>> FindAll()
     {
-        return _collection.FindAll();
+        return await _collection.FindAllAsync();
     }
 
-    public bool Upsert(LocalDatabaseKey key, T item)
+    public async Task<bool> Upsert(LocalDatabaseKey key, T item)
     {
-        return _collection.Upsert(key.AsBsonValue(), item);
-    }
-
-    public LocalDatabaseQuery<T> Query()
-    {
-        return new LocalDatabaseQuery<T>(_collection.Query());
+        return await _collection.UpsertAsync(key.AsBsonValue(), item);
     }
 }

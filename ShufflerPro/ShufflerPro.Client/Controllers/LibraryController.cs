@@ -44,8 +44,9 @@ public class LibraryController
     private static async Task<NewResult<List<string>>> LoadSourcesFromDatabase(LocalDatabaseConnection connection)
     {
         var sources = connection.GetCollection<Source>();
-        var sourcePaths = sources.FindAll().Select(s => s.Path).ToList();
-        return sourcePaths;
+        var sourcePaths = await sources.FindAll().ConfigureAwait(true);
+        
+        return sourcePaths.Select(s => s.Path).ToList();
     }
 
     public static string FindRoot()

@@ -1,4 +1,4 @@
-﻿using LiteDB;
+﻿using LiteDB.Async;
 
 namespace ShufflerPro.Database;
 
@@ -9,12 +9,12 @@ public class LocalDatabase
         return new LocalDatabaseConnection(CreateDatabase(fileName));
     }
 
-    private LiteDatabase CreateDatabase(string fileName)
+    private LiteDatabaseAsync CreateDatabase(string fileName)
     {
         var directory = Path.GetDirectoryName(fileName);
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-        var liteDatabase = new LiteDatabase(fileName);
+        var liteDatabase = new LiteDatabaseAsync(fileName);
         return liteDatabase;
     }
 }

@@ -1,12 +1,12 @@
-using LiteDB;
+using LiteDB.Async;
 
 namespace ShufflerPro.Database;
 
 public class LocalDatabaseConnection : IDisposable
 {
-    private readonly LiteDatabase _liteDatabase;
+    private readonly LiteDatabaseAsync _liteDatabase;
 
-    public LocalDatabaseConnection(LiteDatabase liteDatabase)
+    public LocalDatabaseConnection(LiteDatabaseAsync liteDatabase)
     {
         _liteDatabase = liteDatabase;
     }
@@ -16,9 +16,10 @@ public class LocalDatabaseConnection : IDisposable
         _liteDatabase?.Dispose();
     }
 
-    public ILocalDatabaseCollection<T> GetCollection<T>(string? collectionName = null)
+    public LocalDatabaseCollection<T> GetCollection<T>(string? collectionName = null)
     {
         collectionName ??= typeof(T).Name;
-        return new LocalDatabaseCollection<T>(_liteDatabase.GetCollection<T>(collectionName));
+        var collection = _liteDatabase.GetCollection<T>(collectionName);
+        return new LocalDatabaseCollection<T>(collection);
     }
 }

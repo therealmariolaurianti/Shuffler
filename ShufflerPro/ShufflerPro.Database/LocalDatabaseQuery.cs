@@ -1,24 +1,25 @@
 using System.Linq.Expressions;
-using LiteDB;
+using LiteDB.Async;
 
 namespace ShufflerPro.Database;
 
 public class LocalDatabaseQuery<T>
 {
-    private readonly ILiteQueryable<T> _query;
+    private readonly ILiteQueryableAsync<T> _query;
 
-    public LocalDatabaseQuery(ILiteQueryable<T> query)
+    public LocalDatabaseQuery(ILiteQueryableAsync<T> query)
     {
         _query = query;
     }
 
     public LocalDatabaseQuery<T> Where(Expression<Func<T, bool>> func)
     {
-        return new LocalDatabaseQuery<T>(_query.Where(func));
+        var liteQueryableAsync = _query.Where(func);
+        return new LocalDatabaseQuery<T>(liteQueryableAsync);
     }
 
-    public int Count()
+    public async Task<int> Count()
     {
-        return _query.Count();
+        return await _query.CountAsync();
     }
 }
