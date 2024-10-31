@@ -43,7 +43,7 @@ public class AppBootstrapper : BootstrapperBase
         _kernel.Inject(instance);
     }
 
-    protected override void OnStartup(object sender, StartupEventArgs e)
+    protected override async void OnStartup(object sender, StartupEventArgs e)
     {
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
@@ -54,6 +54,6 @@ public class AppBootstrapper : BootstrapperBase
             .With.AutoMapper()
             .Start();
 
-        DisplayRootViewForAsync<ShellViewModel>();
+        await DisplayRootViewForAsync<ShellViewModel>();
     }
 }

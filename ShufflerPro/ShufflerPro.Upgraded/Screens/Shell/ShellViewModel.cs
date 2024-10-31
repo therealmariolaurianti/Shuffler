@@ -9,6 +9,7 @@ using ShufflerPro.Client.Enums;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
+using ShufflerPro.Upgraded.Framework.WPF;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
@@ -294,11 +295,12 @@ public class ShellViewModel : ViewModelBase
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "mTunes";
-        Load();
         SourceFolders = [];
         SourceTreeItems = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
+        
+        Load();
 
         return base.OnInitializeAsync(cancellationToken);
     }
