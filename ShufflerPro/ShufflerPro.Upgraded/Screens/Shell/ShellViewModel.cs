@@ -509,6 +509,8 @@ public class ShellViewModel : ViewModelBase
                 parent.Items.Remove(_selectedTreeViewItem);
                 _library!.RemoveSourceFolder(_selectedTreeViewItem.SourceFolder);
             }
+            else if (_selectedTreeViewItem.SourceFolder.IsRoot) 
+                SourceTreeItems.Remove(_selectedTreeViewItem);
 
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
