@@ -4,6 +4,8 @@ using Bootstrap.Extensions.StartupTasks;
 using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
+using ShufflerPro.Database;
+using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Upgraded.Screens.Shell;
 
 namespace ShufflerPro.Upgraded.Bootstrapper;
@@ -49,6 +51,7 @@ public class AppBootstrapper : BootstrapperBase
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
 
         Bootstrap.Bootstrapper
+            .Including.ShufflerProDatabase()
             .With.Ninject().WithContainer(_kernel)
             .With.StartupTasks()
             .With.AutoMapper()
