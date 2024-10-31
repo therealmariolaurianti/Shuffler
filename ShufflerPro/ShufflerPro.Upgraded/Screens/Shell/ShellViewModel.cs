@@ -5,6 +5,7 @@ using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Enums;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
@@ -24,6 +25,8 @@ public class ShellViewModel : ViewModelBase
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
     private Library _library;
+    private LibrarySearchType _librarySearchType;
+    private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
@@ -219,6 +222,33 @@ public class ShellViewModel : ViewModelBase
         .ThenBy(s => s.Album)
         .ThenBy(s => s.Track).ToList();
 
+    public string SearchText
+    {
+        get => _searchText;
+        set
+        {
+            if (value == _searchText) return;
+            _searchText = value;
+            NotifyOfPropertyChange();
+            OnSearchTextChanged();
+        }
+    }
+
+    public LibrarySearchType LibrarySearchType
+    {
+        get => _librarySearchType;
+        set
+        {
+            if (value == _librarySearchType) return;
+            _librarySearchType = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    private void OnSearchTextChanged()
+    {
+    }
+
     private void WireTimer()
     {
         _timer = new CountDownTimer();
@@ -253,6 +283,7 @@ public class ShellViewModel : ViewModelBase
         Load();
         SourceFolders = [];
         SourceTreeItems = [];
+        LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
 
         return base.OnInitializeAsync(cancellationToken);
@@ -427,7 +458,7 @@ public class ShellViewModel : ViewModelBase
     {
         if (CurrentSong is null)
             return;
-        
+
         _playerController.Previous(CurrentSong, AllSongsOrdered, ElapsedRunningTime);
     }
 
