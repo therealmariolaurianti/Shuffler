@@ -37,15 +37,20 @@ public class SourceFolderController
 
     public NewResult<NewUnit> Remove(Library library, SourceFolder sourceFolder)
     {
+        return RemoveFolderFromSourceCollection(library, sourceFolder)
+            .Bind(_ => RemoveSongsFromLibrary(library, sourceFolder))
+            .Bind(_ => RemoveFolderFromDatabase(library, sourceFolder));
+    }
+
+    private NewResult<NewUnit> RemoveFolderFromDatabase(Library library, SourceFolder sourceFolder)
+    {
+        return NewUnit.Default;
+    }
+
+    private NewResult<NewUnit> RemoveSongsFromLibrary(Library library, SourceFolder sourceFolder)
+    {
         return NewResultExtensions.Try(() =>
         {
-            //remove from source folder collection
-            if (sourceFolder.Parent != null)
-                sourceFolder.Parent.Items.Remove(sourceFolder);
-            else
-                library.SourceFolders.Remove(sourceFolder);
-
-            //remove artists/albums/songs
             var songs = library.Songs.Where(s => s.Path.Contains(sourceFolder.FullPath));
             foreach (var song in songs)
                 if (song.CreatedAlbum?.Songs.Count - 1 == 0)
@@ -59,7 +64,18 @@ public class SourceFolderController
                     song.CreatedAlbum?.Songs.Remove(song);
                 }
 
-            //remove from database
+            return NewUnit.Default;
+        });
+    }
+
+    private NewResult<NewUnit> RemoveFolderFromSourceCollection(Library library, SourceFolder sourceFolder)
+    {
+        return NewResultExtensions.Try(() =>
+        {
+            if (sourceFolder.Parent != null)
+                sourceFolder.Parent.Items.Remove(sourceFolder);
+            else
+                library.SourceFolders.Remove(sourceFolder);
 
             return NewUnit.Default;
         });

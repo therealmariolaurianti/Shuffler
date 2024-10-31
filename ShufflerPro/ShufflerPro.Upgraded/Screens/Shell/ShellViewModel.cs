@@ -297,6 +297,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(AllSongs));
         NotifyOfPropertyChange(nameof(AllAlbums));
         NotifyOfPropertyChange(nameof(LibrarySummary));
+        NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
     protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
@@ -506,7 +507,6 @@ public class ShellViewModel : ViewModelBase
         if (messageResult == MessageBoxResult.Yes)
         {
             //TODO testing
-            return;
             _sourceFolderController
                 .Remove(Library!, _selectedTreeViewItem.SourceFolder)
                 .Do(_ =>
@@ -516,7 +516,7 @@ public class ShellViewModel : ViewModelBase
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                         SourceTreeItems.Remove(_selectedTreeViewItem);
                     
-                    NotifyOfPropertyChange(nameof(SourceFolders));
+                    NotifyCollectionsChanged();
                 });
         }
     }

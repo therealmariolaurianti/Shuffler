@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using ShufflerPro.Client;
 using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Tests;
@@ -179,10 +180,45 @@ public class SourceTreeTests : UnitTestBase
     }
 
     [TestCase]
-    public void Remove_Source_Folder_Remove_Root()
+    public void Remove_Source_Folder_Remove_Root_Single_Album()
     {
         var mediaController = CreateMediaController();
 
+        var sourceFolders = new List<SourceFolder>();
+
+        var root = new SourceFolder(@"C:", "C:", true, null);
+        sourceFolders.Add(root);
+        var level1 = new SourceFolder(@"UnitTest", @"C:\UnitTest", false, root);
+        root.Items.Add(level1);
+        var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
+        level1.Items.Add(level2);
+
+        var library = new Library();
+
+        var song = new Song(null, "C:\\UnitTest\\Folder_1");
+        var album = new Album("Artist_1", "Album_1", [song]);
+        var artist = new Artist("Artist_1", [album]);
+
+        song.CreatedAlbum = album;
+        album.CreatedArtist = artist;
+
+        library.AddArtists(new[] { artist });
+        library.SourceFolders = sourceFolders.ToObservableCollection();
+        
+        var sourceFolderController = CreateSourceFolderController();
+        var removeFolder = sourceFolders.First();
+
+        sourceFolderController.Remove(library, removeFolder);
+
+        library.SourceFolders.Count.Should().Be(0);
+        library.Artists.Count.Should().Be(0);
+        library.Albums.Count.Should().Be(0);
+        library.Songs.Count.Should().Be(0);
+    }
+
+    [TestCase]
+    public void Remove_Source_Folder_Remove_Child_Single_Album()
+    {
         var sourceFolders = new List<SourceFolder>();
 
         var root = new SourceFolder(@"C:", "C:", true, null);
@@ -197,35 +233,33 @@ public class SourceTreeTests : UnitTestBase
         var library = new Library();
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
-        var album = new Album("Artist_1", "Album_1", new List<Song> { song });
-        var artist = new Artist("Artist_1", new List<Album> { album });
+        var song2 = new Song(null, "C:\\UnitTest");
+        
+        var album = new Album("Artist_1", "Album_1", [song, song2]);
+        var artist = new Artist("Artist_1", [album]);
 
         song.CreatedAlbum = album;
+        song2.CreatedAlbum = album;
         album.CreatedArtist = artist;
 
         library.AddArtists(new[] { artist });
 
-        mediaController
-            .LoadFromFolderPath(sourceFolders, library)
-            .Do(_ =>
-            {
-                var sourceFolderController = CreateSourceFolderController();
-                var removeFolder = sourceFolders.First();
+        library.SourceFolders = sourceFolders.ToObservableCollection();
 
-                sourceFolderController.Remove(library, removeFolder);
+        var sourceFolderController = CreateSourceFolderController();
+        var removeFolder = sourceFolders.First().Items.First();
 
-                library.SourceFolders.Count.Should().Be(0);
-                library.Artists.Count.Should().Be(0);
-                library.Albums.Count.Should().Be(0);
-                library.Songs.Count.Should().Be(0);
-            });
+        sourceFolderController.Remove(library, removeFolder);
+
+        library.SourceFolders.Count.Should().Be(1);
+        library.Artists.Count.Should().Be(0);
+        library.Albums.Count.Should().Be(0);
+        library.Songs.Count.Should().Be(0);
     }
-
+    
     [TestCase]
-    public void Remove_Source_Folder_Remove_Child()
+    public void Remove_Source_Folder_Remove_Child_Multiple_Album()
     {
-        var mediaController = CreateMediaController();
-
         var sourceFolders = new List<SourceFolder>();
 
         var root = new SourceFolder(@"C:", "C:", true, null);
@@ -239,16 +273,34 @@ public class SourceTreeTests : UnitTestBase
 
         var library = new Library();
 
-        mediaController
-            .LoadFromFolderPath(sourceFolders, library)
-            .Do(_ =>
-            {
-                var sourceFolderController = CreateSourceFolderController();
-                var removeFolder = sourceFolders.First();
+        var song = new Song(null, "C:\\UnitTest\\Folder_1");
+        var song2 = new Song(null, "C:\\UnitTest");
+        var song3 = new Song(null, "D:\\UnitTest");
+        
+        var album = new Album("Artist_1", "Album_1", [song, song2]);
+        var album2 = new Album("Artist_1", "Album_2", [song3]);
+        
+        var artist = new Artist("Artist_1", [album, album2]);
+        
+        song.CreatedAlbum = album;
+        song2.CreatedAlbum = album;
+        song3.CreatedAlbum = album2;
+        
+        album.CreatedArtist = artist;
+        album2.CreatedArtist = artist;
 
-                sourceFolderController.Remove(library, removeFolder);
+        library.AddArtists(new[] { artist });
 
-                Assert.Fail();
-            });
+        library.SourceFolders = sourceFolders.ToObservableCollection();
+
+        var sourceFolderController = CreateSourceFolderController();
+        var removeFolder = sourceFolders.First().Items.First();
+
+        sourceFolderController.Remove(library, removeFolder);
+
+        library.SourceFolders.Count.Should().Be(1);
+        library.Artists.Count.Should().Be(1);
+        library.Albums.Count.Should().Be(1);
+        library.Songs.Count.Should().Be(1);
     }
 }
