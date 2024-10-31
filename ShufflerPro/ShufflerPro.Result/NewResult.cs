@@ -72,9 +72,17 @@ public class NewResult<T>
     {
         return !Success ? NewResultExtensions.CreateFail<T1>(FirstException) : func(Item);
     }
-    
+
     public async Task<NewResult<T1>> Bind<T1>(Func<T, Task<NewResult<T1>>> func)
     {
         return !Success ? NewResultExtensions.CreateFail<T1>(FirstException) : await func(Item);
     }
+    
+    public NewResult<T> IfFail(Action<Exception> func)
+    {
+        if (!Success)
+            func(FirstException);
+        return this;
+    }
+
 }

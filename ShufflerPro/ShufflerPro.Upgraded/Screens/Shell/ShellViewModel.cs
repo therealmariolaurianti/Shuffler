@@ -505,19 +505,18 @@ public class ShellViewModel : ViewModelBase
             "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         if (messageResult == MessageBoxResult.Yes)
-        {
-            _sourceFolderController
+            RunAsync(async () => await _sourceFolderController
                 .Remove(Library!, _selectedTreeViewItem.SourceFolder)
+                .IfFail(_ => MessageBox.Show(_.Message))
                 .Do(_ =>
                 {
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
                         parent.Items.Remove(_selectedTreeViewItem);
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                         SourceTreeItems.Remove(_selectedTreeViewItem);
-                    
+
                     NotifyCollectionsChanged();
-                });
-        }
+                }));
     }
 
     private static SourceTreeViewItem BuildTreeGridItem(SourceFolder sourceFolder, ContextMenu contextMenu)

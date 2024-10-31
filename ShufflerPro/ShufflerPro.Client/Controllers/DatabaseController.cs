@@ -38,4 +38,17 @@ public class DatabaseController
 
         return NewUnit.Default;
     }
+
+    public async Task<NewResult<NewUnit>> DeleteSource(SourceFolder sourceFolder)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var sourceCollection = connection.GetCollection<Source>();
+            var result = await sourceCollection.Delete(sourceFolder.FullPath);
+            if (result == false)
+                return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
+        }
+
+        return NewUnit.Default;
+    }
 }

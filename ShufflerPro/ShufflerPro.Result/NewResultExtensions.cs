@@ -78,4 +78,10 @@ public static class NewResultExtensions
         var item = await ma;
         return item.Map(func);
     }
+    
+    public static async Task<NewResult<T>> IfFail<T>(this Task<NewResult<T>> ma, Action<Exception> f)
+    {
+        var item = await ma;
+        return item.IfFail(ex => f(ex));
+    }
 }

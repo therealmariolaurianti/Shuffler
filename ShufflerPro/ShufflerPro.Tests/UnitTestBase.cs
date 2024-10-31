@@ -8,7 +8,7 @@ public class UnitTestBase
 {
     public SourceFolderController CreateSourceFolderController()
     {
-        return new SourceFolderController();
+        return new SourceFolderController(null);
     }
 
 

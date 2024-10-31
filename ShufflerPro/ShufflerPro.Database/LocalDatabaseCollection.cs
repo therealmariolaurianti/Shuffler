@@ -23,6 +23,11 @@ public class LocalDatabaseCollection<T>
         return new LocalDatabaseKey(value);
     }
 
+    public async Task<bool> Delete(string item)
+    {
+        return await _collection.DeleteAsync(item);
+    }
+
     public async Task<bool> Upsert(T item)
     {
         return await _collection.UpsertAsync(item);

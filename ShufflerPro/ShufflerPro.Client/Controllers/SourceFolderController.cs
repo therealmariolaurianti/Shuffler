@@ -6,6 +6,13 @@ namespace ShufflerPro.Client.Controllers;
 
 public class SourceFolderController
 {
+    private readonly DatabaseController _databaseController;
+
+    public SourceFolderController(DatabaseController databaseController)
+    {
+        _databaseController = databaseController;
+    }
+
     public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(List<string> folderPaths,
         ICollection<SourceFolder> existingSourceFolders)
     {
@@ -35,16 +42,16 @@ public class SourceFolderController
             });
     }
 
-    public NewResult<NewUnit> Remove(Library library, SourceFolder sourceFolder)
+    public async Task<NewResult<NewUnit>> Remove(Library library, SourceFolder sourceFolder)
     {
-        return RemoveFolderFromSourceCollection(library, sourceFolder)
+        return await RemoveFolderFromSourceCollection(library, sourceFolder)
             .Bind(_ => RemoveSongsFromLibrary(library, sourceFolder))
-            .Bind(_ => RemoveFolderFromDatabase(library, sourceFolder));
+            .Bind(async _ => await RemoveFolderFromDatabase(sourceFolder));
     }
 
-    private NewResult<NewUnit> RemoveFolderFromDatabase(Library library, SourceFolder sourceFolder)
+    private async Task<NewResult<NewUnit>> RemoveFolderFromDatabase(SourceFolder sourceFolder)
     {
-        return NewUnit.Default;
+        return await _databaseController.DeleteSource(sourceFolder);
     }
 
     private NewResult<NewUnit> RemoveSongsFromLibrary(Library library, SourceFolder sourceFolder)
