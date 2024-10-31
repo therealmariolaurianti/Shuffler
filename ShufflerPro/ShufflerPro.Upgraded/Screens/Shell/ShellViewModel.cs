@@ -239,7 +239,6 @@ public class ShellViewModel : ViewModelBase
     {
         NotifyOfPropertyChange(nameof(Library));
         NotifyOfPropertyChange(nameof(SelectedArtist));
-        NotifyOfPropertyChange(nameof(LibrarySummary));
         NotifyOfPropertyChange(nameof(Artists));
         NotifyOfPropertyChange(nameof(Albums));
         NotifyOfPropertyChange(nameof(Songs));

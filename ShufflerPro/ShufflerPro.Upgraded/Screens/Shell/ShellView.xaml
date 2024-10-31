@@ -156,13 +156,13 @@
                             VerticalAlignment="Center">
                             <TextBlock
                                 TextAlignment="Center"
-                                Text="{Binding CurrentSong.Title}" />
+                                Text="{Binding CurrentSong.Title, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
-                                Text="{Binding CurrentSong.Album}" />
+                                Text="{Binding CurrentSong.Album, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
-                                Text="{Binding CurrentSong.Artist}" />
+                                Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
                             <Grid
                                 Margin="20,5">
                                 <Grid.ColumnDefinitions>
