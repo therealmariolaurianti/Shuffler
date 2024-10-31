@@ -36,7 +36,7 @@ public class ShellViewModel : ViewModelBase
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
-    private SourceFolder? _selectedTreeViewItem;
+    private SourceTreeViewItem? _selectedTreeViewItem;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
@@ -469,13 +469,13 @@ public class ShellViewModel : ViewModelBase
         if (_selectedTreeViewItem is null)
             return;
 
-        Process.Start("explorer.exe", _selectedTreeViewItem.FullPath);
+        Process.Start("explorer.exe", _selectedTreeViewItem.SourceFolder.FullPath);
     }
 
     public void SelectedTreeViewItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
         if (e.NewValue is SourceTreeViewItem treeViewItem)
-            _selectedTreeViewItem = treeViewItem.SourceFolder;
+            _selectedTreeViewItem = treeViewItem;
     }
 
     private void ProcessSourceFolders()
@@ -499,12 +499,18 @@ public class ShellViewModel : ViewModelBase
         if (_selectedTreeViewItem is null)
             return;
 
-        var messageResult = MessageBox.Show($"Are you sure you want to remove '{_selectedTreeViewItem.Header}'?",
+        var messageResult = MessageBox.Show(
+            $"Are you sure you want to remove '{_selectedTreeViewItem.Header}'?",
             "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+
         if (messageResult == MessageBoxResult.Yes)
-        {
-            
-        }
+            if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
+            {
+                parent.Items.Remove(_selectedTreeViewItem);
+                _library!.RemoveSourceFolder(_selectedTreeViewItem.SourceFolder);
+            }
+
+        NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
     private static SourceTreeViewItem BuildTreeGridItem(SourceFolder sourceFolder, ContextMenu contextMenu)
@@ -537,9 +543,4 @@ public class ShellViewModel : ViewModelBase
 
         _playerController.Skip(CurrentSong, AllSongsOrdered);
     }
-}
-
-public class SourceTreeViewItem : TreeViewItem
-{
-    public SourceFolder SourceFolder { get; set; }
 }

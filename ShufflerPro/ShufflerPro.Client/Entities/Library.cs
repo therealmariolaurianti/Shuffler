@@ -36,4 +36,11 @@ public class Library
                 Artists.Add(artist);
         }
     }
+
+    public void RemoveSourceFolder(SourceFolder sourceFolder)
+    {
+        //remove from source folder collection
+        //remove arists/albums/songs
+        //remove from database
+    }
 }
