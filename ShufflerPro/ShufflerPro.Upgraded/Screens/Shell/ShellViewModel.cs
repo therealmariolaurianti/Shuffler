@@ -439,15 +439,15 @@ public class ShellViewModel : ViewModelBase
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
                 RunAsync(async () => await BuildSourceFolders(folderPath)
                     .Do(_ => ProcessSourceFolders())
-                    .Bind(async _ => await Save(folderPath)));
+                    .Bind(async _ => await InsertSource(folderPath)));
             else
                 IsLoadingSourceFolders = false;
         }
     }
 
-    private async Task<NewResult<NewUnit>> Save(string folderPath)
+    private async Task<NewResult<NewUnit>> InsertSource(string folderPath)
     {
-        return await _libraryController.SaveFolderPath(folderPath);
+        return await _libraryController.InsertSource(folderPath);
     }
 
     private async Task<NewResult<NewUnit>> BuildSourceFolders(string folderPath)
@@ -506,7 +506,6 @@ public class ShellViewModel : ViewModelBase
 
         if (messageResult == MessageBoxResult.Yes)
         {
-            //TODO testing
             _sourceFolderController
                 .Remove(Library!, _selectedTreeViewItem.SourceFolder)
                 .Do(_ =>
