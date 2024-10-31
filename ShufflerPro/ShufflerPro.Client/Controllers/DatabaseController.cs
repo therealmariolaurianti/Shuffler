@@ -1,4 +1,6 @@
-﻿using ShufflerPro.Client.Entities;
+﻿using System.Linq.Expressions;
+using LiteDB;
+using ShufflerPro.Client.Entities;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Interfaces;
 using ShufflerPro.Result;
@@ -44,8 +46,10 @@ public class DatabaseController
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var sourceCollection = connection.GetCollection<Source>();
-            var result = await sourceCollection.Delete(sourceFolder.FullPath);
-            if (result == false)
+            Expression<Func<Source,bool>> expression = s => s.FolderPath == sourceFolder.FullPath;
+            
+            var result = await sourceCollection.Delete(expression);
+            if (result == 0)
                 return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
         }
 

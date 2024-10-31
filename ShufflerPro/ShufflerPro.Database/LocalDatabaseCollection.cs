@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using LiteDB;
 using LiteDB.Async;
 
 namespace ShufflerPro.Database;
@@ -23,9 +25,9 @@ public class LocalDatabaseCollection<T>
         return new LocalDatabaseKey(value);
     }
 
-    public async Task<bool> Delete(string item)
+    public async Task<int> Delete(Expression<Func<T, bool>> predicate)
     {
-        return await _collection.DeleteAsync(item);
+        return await _collection.DeleteManyAsync(predicate);
     }
 
     public async Task<bool> Upsert(T item)
