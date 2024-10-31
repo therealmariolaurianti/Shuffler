@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media.Imaging;
@@ -9,12 +11,15 @@ using ShufflerPro.Client.Enums;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : ViewModelBase
 {
     private readonly BinaryHelper _binaryHelper;
+
+    private readonly ContextMenuBuilder _contextMenuBuilder;
 
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
@@ -31,9 +36,9 @@ public class ShellViewModel : ViewModelBase
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
+    private SourceFolder? _selectedTreeViewItem;
     private ObservableCollection<Song>? _songs;
-    private ObservableCollection<SourceFolder> _sourceFolders;
-    private ObservableCollection<TreeViewItem> _sourceTreeItems;
+    private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
 
@@ -41,13 +46,14 @@ public class ShellViewModel : ViewModelBase
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        BinaryHelper binaryHelper, LibraryController libraryController)
+        BinaryHelper binaryHelper, LibraryController libraryController, ContextMenuBuilder contextMenuBuilder)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
         _binaryHelper = binaryHelper;
         _libraryController = libraryController;
+        _contextMenuBuilder = contextMenuBuilder;
 
         TimeSpan = new TimeSpan();
 
@@ -170,7 +176,7 @@ public class ShellViewModel : ViewModelBase
 
     private TimeSpan TimeSpan { get; }
 
-    public ObservableCollection<TreeViewItem> SourceTreeItems
+    public ObservableCollection<SourceTreeViewItem> SourceTreeItems
     {
         get => _sourceTreeItems;
         set
@@ -458,11 +464,28 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
+    public void OpenBrowserToFolderPath()
+    {
+        if (_selectedTreeViewItem is null)
+            return;
+
+        Process.Start("explorer.exe", _selectedTreeViewItem.FullPath);
+    }
+
+    public void SelectedTreeViewItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+    {
+        if (e.NewValue is SourceTreeViewItem treeViewItem)
+            _selectedTreeViewItem = treeViewItem.SourceFolder;
+    }
+
     private void ProcessSourceFolders()
     {
         SourceTreeItems.Clear();
+
+        var buildContextMenu = _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath,
+            RemoveSourceFolder);
         foreach (var sourceFolder in SourceFolders)
-            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder));
+            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
         FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
 
@@ -471,15 +494,30 @@ public class ShellViewModel : ViewModelBase
         IsLoadingSourceFolders = false;
     }
 
-    private static TreeViewItem BuildTreeGridItem(SourceFolder sourceFolder)
+    private void RemoveSourceFolder()
     {
-        var treeItem = new TreeViewItem
+        if (_selectedTreeViewItem is null)
+            return;
+
+        var messageResult = MessageBox.Show($"Are you sure you want to remove '{_selectedTreeViewItem.Header}'?",
+            "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (messageResult == MessageBoxResult.Yes)
         {
-            Header = sourceFolder.Header
+            
+        }
+    }
+
+    private static SourceTreeViewItem BuildTreeGridItem(SourceFolder sourceFolder, ContextMenu contextMenu)
+    {
+        var treeItem = new SourceTreeViewItem
+        {
+            Header = sourceFolder.Header,
+            ContextMenu = contextMenu,
+            SourceFolder = sourceFolder
         };
 
         foreach (var sourceFolderItem in sourceFolder.Items)
-            treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem));
+            treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem, contextMenu));
 
         return treeItem;
     }
@@ -499,4 +537,9 @@ public class ShellViewModel : ViewModelBase
 
         _playerController.Skip(CurrentSong, AllSongsOrdered);
     }
+}
+
+public class SourceTreeViewItem : TreeViewItem
+{
+    public SourceFolder SourceFolder { get; set; }
 }
