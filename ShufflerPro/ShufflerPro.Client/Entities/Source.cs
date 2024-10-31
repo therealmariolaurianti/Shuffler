@@ -1,6 +1,6 @@
 ﻿namespace ShufflerPro.Client.Entities;
 
-public class Source
+public class Source(string folderPath)
 {
-    public string Path { get; set; }
+    public string FolderPath { get; } = folderPath;
 }

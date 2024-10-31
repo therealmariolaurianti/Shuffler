@@ -58,6 +58,20 @@ public static class NewResultExtensions
         }
     }
     
+    public static async Task<NewResult<T1>> Bind<T, T1>(this Task<NewResult<T>> ma,
+        Func<T, Task<NewResult<T1>>> func)
+    {
+        try
+        {
+            var result = await ma;
+            return await result.Bind(func);
+        }
+        catch (Exception ex)
+        {
+            return ex;
+        }
+    }
+    
     public static async Task<NewResult<T1>> Map1<T, T1>(this Task<NewResult<T>> ma,
         Func<T, T1> func)
     {

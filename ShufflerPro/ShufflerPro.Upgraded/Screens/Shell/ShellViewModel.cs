@@ -183,11 +183,11 @@ public class ShellViewModel : ViewModelBase
 
     public ObservableCollection<SourceFolder> SourceFolders
     {
-        get => _sourceFolders;
+        get => Library?.SourceFolders ?? new ObservableCollection<SourceFolder>();
         set
         {
-            if (Equals(value, _sourceFolders)) return;
-            _sourceFolders = value;
+            if (Equals(value, Library!.SourceFolders)) return;
+            Library!.SourceFolders = value;
             NotifyOfPropertyChange();
         }
     }
@@ -296,7 +296,6 @@ public class ShellViewModel : ViewModelBase
     protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "mTunes";
-        SourceFolders = [];
         SourceTreeItems = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
@@ -314,14 +313,14 @@ public class ShellViewModel : ViewModelBase
 
     private async Task Load()
     {
-        await _libraryController
-            .LoadLibrary()
+        await _libraryController.Initialize()
             .Do(library =>
             {
                 Library = library;
                 ElapsedRunningTime = 0;
                 ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
-            });
+            })
+            .Do(_ => ProcessSourceFolders());
     }
 
     public void PlayArtist()
@@ -432,10 +431,16 @@ public class ShellViewModel : ViewModelBase
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
                 RunAsync(async () => await BuildSourceFolders(folderPath)
-                    .Do(_ => ProcessSourceFolders()));
+                    .Do(_ => ProcessSourceFolders())
+                    .Bind(async _ => await Save(folderPath)));
             else
                 IsLoadingSourceFolders = false;
         }
+    }
+
+    private async Task<NewResult<NewUnit>> Save(string folderPath)
+    {
+        return await _libraryController.SaveFolderPath(folderPath);
     }
 
     private async Task<NewResult<NewUnit>> BuildSourceFolders(string folderPath)

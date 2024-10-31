@@ -4,6 +4,7 @@ namespace ShufflerPro.Client.Entities;
 
 public class Library
 {
+    public ObservableCollection<SourceFolder> SourceFolders { get; set; } = new();
     public ObservableCollection<Artist> Artists { get; } = new();
     public IReadOnlyCollection<Song> Songs => Artists.SelectMany(al => al.Albums.SelectMany(s => s.Songs)).ToList();
     public IReadOnlyCollection<Album> Albums => Artists.SelectMany(al => al.Albums).ToList();
