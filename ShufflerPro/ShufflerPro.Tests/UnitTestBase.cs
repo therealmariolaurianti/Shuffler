@@ -6,7 +6,7 @@ namespace ShufflerPro.Tests;
 
 public class UnitTestBase
 {
-    public SourceFolderController CreateFolderBrowserController()
+    public SourceFolderController CreateSourceFolderController()
     {
         return new SourceFolderController();
     }

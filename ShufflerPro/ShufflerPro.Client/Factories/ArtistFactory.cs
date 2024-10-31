@@ -6,6 +6,8 @@ public class ArtistFactory
 {
     public Artist Create(string name, List<Album> albums)
     {
-        return new Artist(name, albums);
+        var artist = new Artist(name, albums);
+        albums.ForEach(a => a.CreatedArtist = artist);
+        return artist;
     }
 }

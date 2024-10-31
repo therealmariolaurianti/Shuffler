@@ -29,11 +29,40 @@ public class SourceFolderController
                 FindAllFolders(rootFolder, allFolders);
 
                 var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
-
                 Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath);
 
                 return existingSourceFolders.ToObservableCollection();
             });
+    }
+
+    public NewResult<NewUnit> Remove(Library library, SourceFolder sourceFolder)
+    {
+        return NewResultExtensions.Try(() =>
+        {
+            //remove from source folder collection
+            if (sourceFolder.Parent != null)
+                sourceFolder.Parent.Items.Remove(sourceFolder);
+            else
+                library.SourceFolders.Remove(sourceFolder);
+
+            //remove artists/albums/songs
+            var songs = library.Songs.Where(s => s.Path.Contains(sourceFolder.FullPath));
+            foreach (var song in songs)
+                if (song.CreatedAlbum?.Songs.Count - 1 == 0)
+                {
+                    song.CreatedAlbum!.CreatedArtist!.Albums.Remove(song.CreatedAlbum);
+                    if (song.CreatedAlbum!.CreatedArtist!.Albums.Count == 0)
+                        library.Artists.Remove(song.CreatedAlbum!.CreatedArtist!);
+                }
+                else
+                {
+                    song.CreatedAlbum?.Songs.Remove(song);
+                }
+
+            //remove from database
+
+            return NewUnit.Default;
+        });
     }
 
     private static void FindAllFolders(SourceFolder rootFolder, List<SourceFolder> allFolders)

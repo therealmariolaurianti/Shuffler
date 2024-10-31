@@ -29,6 +29,8 @@ public class Song(File? songFile, string path) : INotifyPropertyChanged
         }
     }
 
+    public Album? CreatedAlbum { get; set; }
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
     private bool Equals(Song other)

@@ -12,4 +12,5 @@ public class Album
     public string Artist { get; }
     public string Name { get; }
     public List<Song> Songs { get; }
+    public Artist? CreatedArtist { get; set; }
 }

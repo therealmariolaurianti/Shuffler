@@ -6,7 +6,7 @@ public class Library
 {
     public ObservableCollection<SourceFolder> SourceFolders { get; set; } = new();
     public ObservableCollection<Artist> Artists { get; } = new();
-    public IReadOnlyCollection<Song> Songs => Artists.SelectMany(al => al.Albums.SelectMany(s => s.Songs)).ToList();
+    public IReadOnlyCollection<Song> Songs => Albums.SelectMany(al => al.Songs).ToList();
     public IReadOnlyCollection<Album> Albums => Artists.SelectMany(al => al.Albums).ToList();
 
     public string Summary
@@ -35,12 +35,5 @@ public class Library
             else
                 Artists.Add(artist);
         }
-    }
-
-    public void RemoveSourceFolder(SourceFolder sourceFolder)
-    {
-        //remove from source folder collection
-        //remove arists/albums/songs
-        //remove from database
     }
 }

@@ -10,7 +10,7 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Load_Single_Folder_One_Level()
     {
-        var folderBrowserController = CreateFolderBrowserController();
+        var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
             .BuildSourceFolders(@"C:\Level1\", new List<SourceFolder>())
@@ -28,7 +28,7 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Load_Single_Folder_Multiple_Levels()
     {
-        var folderBrowserController = CreateFolderBrowserController();
+        var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
             .BuildSourceFolders(@"C:\Level1\Level2\Level3\Level4", new List<SourceFolder>())
@@ -56,7 +56,7 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Load_Multiple_Folders_One_Level()
     {
-        var folderBrowserController = CreateFolderBrowserController();
+        var folderBrowserController = CreateSourceFolderController();
         var existingSourceFolders = new List<SourceFolder>();
 
         folderBrowserController
@@ -87,7 +87,7 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Load_Multiple_Folders_Same_Parent()
     {
-        var folderBrowserController = CreateFolderBrowserController();
+        var folderBrowserController = CreateSourceFolderController();
         var existingSourceFolders = new List<SourceFolder>();
 
         folderBrowserController
@@ -122,7 +122,7 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Load_Top_Level_Folder_With_Children()
     {
-        var folderBrowserController = CreateFolderBrowserController();
+        var folderBrowserController = CreateSourceFolderController();
         var existingSourceFolders = new List<SourceFolder>();
 
         folderBrowserController
@@ -175,6 +175,80 @@ public class SourceTreeTests : UnitTestBase
                 root.IsProcessed.Should().Be(true);
                 level1.IsProcessed.Should().Be(true);
                 level2.IsProcessed.Should().Be(true);
+            });
+    }
+
+    [TestCase]
+    public void Remove_Source_Folder_Remove_Root()
+    {
+        var mediaController = CreateMediaController();
+
+        var sourceFolders = new List<SourceFolder>();
+
+        var root = new SourceFolder(@"C:", "C:", true, null);
+        sourceFolders.Add(root);
+
+        var level1 = new SourceFolder(@"UnitTest", @"C:\UnitTest", false, root);
+        root.Items.Add(level1);
+
+        var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
+        level1.Items.Add(level2);
+
+        var library = new Library();
+
+        var song = new Song(null, "C:\\UnitTest\\Folder_1");
+        var album = new Album("Artist_1", "Album_1", new List<Song> { song });
+        var artist = new Artist("Artist_1", new List<Album> { album });
+
+        song.CreatedAlbum = album;
+        album.CreatedArtist = artist;
+
+        library.AddArtists(new[] { artist });
+
+        mediaController
+            .LoadFromFolderPath(sourceFolders, library)
+            .Do(_ =>
+            {
+                var sourceFolderController = CreateSourceFolderController();
+                var removeFolder = sourceFolders.First();
+
+                sourceFolderController.Remove(library, removeFolder);
+
+                library.SourceFolders.Count.Should().Be(0);
+                library.Artists.Count.Should().Be(0);
+                library.Albums.Count.Should().Be(0);
+                library.Songs.Count.Should().Be(0);
+            });
+    }
+
+    [TestCase]
+    public void Remove_Source_Folder_Remove_Child()
+    {
+        var mediaController = CreateMediaController();
+
+        var sourceFolders = new List<SourceFolder>();
+
+        var root = new SourceFolder(@"C:", "C:", true, null);
+        sourceFolders.Add(root);
+
+        var level1 = new SourceFolder(@"UnitTest", @"C:\UnitTest", false, root);
+        root.Items.Add(level1);
+
+        var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
+        level1.Items.Add(level2);
+
+        var library = new Library();
+
+        mediaController
+            .LoadFromFolderPath(sourceFolders, library)
+            .Do(_ =>
+            {
+                var sourceFolderController = CreateSourceFolderController();
+                var removeFolder = sourceFolders.First();
+
+                sourceFolderController.Remove(library, removeFolder);
+
+                Assert.Fail();
             });
     }
 }

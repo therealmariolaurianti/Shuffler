@@ -24,6 +24,7 @@ public class LibraryController
         _libraryFactory = libraryFactory;
         _mediaController = mediaController;
 
+        //move to initialize method to capture if root isnt found exception
         var root = FindRoot();
         _localDatabasePath = $@"{root}\local.db";
     }
