@@ -11,8 +11,8 @@
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         WindowStyle="ThreeDBorderWindow"
-        Width="1200"
-        Height="700"
+        Width="1100"
+        Height="850"
         Background="Gray"
         d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
     <Window.Resources>
