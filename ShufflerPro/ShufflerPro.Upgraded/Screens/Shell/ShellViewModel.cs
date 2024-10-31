@@ -247,6 +247,20 @@ public class ShellViewModel : ViewModelBase
 
     private void OnSearchTextChanged()
     {
+        switch (LibrarySearchType)
+        {
+            case LibrarySearchType.Artist:
+                SearchSongs(SearchText, null, null);
+                break;
+            case LibrarySearchType.Song:
+                SearchSongs(null, null, SearchText);
+                break;
+            case LibrarySearchType.Album:
+                SearchSongs(null, SearchText, null);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
     }
 
     private void WireTimer()
@@ -376,6 +390,21 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
         NotifyOfPropertyChange(nameof(CurrentSongPicture));
+    }
+
+    private void SearchSongs(string? artist, string? album, string? song)
+    {
+        var filteredSongs = AllSongs.AsEnumerable();
+
+        if (artist != null)
+            filteredSongs = AllSongs.Where(s => s.Artist.Contains(artist, StringComparison.OrdinalIgnoreCase));
+        if (album != null)
+            filteredSongs = AllSongs.Where(s => s.Album.Contains(album, StringComparison.OrdinalIgnoreCase));
+        if (song != null)
+            filteredSongs = AllSongs.Where(s =>
+                s.Title != null && s.Title.Contains(song, StringComparison.OrdinalIgnoreCase));
+
+        Songs = filteredSongs.ToObservableCollection();
     }
 
     private void FilterSongs(string? artist = null, string? album = null)
