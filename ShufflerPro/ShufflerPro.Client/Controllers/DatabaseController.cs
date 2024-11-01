@@ -51,6 +51,8 @@ public class DatabaseController
             var sourceCollection = connection.GetCollection<Source>();
             foreach (var folder in sourceFolder.Flatten())
             {
+                if(folder.IsRoot)
+                    continue;
                 var result = await sourceCollection.Delete(_deleteExpression(folder));
                 if (result == 0)
                     return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
