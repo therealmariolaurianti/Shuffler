@@ -93,8 +93,6 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string SyncText => IsLoadingSourceFolders ? "Syncing" : "Synced";
-
     public ObservableCollection<Album> Albums =>
         SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
         AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
@@ -231,7 +229,6 @@ public class ShellViewModel : ViewModelBase
             if (value == _isLoadingSourceFolders) return;
             _isLoadingSourceFolders = value;
             NotifyOfPropertyChange();
-            NotifyOfPropertyChange(nameof(SyncText));
         }
     }
 

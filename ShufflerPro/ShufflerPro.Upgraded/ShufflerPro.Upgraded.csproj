@@ -47,6 +47,10 @@
       <Resource Include="Images\volume_loud.png" />
       <None Remove="Images\volume_soft.png" />
       <Resource Include="Images\volume_soft.png" />
+      <None Remove="Images\replay.png" />
+      <Resource Include="Images\replay.png" />
+      <None Remove="Images\shuffle.png" />
+      <Resource Include="Images\shuffle.png" />
     </ItemGroup>
 
 </Project>

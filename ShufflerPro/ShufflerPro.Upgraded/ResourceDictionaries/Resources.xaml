@@ -8,6 +8,8 @@
     <BitmapImage x:Key="PreviousImage" UriSource="/Images/previous.png" />
     <BitmapImage x:Key="VolumeLoudImage" UriSource="/Images/volume_loud.png" />
     <BitmapImage x:Key="VolumeSoftImage" UriSource="/Images/volume_soft.png" />
+    <BitmapImage x:Key="ReplayImage" UriSource="/Images/replay.png" />
+    <BitmapImage x:Key="ShuffleImage" UriSource="/Images/shuffle.png" />
 
 
     <Style x:Key="MyFocusVisual">

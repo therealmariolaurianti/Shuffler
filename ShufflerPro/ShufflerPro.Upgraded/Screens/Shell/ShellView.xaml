@@ -38,7 +38,7 @@
                 BorderThickness="1">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="350" />
+                        <ColumnDefinition Width="275" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="275" />
                     </Grid.ColumnDefinitions>
@@ -51,11 +51,6 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
-                            <Button
-                                Width="35"
-                                Height="35"
-                                Style="{StaticResource CircleButton}"
-                                Background="{StaticResource MahApps.Brushes.Button.Flat.Background}"/>
                             <Button
                                 Width="50"
                                 Height="50"
@@ -108,11 +103,6 @@
                                         Source="{StaticResource NextImage}" />
                                 </StackPanel>
                             </Button>
-                            <Button
-                                Width="35"
-                                Height="35"
-                                Background="{StaticResource MahApps.Brushes.Button.Flat.Background}"
-                                Style="{StaticResource CircleButton}"/>
                         </StackPanel>
                     </Border>
                     <Border
@@ -251,49 +241,63 @@
                     <ColumnDefinition Width="5" />
                     <ColumnDefinition Width="3.5*" />
                 </Grid.ColumnDefinitions>
-                <Border
-                    Margin="2,0,2,2"
-                    BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
-                    BorderThickness="1">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition />
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-                        <TextBlock
-                            Margin="2"
-                            FontSize="16"
-                            TextAlignment="Center"
-                            FontWeight="SemiBold"
-                            Background="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
-                            Text="Source" />
-                        <TreeView
-                            Margin="2,0,2,2"
-                            Grid.Row="1"
-                            cal:Message.Attach="[Event SelectedItemChanged] = [Action SelectedTreeViewItemChanged($source, $eventArgs)]"
-                            ItemsSource="{Binding SourceTreeItems}">
-                            <TreeView.ItemContainerStyle>
-                                <Style TargetType="{x:Type TreeViewItem}">
-                                    <Setter Property="IsExpanded" Value="True" />
-                                </Style>
-                            </TreeView.ItemContainerStyle>
-                        </TreeView>
-                        <Separator
-                            Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
-                            Grid.Row="2"/>
-                        <Border
-                            Grid.Row="3"
-                            Margin="2,0,2,2"
-                            Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
-                            BorderThickness="0">
-                            <Image 
-                                MaxHeight="250"
-                                Source="{Binding CurrentSongPicture}" />
-                        </Border>
-                    </Grid>
-                </Border>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Margin="2,0,2,2"
+                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="2"
+                                FontSize="16"
+                                TextAlignment="Center"
+                                FontWeight="SemiBold"
+                                Background="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Text="Source" />
+                            <TreeView
+                                Margin="2,0,2,2"
+                                Grid.Row="1"
+                                cal:Message.Attach="[Event SelectedItemChanged] = [Action SelectedTreeViewItemChanged($source, $eventArgs)]"
+                                ItemsSource="{Binding SourceTreeItems}">
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type TreeViewItem}">
+                                        <Setter Property="IsExpanded" Value="True" />
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                            </TreeView>
+                            <Separator
+                                Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
+                                Grid.Row="2" />
+                            <Border
+                                Grid.Row="3"
+                                Margin="2,0,2,2"
+                                Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
+                                BorderThickness="0">
+                                <Image
+                                    MaxHeight="250"
+                                    Source="{Binding CurrentSongPicture}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <ProgressBar
+                        Grid.Row="1"
+                        Visibility="{calcBinding:Binding IsLoadingSourceFolders, FalseToVisibility=Collapsed}"
+                        Grid.Column="0"
+                        Height="35"
+                        Background="{StaticResource MahApps.Brushes.Progress}"
+                        Margin="2"
+                        IsIndeterminate="{Binding IsLoadingSourceFolders}" />
+                </Grid>
                 <GridSplitter
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Stretch"
@@ -470,22 +474,40 @@
                 BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
                 BorderThickness="1">
                 <Grid>
-                    <Grid
+                    <StackPanel
+                        Margin="10"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
                         HorizontalAlignment="Left">
-                        <ProgressBar
-                            Grid.Column="0"
-                            Background="{StaticResource MahApps.Brushes.Progress}"
-                            Width="200"
-                            Margin="10"
-                            IsIndeterminate="{Binding IsLoadingSourceFolders}" />
-                        <TextBlock
-                            Name="SyncText"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
-                    </Grid>
+                        <ToggleButton
+                            ToolTip="Replay Album"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Image
+                                    Height="23"
+                                    Width="23"
+                                    Source="{StaticResource ReplayImage}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            ToolTip="Shuffle"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Image
+                                    Height="23"
+                                    Width="23"
+                                    Source="{StaticResource ShuffleImage}"/>
+                            </StackPanel>
+                        </ToggleButton>
+                    </StackPanel>
                     <TextBlock
                         TextAlignment="Center"
                         VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
                         Text="{Binding LibrarySummary, Mode=OneWay}" />
                     <Button
                         Name="AddSource"
@@ -493,7 +515,7 @@
                         VerticalAlignment="Center"
                         Width="100"
                         Margin="10"
-                        Content="Import"/>
+                        Content="Import" />
                 </Grid>
             </Border>
         </Grid>
