@@ -70,6 +70,8 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(MaxRunTime));
             NotifyOfPropertyChange(nameof(CurrentSongTime));
+            NotifyOfPropertyChange(nameof(CurrentSongPicture));
+            NotifyOfPropertyChange(nameof(HasAlbumArt));
         }
     }
 
@@ -189,7 +191,7 @@ public class ShellViewModel : ViewModelBase
 
     public ObservableCollection<SourceFolder> SourceFolders
     {
-        get => Library?.SourceFolders ?? new ObservableCollection<SourceFolder>();
+        get => Library?.SourceFolders ?? [];
         set
         {
             if (Equals(value, Library!.SourceFolders)) return;
@@ -252,6 +254,8 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
         }
     }
+
+    public bool HasAlbumArt => CurrentSongPicture != null;
 
     private void OnSearchTextChanged()
     {
@@ -392,6 +396,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
         NotifyOfPropertyChange(nameof(CurrentSongPicture));
+        NotifyOfPropertyChange(nameof(HasAlbumArt));
     }
 
     private void SearchSongs(string? artist, string? album, string? song)
