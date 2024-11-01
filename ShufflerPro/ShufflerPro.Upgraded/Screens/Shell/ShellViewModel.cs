@@ -121,7 +121,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(Albums));
 
-            FilterSongs(value?.Name);
+            HandleFilterSongs(value?.Name);
         }
     }
 
@@ -133,7 +133,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedAlbum)) return;
             _selectedAlbum = value;
             NotifyOfPropertyChange();
-            FilterSongs(SelectedArtist?.Name, value?.Name);
+            HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
 
@@ -355,11 +355,15 @@ public class ShellViewModel : ViewModelBase
     public void PlayPause()
     {
         if (_playerController.Playing)
+        {
             _timer?.Pause();
+            _playerController.Pause();
+        }
         else
+        {
             _timer?.Start();
-
-        _playerController.PlayPause();
+            _playerController.Resume();
+        }
 
         NotifyOfPropertyChange(nameof(IsPlaying));
     }
@@ -372,31 +376,50 @@ public class ShellViewModel : ViewModelBase
         WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
     }
 
-    public void PlaySong()
+    public NewResult<NewUnit> InitializePlaySong()
     {
         if (SelectedSong is null)
-            return;
+            return NewResultExtensions.CreateFail<NewUnit>();
 
-        if (_playerController.Playing || _playerController.IsPaused)
-            _playerController.Cancel();
+        return NewResultExtensions.Try(() =>
+        {
+            if (_playerController.Playing || _playerController.IsPaused)
+                _playerController.Cancel();
 
-        CurrentSong = SelectedSong;
-        ElapsedRunningTime = 0;
+            CurrentSong = SelectedSong;
+            ElapsedRunningTime = 0;
 
-        WireTimer();
+            WireTimer();
 
-        _playerController.PlaySong(CurrentSong, AllSongsOrdered);
-        var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
-        if (playingNow is not null)
-            playingNow.IsPlaying = false;
+            return NewUnit.Default;
+        });
+    }
 
-        CurrentSong.IsPlaying = true;
+    public void PlaySong()
+    {
+        InitializePlaySong()
+            .IfSuccess(_ => BuildSongList()
+                .Do(songList =>
+                {
+                    _playerController.PlaySong(CurrentSong!, songList);
 
-        NotifyOfPropertyChange(nameof(IsPlaying));
-        NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
-        NotifyOfPropertyChange(nameof(ElapsedRunningTime));
-        NotifyOfPropertyChange(nameof(CurrentSongPicture));
-        NotifyOfPropertyChange(nameof(HasAlbumArt));
+                    var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
+                    if (playingNow is not null)
+                        playingNow.IsPlaying = false;
+
+                    CurrentSong!.IsPlaying = true;
+
+                    NotifyOfPropertyChange(nameof(IsPlaying));
+                    NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
+                    NotifyOfPropertyChange(nameof(ElapsedRunningTime));
+                    NotifyOfPropertyChange(nameof(CurrentSongPicture));
+                    NotifyOfPropertyChange(nameof(HasAlbumArt));
+                }));
+    }
+
+    private NewResult<List<Song>> BuildSongList()
+    {
+        return AllSongs.ToList();
     }
 
     private void SearchSongs(string? artist, string? album, string? song)
@@ -414,7 +437,17 @@ public class ShellViewModel : ViewModelBase
         Songs = filteredSongs.ToObservableCollection();
     }
 
-    private void FilterSongs(string? artist = null, string? album = null)
+    private void HandleFilterSongs(string? artist = null, string? album = null)
+    {
+        var filteredSongs = FilterSongs(artist, album);
+        Songs = filteredSongs
+            .OrderBy(s => s.Artist)
+            .ThenBy(s => s.Album)
+            .ThenBy(s => s.Track)
+            .ToObservableCollection();
+    }
+
+    private IEnumerable<Song> FilterSongs(string? artist, string? album)
     {
         var filteredSongs = AllSongs.AsEnumerable();
 
@@ -424,12 +457,7 @@ public class ShellViewModel : ViewModelBase
             filteredSongs = AllSongs.Where(s => s.Album == album);
         if (artist != null && album != null)
             filteredSongs = AllSongs.Where(s => s.Artist == artist && s.Album == album);
-
-        Songs = filteredSongs
-            .OrderBy(s => s.Artist)
-            .ThenBy(s => s.Album)
-            .ThenBy(s => s.Track)
-            .ToObservableCollection();
+        return filteredSongs;
     }
 
     public void AddSource()
@@ -492,7 +520,7 @@ public class ShellViewModel : ViewModelBase
         foreach (var sourceFolder in SourceFolders)
             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
-        FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+        HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
 
         NotifyCollectionsChanged();
 
@@ -525,7 +553,7 @@ public class ShellViewModel : ViewModelBase
                         SourceTreeItems.Remove(_selectedTreeViewItem);
                     }
 
-                    FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                    HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                     NotifyCollectionsChanged();
                 }));
     }

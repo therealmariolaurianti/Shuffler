@@ -8,6 +8,12 @@ public class NewResult<T>
         Exceptions = new List<Exception>();
     }
 
+    public NewResult()
+    {
+        Item = default;
+        Exceptions = new List<Exception>();
+    }
+
     public NewResult(Exception exception)
     {
         Exceptions = new List<Exception> { exception };

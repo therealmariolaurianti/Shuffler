@@ -11,6 +11,11 @@ public static class NewResultExtensions
     {
         return new NewResult<T>(ex);
     }
+    
+    public static NewResult<T> CreateFail<T>()
+    {
+        return new NewResult<T>();
+    }
 
     public static NewResult<T> Try<T>(Func<T> func)
     {

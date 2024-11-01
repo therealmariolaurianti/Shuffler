@@ -104,27 +104,24 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         _timer.Start();
     }
 
-    public void PlayPause()
+    public void Pause()
     {
         if (Playing)
         {
             _outEvent?.Pause();
             _timer?.Stop();
             IsPaused = true;
-            return;
         }
+    }
 
+    public void Resume()
+    {
         if (!Playing)
-            try
-            {
-                _outEvent?.Play();
-                _timer?.Start();
-                IsPaused = false;
-            }
-            catch (Exception)
-            {
-                //ignored
-            }
+        {
+            _outEvent?.Play();
+            _timer?.Start();
+            IsPaused = false;
+        }
     }
 
     public void Skip(Song currentSong, List<Song> allSongs)
