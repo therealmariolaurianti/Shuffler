@@ -439,7 +439,7 @@ public class ShellViewModel : ViewModelBase
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
                 RunAsync(async () => await BuildSourceFolders(folderPath)
                     .Do(_ => ProcessSourceFolders())
-                    .Bind(async _ => await InsertSource(_)));
+                    .Bind(async state => await InsertSource(state)));
             else
                 IsLoadingSourceFolders = false;
         }
@@ -509,9 +509,16 @@ public class ShellViewModel : ViewModelBase
                 .IfSuccess(_ =>
                 {
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
+                    {
                         parent.Items.Remove(_selectedTreeViewItem);
+
+                        if (parent.Items.Count == 0)
+                            SourceTreeItems.Remove(parent);
+                    }
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
+                    {
                         SourceTreeItems.Remove(_selectedTreeViewItem);
+                    }
 
                     FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                     NotifyCollectionsChanged();

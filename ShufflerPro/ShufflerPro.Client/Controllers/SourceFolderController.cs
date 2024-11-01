@@ -61,6 +61,8 @@ public class SourceFolderController
 
     private async Task<NewResult<NewUnit>> RemoveFolderFromDatabase(SourceFolder sourceFolder)
     {
+        if (sourceFolder.IsRoot)
+            return NewUnit.Default;
         return await _databaseController.DeleteSource(sourceFolder);
     }
 

@@ -13,8 +13,8 @@
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
-    Width="1100"
-    Height="850"
+    Width="1200"
+    Height="825"
     Background="{StaticResource MahApps.Brushes.Control.Background}"
     d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
     <Window.Resources>
@@ -29,8 +29,8 @@
             Grid.Row="1"
             Margin="5">
             <Grid.RowDefinitions>
-                <RowDefinition Height=".5*" MinHeight="115" MaxHeight="150" />
-                <RowDefinition Height="2*" />
+                <RowDefinition Height="150" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="60" />
             </Grid.RowDefinitions>
             <Border
@@ -401,9 +401,7 @@
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             ItemsSource="{Binding Songs}"
-                            AlternationCount="2"
-                            IsReadOnly="True"
-                            CellStyle="{StaticResource GridContentAlign}">
+                            IsReadOnly="True">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn
                                     Width="25"
