@@ -1,5 +1,4 @@
-﻿using System.Collections.ObjectModel;
-using ShufflerPro.Client.Entities;
+﻿using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 
@@ -28,9 +27,8 @@ public class MediaController(
         {
             var path = sourceFolder.FullPath;
             var loadSongsInPath = LoadSongsInPath(path);
-            var readOnlyCollection = Process(loadSongsInPath);
 
-            library.AddArtists(readOnlyCollection);
+            Process(library, loadSongsInPath);
         }
 
         sourceFolder.IsProcessed = true;
@@ -47,7 +45,7 @@ public class MediaController(
         return songsPaths.Select(SongFactory.Create).ToList();
     }
 
-    private ReadOnlyCollection<Artist> Process(List<Song> songs)
+    private void Process(Library library, List<Song> songs)
     {
         var songFilesWithArtists = songs
             .Distinct()
@@ -70,10 +68,18 @@ public class MediaController(
             .GroupBy(a => a.Artist)
             .ToDictionary(s => s.Key, g => g.ToList());
 
-        var artists = groupedAlbums
-            .Select(album => artistFactory.Create(album.Key, album.Value)).OrderBy(a => a.Name)
-            .ToList();
-
-        return artists.ToReadOnlyCollection();
+        foreach (var groupedAlbum in groupedAlbums)
+        {
+            var existingArtist = library.Artists.SingleOrDefault(a => a.Name == groupedAlbum.Key);
+            if (existingArtist is not null)
+            {
+                foreach (var album in groupedAlbum.Value) 
+                    album.CreatedArtist = existingArtist;
+                
+                existingArtist.Albums.AddRange(groupedAlbum.Value);
+            }
+            else
+                library.Artists.Add(artistFactory.Create(groupedAlbum.Key, groupedAlbum.Value));
+        }
     }
 }

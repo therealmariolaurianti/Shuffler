@@ -11,6 +11,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     private Timer? _timer;
 
     public required Action<Song> SongChanged;
+    public required Action PlayerDisposed;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
@@ -29,32 +30,26 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         _timer = null;
         _outEvent = null;
         _audioFileReader = null;
+        
+        PlayerDisposed.Invoke();
     }
 
-    private void OnSongComplete(Song currentSong, List<Song> songs)
+    private void StartNextSong(SongQueue songQueue)
     {
-        var nextTrack = GetNextTrack(currentSong, songs);
-
-        if (nextTrack is null)
+        if (songQueue.NextSong is null)
             Dispose();
         else
-            SongChanged.Invoke(nextTrack);
+            SongChanged.Invoke(songQueue.NextSong);
     }
-
-    private static Song? GetNextTrack(Song currentSong, List<Song> songs)
+    
+    private void StartPreviousSong(SongQueue songQueue)
     {
-        var index = songs.IndexOf(currentSong) + 1;
-        var nextTrack = songs.Skip(index).FirstOrDefault();
-        return nextTrack;
+        if (songQueue.NextSong is null)
+            Dispose();
+        else
+            SongChanged.Invoke(songQueue.PreviousSong!);
     }
-
-    private static Song? GetPreviousTrack(Song currentSong, List<Song> songs)
-    {
-        var index = songs.IndexOf(currentSong) - 1;
-        var nextTrack = songs.Skip(index).FirstOrDefault();
-        return nextTrack;
-    }
-
+    
     public void ReInitialize()
     {
         Dispose();
@@ -68,26 +63,27 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         ReInitialize();
     }
 
-    public bool PlaySong(Song song, List<Song> songs)
+    public void PlaySong(SongQueue songQueue)
     {
+        if (songQueue.CurrentSong is null)
+            return;
+        
         try
         {
-            using (_audioFileReader = new AudioFileReader(song.Path))
+            using (_audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path))
             {
                 _outEvent ??= new WaveOutEvent();
 
                 _outEvent.Init(_audioFileReader);
                 _outEvent.Play();
 
-                DelayAction(song.Duration!.Value.TotalMilliseconds, () => OnSongComplete(song, songs));
+                DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds, () => StartNextSong(songQueue));
             }
         }
         catch (Exception)
         {
-            return false;
+            // ignored
         }
-
-        return true;
     }
 
     public void DelayAction(double millisecond, Action action)
@@ -124,24 +120,16 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         }
     }
 
-    public void Skip(Song currentSong, List<Song> allSongs)
+    public void Skip(SongQueue songQueue)
     {
-        var nextTrack = GetNextTrack(currentSong, allSongs);
-        if (nextTrack is not null)
-            SongChanged.Invoke(nextTrack);
+        StartNextSong(songQueue);
     }
 
-    public void Previous(Song currentSong, List<Song> allSongsOrdered, double elapsedRunningTime)
+    public void Previous(SongQueue songQueue, double elapsedRunningTime)
     {
         if (elapsedRunningTime >= 5)
-        {
-            SongChanged.Invoke(currentSong);
-        }
+            SongChanged.Invoke(songQueue.CurrentSong!);
         else
-        {
-            var previousTrack = GetPreviousTrack(currentSong, allSongsOrdered);
-            if (previousTrack is not null)
-                SongChanged.Invoke(previousTrack);
-        }
+            StartPreviousSong(songQueue);
     }
 }

@@ -203,7 +203,7 @@ public class SourceTreeTests : UnitTestBase
         song.CreatedAlbum = album;
         album.CreatedArtist = artist;
 
-        library.AddArtists(new[] { artist });
+        library.Artists.Add(artist);
         library.SourceFolders = sourceFolders.ToObservableCollection();
 
         var sourceFolderController = CreateSourceFolderController();
@@ -243,7 +243,7 @@ public class SourceTreeTests : UnitTestBase
         song2.CreatedAlbum = album;
         album.CreatedArtist = artist;
 
-        library.AddArtists(new[] { artist });
+        library.Artists.Add(artist);
 
         library.SourceFolders = sourceFolders.ToObservableCollection();
 
@@ -290,7 +290,7 @@ public class SourceTreeTests : UnitTestBase
         album.CreatedArtist = artist;
         album2.CreatedArtist = artist;
 
-        library.AddArtists(new[] { artist });
+        library.Artists.Add(artist);
 
         library.SourceFolders = sourceFolders.ToObservableCollection();
 

@@ -24,16 +24,4 @@ public class Library
             return $"{totalSongs} songs, {totalSpan.Duration().StripMilliseconds()} total time";
         }
     }
-
-    public void AddArtists(IReadOnlyCollection<Artist> artists)
-    {
-        foreach (var artist in artists)
-        {
-            var existingArtist = Artists.SingleOrDefault(a => a.Name == artist.Name);
-            if (existingArtist is not null)
-                existingArtist.Albums.AddRange(artist.Albums);
-            else
-                Artists.Add(artist);
-        }
-    }
 }
