@@ -302,7 +302,7 @@ public class ShellViewModel : ViewModelBase
 
     protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
     {
-        DisplayName = "mTunes";
+        DisplayName = "Shuffler";
         SourceTreeItems = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
