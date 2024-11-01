@@ -68,18 +68,21 @@ public class SourceFolderController
     {
         return NewResultExtensions.Try(() =>
         {
-            var songs = library.Songs.Where(s => s.Path.Contains(sourceFolder.FullPath));
-            foreach (var song in songs)
-                if (song.CreatedAlbum?.Songs.Count - 1 == 0)
-                {
-                    song.CreatedAlbum!.CreatedArtist!.Albums.Remove(song.CreatedAlbum);
-                    if (song.CreatedAlbum!.CreatedArtist!.Albums.Count == 0)
-                        library.Artists.Remove(song.CreatedAlbum!.CreatedArtist!);
-                }
-                else
-                {
-                    song.CreatedAlbum?.Songs.Remove(song);
-                }
+            foreach (var folder in sourceFolder.Flatten())
+            {
+                var songs = library.Songs.Where(s => s.Path.Contains(folder.FullPath));
+                foreach (var song in songs)
+                    if (song.CreatedAlbum?.Songs.Count - 1 == 0)
+                    {
+                        song.CreatedAlbum!.CreatedArtist!.Albums.Remove(song.CreatedAlbum);
+                        if (song.CreatedAlbum!.CreatedArtist!.Albums.Count == 0)
+                            library.Artists.Remove(song.CreatedAlbum!.CreatedArtist!);
+                    }
+                    else
+                    {
+                        song.CreatedAlbum?.Songs.Remove(song);
+                    }
+            }
 
             return NewUnit.Default;
         });

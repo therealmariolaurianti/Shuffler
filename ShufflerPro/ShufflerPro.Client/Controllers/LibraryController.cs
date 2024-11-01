@@ -37,7 +37,6 @@ public class LibraryController
                 }));
     }
 
-
     public async Task<NewResult<NewUnit>> InsertSource(SourceFolderState state)
     {
         return await _databaseController.InsertSource(state);

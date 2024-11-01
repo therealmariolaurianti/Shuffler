@@ -483,8 +483,7 @@ public class ShellViewModel : ViewModelBase
     {
         SourceTreeItems.Clear();
 
-        var buildContextMenu = _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath,
-            RemoveSourceFolder);
+        var buildContextMenu = _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath, RemoveSourceFolder);
         foreach (var sourceFolder in SourceFolders)
             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
