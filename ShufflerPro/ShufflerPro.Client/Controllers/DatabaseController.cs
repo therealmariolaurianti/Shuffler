@@ -34,8 +34,9 @@ public class DatabaseController
         {
             foreach (var addedSourceFolder in state.AddedSourceFolders)
             {
-                var source = new Source(addedSourceFolder.FullPath);
                 var sourceCollection = connection.GetCollection<Source>();
+
+                var source = new Source(addedSourceFolder.FullPath);
                 await sourceCollection.Insert(source);
             }
         }
@@ -48,13 +49,19 @@ public class DatabaseController
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var sourceCollection = connection.GetCollection<Source>();
-            Expression<Func<Source, bool>> expression = s => s.FolderPath == sourceFolder.FullPath;
-
-            var result = await sourceCollection.Delete(expression);
-            if (result == 0)
-                return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
+            foreach (var folder in sourceFolder.Flatten())
+            {
+                var result = await sourceCollection.Delete(_deleteExpression(folder));
+                if (result == 0)
+                    return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
+            }
         }
 
         return NewUnit.Default;
+    }
+
+    private Expression<Func<Source, bool>> _deleteExpression(SourceFolder sourceFolder)
+    {
+        return s => s.FolderPath == sourceFolder.FullPath;
     }
 }
