@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
 using ShufflerPro.Client;
+using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Tests;
@@ -14,10 +15,10 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\", new List<SourceFolder>())
+            .BuildSourceFolders(@"C:\Level1\", new SourceFolderState(new List<SourceFolder>()))
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -32,10 +33,10 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\Level2\Level3\Level4", new List<SourceFolder>())
+            .BuildSourceFolders(@"C:\Level1\Level2\Level3\Level4", new SourceFolderState(new List<SourceFolder>()))
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -60,11 +61,12 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
         var existingSourceFolders = new List<SourceFolder>();
 
+        var sourceFolderState = new SourceFolderState(existingSourceFolders);
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\", existingSourceFolders)
+            .BuildSourceFolders(@"C:\Level1\", sourceFolderState)
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -73,10 +75,10 @@ public class SourceTreeTests : UnitTestBase
             });
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1_Second\", existingSourceFolders)
+            .BuildSourceFolders(@"C:\Level1_Second\", sourceFolderState)
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -91,11 +93,12 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
         var existingSourceFolders = new List<SourceFolder>();
 
+        var sourceFolderState = new SourceFolderState(existingSourceFolders);
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\SubLevel1", existingSourceFolders)
+            .BuildSourceFolders(@"C:\Level1\SubLevel1", sourceFolderState)
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -105,10 +108,10 @@ public class SourceTreeTests : UnitTestBase
             });
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\SubLevel2", existingSourceFolders)
+            .BuildSourceFolders(@"C:\Level1\SubLevel2", sourceFolderState)
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -127,10 +130,10 @@ public class SourceTreeTests : UnitTestBase
         var existingSourceFolders = new List<SourceFolder>();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\UnitTest", existingSourceFolders)
+            .BuildSourceFolders(@"C:\UnitTest", new SourceFolderState(existingSourceFolders))
             .Do(sourceFolders =>
             {
-                var root = sourceFolders.First();
+                var root = sourceFolders.SourceFolders.First();
 
                 root.Header.Should().Be("C:");
                 root.IsRoot.Should().Be(true);
@@ -182,8 +185,6 @@ public class SourceTreeTests : UnitTestBase
     [TestCase]
     public void Remove_Source_Folder_Remove_Root_Single_Album()
     {
-        var mediaController = CreateMediaController();
-
         var sourceFolders = new List<SourceFolder>();
 
         var root = new SourceFolder(@"C:", "C:", true, null);
@@ -204,7 +205,7 @@ public class SourceTreeTests : UnitTestBase
 
         library.AddArtists(new[] { artist });
         library.SourceFolders = sourceFolders.ToObservableCollection();
-        
+
         var sourceFolderController = CreateSourceFolderController();
         var removeFolder = sourceFolders.First();
 
@@ -234,7 +235,7 @@ public class SourceTreeTests : UnitTestBase
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
         var song2 = new Song(null, "C:\\UnitTest");
-        
+
         var album = new Album("Artist_1", "Album_1", [song, song2]);
         var artist = new Artist("Artist_1", [album]);
 
@@ -256,7 +257,7 @@ public class SourceTreeTests : UnitTestBase
         library.Albums.Count.Should().Be(0);
         library.Songs.Count.Should().Be(0);
     }
-    
+
     [TestCase]
     public void Remove_Source_Folder_Remove_Child_Multiple_Album()
     {
@@ -276,16 +277,16 @@ public class SourceTreeTests : UnitTestBase
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
         var song2 = new Song(null, "C:\\UnitTest");
         var song3 = new Song(null, "D:\\UnitTest");
-        
+
         var album = new Album("Artist_1", "Album_1", [song, song2]);
         var album2 = new Album("Artist_1", "Album_2", [song3]);
-        
+
         var artist = new Artist("Artist_1", [album, album2]);
-        
+
         song.CreatedAlbum = album;
         song2.CreatedAlbum = album;
         song3.CreatedAlbum = album2;
-        
+
         album.CreatedArtist = artist;
         album2.CreatedArtist = artist;
 

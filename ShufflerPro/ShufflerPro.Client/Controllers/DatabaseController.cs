@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using LiteDB;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Interfaces;
@@ -25,17 +24,20 @@ public class DatabaseController
             var sources = connection.GetCollection<Source>();
             var sourcePaths = await sources.FindAll().ConfigureAwait(true);
 
-            return sourcePaths.Select(s => s.FolderPath).ToList();       
+            return sourcePaths.Select(s => s.FolderPath).ToList();
         }
     }
 
-    public async Task<NewResult<NewUnit>> InsertSource(string folderPath)
+    public async Task<NewResult<NewUnit>> InsertSource(SourceFolderState state)
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
-            var source = new Source(folderPath);
-            var sourceCollection = connection.GetCollection<Source>();
-            await sourceCollection.Insert(source);
+            foreach (var addedSourceFolder in state.AddedSourceFolders)
+            {
+                var source = new Source(addedSourceFolder.FullPath);
+                var sourceCollection = connection.GetCollection<Source>();
+                await sourceCollection.Insert(source);
+            }
         }
 
         return NewUnit.Default;
@@ -46,8 +48,8 @@ public class DatabaseController
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var sourceCollection = connection.GetCollection<Source>();
-            Expression<Func<Source,bool>> expression = s => s.FolderPath == sourceFolder.FullPath;
-            
+            Expression<Func<Source, bool>> expression = s => s.FolderPath == sourceFolder.FullPath;
+
             var result = await sourceCollection.Delete(expression);
             if (result == 0)
                 return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));

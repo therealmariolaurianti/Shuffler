@@ -6,15 +6,15 @@ namespace ShufflerPro.Client.Controllers;
 
 public class LibraryController
 {
+    private readonly DatabaseController _databaseController;
     private readonly LibraryFactory _libraryFactory;
     private readonly MediaController _mediaController;
     private readonly SourceFolderController _sourceFolderController;
-    private readonly DatabaseController _databaseController;
 
     public LibraryController(
         SourceFolderController sourceFolderController,
         LibraryFactory libraryFactory,
-        MediaController mediaController, 
+        MediaController mediaController,
         DatabaseController databaseController)
     {
         _sourceFolderController = sourceFolderController;
@@ -27,19 +27,19 @@ public class LibraryController
     {
         return await _databaseController.LoadSources()
             .Bind(sourcePaths => _sourceFolderController
-                .BuildSourceFolders(sourcePaths, new List<SourceFolder>())
-                .Bind(sourceFolders =>
+                .BuildSourceFolders(sourcePaths, new SourceFolderState(new List<SourceFolder>()))
+                .Bind(state =>
                 {
-                    var library = _libraryFactory.Create(sourceFolders);
+                    var library = _libraryFactory.Create(state.SourceFolders);
                     return _mediaController
-                        .LoadFromFolderPath(sourceFolders, library)
+                        .LoadFromFolderPath(state.SourceFolders, library)
                         .Map(_ => library);
                 }));
     }
 
 
-    public async Task<NewResult<NewUnit>> InsertSource(string folderPath)
+    public async Task<NewResult<NewUnit>> InsertSource(SourceFolderState state)
     {
-        return await _databaseController.InsertSource(folderPath);
+        return await _databaseController.InsertSource(state);
     }
 }

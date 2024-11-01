@@ -439,29 +439,29 @@ public class ShellViewModel : ViewModelBase
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderPath))
                 RunAsync(async () => await BuildSourceFolders(folderPath)
                     .Do(_ => ProcessSourceFolders())
-                    .Bind(async _ => await InsertSource(folderPath)));
+                    .Bind(async _ => await InsertSource(_)));
             else
                 IsLoadingSourceFolders = false;
         }
     }
 
-    private async Task<NewResult<NewUnit>> InsertSource(string folderPath)
+    private async Task<NewResult<NewUnit>> InsertSource(SourceFolderState state)
     {
-        return await _libraryController.InsertSource(folderPath);
+        return await _libraryController.InsertSource(state);
     }
 
-    private async Task<NewResult<NewUnit>> BuildSourceFolders(string folderPath)
+    private async Task<NewResult<SourceFolderState>> BuildSourceFolders(string folderPath)
     {
         return await NewResultExtensions.Try(async () =>
         {
+            var state = new SourceFolderState(SourceFolders);
             await Task.Run(() =>
             {
-                _sourceFolderController.BuildSourceFolders(folderPath, SourceFolders)
-                    .Do(sourceFolders => _mediaController.LoadFromFolderPath(sourceFolders, Library!))
-                    .Do(sourceFolders => SourceFolders = sourceFolders);
+                _sourceFolderController.BuildSourceFolders(folderPath, state)
+                    .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, Library!))
+                    .Do(_ => SourceFolders = state.SourceFolders);
             }).ConfigureAwait(true);
-
-            return NewUnit.Default;
+            return state;
         });
     }
 

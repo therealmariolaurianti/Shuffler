@@ -4,6 +4,14 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
+public class SourceFolderState(ICollection<SourceFolder> existingSourceFolders)
+{
+    public ObservableCollection<SourceFolder> SourceFolders { get; } =
+        existingSourceFolders.ToObservableCollection();
+
+    public List<SourceFolder> AddedSourceFolders { get; } = new();
+}
+
 public class SourceFolderController
 {
     private readonly DatabaseController _databaseController;
@@ -13,32 +21,34 @@ public class SourceFolderController
         _databaseController = databaseController;
     }
 
-    public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(List<string> folderPaths,
-        ICollection<SourceFolder> existingSourceFolders)
+    public NewResult<SourceFolderState> BuildSourceFolders(List<string> folderPaths, SourceFolderState state)
     {
         foreach (var folderPath in folderPaths)
         {
-            var result = BuildSourceFolders(folderPath, existingSourceFolders);
+            var result = BuildSourceFolders(folderPath, state);
             if (result.Fail)
                 return result;
         }
 
-        return existingSourceFolders.ToObservableCollection();
+        return state;
     }
 
-    public NewResult<ObservableCollection<SourceFolder>> BuildSourceFolders(string folderPath,
-        ICollection<SourceFolder> existingSourceFolders)
+    public NewResult<SourceFolderState> BuildSourceFolders(string folderPath, SourceFolderState state)
     {
-        return FindRoot(folderPath, existingSourceFolders)
+        return FindRoot(folderPath, state.SourceFolders)
             .Map(rootFolder =>
             {
                 var allFolders = new List<SourceFolder> { rootFolder };
                 FindAllFolders(rootFolder, allFolders);
 
-                var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
-                Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath);
+                var addedSourceFolders = new List<SourceFolder>();
 
-                return existingSourceFolders.ToObservableCollection();
+                var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
+                Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath, addedSourceFolders);
+
+                state.AddedSourceFolders.AddRange(addedSourceFolders);
+
+                return state;
             });
     }
 
@@ -98,7 +108,7 @@ public class SourceFolderController
     }
 
     private static void Build(string root, List<string> levels, SourceFolder rootFolder,
-        List<SourceFolder> allFolders, string fullPath)
+        List<SourceFolder> allFolders, string fullPath, List<SourceFolder> addedSourceFolders)
     {
         var lastLevel = levels.Last();
 
@@ -118,6 +128,7 @@ public class SourceFolderController
             }
 
             var item = new SourceFolder(level, rootFolder, currentPath);
+            addedSourceFolders.Add(item);
             var existingFolder = allFolders
                 .SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
             if (existingFolder is not null)
@@ -132,12 +143,12 @@ public class SourceFolderController
             }
 
             if (lastLevel == level)
-                BuildChildDirectories(root, rootFolder, allFolders, fullPath);
+                BuildChildDirectories(root, rootFolder, allFolders, fullPath, addedSourceFolders);
         }
     }
 
     private static void BuildChildDirectories(string root, SourceFolder rootFolder, List<SourceFolder> allFolders,
-        string fullPath)
+        string fullPath, List<SourceFolder> addedSourceFolders)
     {
         try
         {
@@ -147,7 +158,7 @@ public class SourceFolderController
             foreach (var directory in directories)
             {
                 var x = directory.Split(Path.DirectorySeparatorChar).ToList();
-                Build(root, x, rootFolder, allFolders, directory);
+                Build(root, x, rootFolder, allFolders, directory, addedSourceFolders);
             }
         }
         catch (Exception)
