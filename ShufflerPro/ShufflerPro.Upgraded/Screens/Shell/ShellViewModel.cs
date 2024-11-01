@@ -504,8 +504,7 @@ public class ShellViewModel : ViewModelBase
             "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         if (messageResult == MessageBoxResult.Yes)
-            RunAsync(async () => await _sourceFolderController
-                .Remove(Library!, _selectedTreeViewItem.SourceFolder)
+            RunAsync(async () => await _sourceFolderController.Remove(Library!, _selectedTreeViewItem.SourceFolder)
                 .IfFail(exception => MessageBox.Show(exception.Message))
                 .IfSuccess(_ =>
                 {
@@ -514,6 +513,7 @@ public class ShellViewModel : ViewModelBase
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                         SourceTreeItems.Remove(_selectedTreeViewItem);
 
+                    FilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                     NotifyCollectionsChanged();
                 }));
     }

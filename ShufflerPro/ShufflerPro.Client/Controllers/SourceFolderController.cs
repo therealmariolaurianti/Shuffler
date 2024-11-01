@@ -70,7 +70,7 @@ public class SourceFolderController
         {
             foreach (var folder in sourceFolder.Flatten())
             {
-                var songs = library.Songs.Where(s => s.Path.Contains(folder.FullPath));
+                var songs = library.Songs.Where(s => s.Path != null && s.Path.Contains(folder.FullPath));
                 foreach (var song in songs)
                     if (song.CreatedAlbum?.Songs.Count - 1 == 0)
                     {
