@@ -44,7 +44,7 @@
                     </Grid.ColumnDefinitions>
                     <Border
                         Margin="10"
-                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <StackPanel
@@ -108,7 +108,7 @@
                     <Border
                         Grid.Column="1"
                         Margin="10"
-                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <StackPanel
@@ -138,7 +138,7 @@
                                 <Slider
                                     Margin="5"
                                     Grid.Column="1"
-                                    IsEnabled="False"
+                                    
                                     Minimum="0"
                                     Interval="1000"
                                     Maximum="{Binding MaxRunTime}"
@@ -153,7 +153,7 @@
                     <Border
                         Margin="10"
                         Grid.Column="2"
-                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <Grid
@@ -248,7 +248,7 @@
                     </Grid.RowDefinitions>
                     <Border
                         Margin="2,0,2,2"
-                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -320,7 +320,7 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Margin="2,0,0,0"
-                            BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                            BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -358,7 +358,7 @@
                         <Border
                             Margin="0,0,2,0"
                             Grid.Column="1"
-                            BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                            BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -404,7 +404,7 @@
                         ResizeDirection="Rows" />
                     <Border
                         Margin="2"
-                        BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         Grid.Row="2">
                         <DataGrid
@@ -471,7 +471,7 @@
             <Border
                 Margin="2"
                 Grid.Row="2"
-                BorderBrush="{StaticResource MahApps.Brushes.Control.Border}"
+                BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
                 BorderThickness="1">
                 <Grid>
                     <StackPanel
