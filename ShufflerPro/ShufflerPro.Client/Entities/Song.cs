@@ -16,7 +16,7 @@ public class Song(File? songFile, string path) : INotifyPropertyChanged
     public string? Path { get; set; } = path;
     public string? Time { get; } = songFile?.Properties.Duration.ToString("mm':'ss");
     public TimeSpan? Duration { get; } = songFile?.Properties.Duration;
-    public IPicture? Picture { get; } = songFile?.Tag.Pictures.FirstOrDefault();
+    public IPicture? Picture { get; } = null; //songFile?.Tag.Pictures.FirstOrDefault();
 
     public bool IsPlaying
     {

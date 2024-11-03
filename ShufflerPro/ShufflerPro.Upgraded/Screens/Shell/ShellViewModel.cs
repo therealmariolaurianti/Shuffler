@@ -12,12 +12,14 @@ using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
+using TagLib;
 using MessageBox = System.Windows.MessageBox;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
 public class ShellViewModel : ViewModelBase
 {
+    private readonly AlbumArtLoader _albumArtLoader;
     private readonly BinaryHelper _binaryHelper;
 
     private readonly ContextMenuBuilder _contextMenuBuilder;
@@ -51,7 +53,7 @@ public class ShellViewModel : ViewModelBase
         SourceFolderController sourceFolderController,
         MediaController mediaController,
         BinaryHelper binaryHelper, LibraryController libraryController, ContextMenuBuilder contextMenuBuilder,
-        SongQueueFactory songQueueFactory)
+        SongQueueFactory songQueueFactory, AlbumArtLoader albumArtLoader)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -60,6 +62,7 @@ public class ShellViewModel : ViewModelBase
         _libraryController = libraryController;
         _contextMenuBuilder = contextMenuBuilder;
         _songQueueFactory = songQueueFactory;
+        _albumArtLoader = albumArtLoader;
 
         TimeSpan = new TimeSpan();
 
@@ -207,7 +210,14 @@ public class ShellViewModel : ViewModelBase
 
     public bool IsPlaying => _playerController.Playing;
 
-    public BitmapImage? CurrentSongPicture => _binaryHelper.ToImage(CurrentSong?.Picture);
+    public BitmapImage? CurrentSongPicture
+    {
+        get
+        {
+            var albumArt = _albumArtLoader.Load(CurrentSong?.Path);
+            return _binaryHelper.ToImage(albumArt);
+        }
+    }
 
     public int ApplicationVolumeLevel
     {
@@ -259,7 +269,9 @@ public class ShellViewModel : ViewModelBase
 
     private void OnPlayerDisposed()
     {
-        CurrentSong.IsPlaying = false;
+        if (CurrentSong is not null)
+            CurrentSong.IsPlaying = false;
+
         CurrentSong = null;
 
         NotifyOfPropertyChange(nameof(IsPlaying));
@@ -604,5 +616,16 @@ public class ShellViewModel : ViewModelBase
             return;
 
         _playerController.Skip(_songQueue);
+    }
+}
+
+public class AlbumArtLoader
+{
+    public IPicture? Load(string? currentSongPath)
+    {
+        if (currentSongPath is null)
+            return null;
+        var albumArt = File.Create(currentSongPath).Tag.Pictures.FirstOrDefault();
+        return albumArt;
     }
 }

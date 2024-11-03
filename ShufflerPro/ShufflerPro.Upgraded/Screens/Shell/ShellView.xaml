@@ -349,7 +349,7 @@
                                                         SharedSizeGroup="NameColumn" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
-                                                    Text="{Binding Name}" />
+                                                    Text="{Binding Name, Mode=OneTime}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -387,7 +387,7 @@
                                                         SharedSizeGroup="NameColumn" />
                                                 </Grid.ColumnDefinitions>
                                                 <TextBlock
-                                                    Text="{Binding Name}" />
+                                                    Text="{Binding Name, Mode=OneTime}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -413,6 +413,7 @@
                             cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
+                            ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
                             CanUserSortColumns="False"
                             IsReadOnly="True">
@@ -502,7 +503,7 @@
                                 <Image
                                     Height="23"
                                     Width="23"
-                                    Source="{StaticResource ShuffleImage}"/>
+                                    Source="{StaticResource ShuffleImage}" />
                             </StackPanel>
                         </ToggleButton>
                     </StackPanel>
