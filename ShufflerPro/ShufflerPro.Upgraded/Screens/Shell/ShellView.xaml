@@ -120,10 +120,10 @@
                                 Text="{Binding CurrentSong.Title, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
-                                Text="{Binding CurrentSong.Album, FallbackValue=''}" />
+                                Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
-                                Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
+                                Text="{Binding CurrentSong.Album, FallbackValue=''}" />
                             <Grid
                                 Margin="20,5">
                                 <Grid.ColumnDefinitions>
@@ -134,11 +134,11 @@
                                 <TextBlock
                                     Grid.Column="0"
                                     VerticalAlignment="Center"
+                                    HorizontalAlignment="Right"
                                     Text="{Binding ElapsedRunningTimeDisplay}" />
                                 <Slider
                                     Margin="5"
                                     Grid.Column="1"
-                                    
                                     Minimum="0"
                                     Interval="1000"
                                     Maximum="{Binding MaxRunTime}"
@@ -146,6 +146,7 @@
                                 <TextBlock
                                     Grid.Column="2"
                                     VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
                                     Text="{Binding CurrentSongTime}" />
                             </Grid>
                         </StackPanel>
@@ -413,6 +414,7 @@
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             ItemsSource="{Binding Songs}"
+                            CanUserSortColumns="False"
                             IsReadOnly="True">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn

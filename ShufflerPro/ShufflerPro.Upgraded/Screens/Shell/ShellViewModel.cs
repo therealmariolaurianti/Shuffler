@@ -40,7 +40,7 @@ public class ShellViewModel : ViewModelBase
     private Artist? _selectedArtist;
     private Song? _selectedSong;
     private SourceTreeViewItem? _selectedTreeViewItem;
-    private SongQueue _songQueue;
+    private SongQueue? _songQueue;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
@@ -232,10 +232,6 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    private List<Song> AllSongsOrdered => AllSongs.OrderBy(s => s.Artist)
-        .ThenBy(s => s.Album)
-        .ThenBy(s => s.Track).ToList();
-
     public string SearchText
     {
         get => _searchText;
@@ -265,7 +261,7 @@ public class ShellViewModel : ViewModelBase
     {
         CurrentSong.IsPlaying = false;
         CurrentSong = null;
-        
+
         NotifyOfPropertyChange(nameof(IsPlaying));
     }
 
@@ -366,6 +362,9 @@ public class ShellViewModel : ViewModelBase
 
     public void PlayPause()
     {
+        if (_songQueue?.CurrentSong is null)
+            PlaySong();
+
         if (_playerController.Playing)
         {
             _timer?.Pause();
@@ -391,7 +390,13 @@ public class ShellViewModel : ViewModelBase
     public NewResult<NewUnit> InitializePlaySong()
     {
         if (SelectedSong is null)
-            return NewResultExtensions.CreateFail<NewUnit>();
+        {
+            var firstSong = Songs?.FirstOrDefault();
+            if (firstSong is null)
+                return NewResultExtensions.CreateFail<NewUnit>();
+
+            SelectedSong = firstSong;
+        }
 
         return NewResultExtensions.Try(() =>
         {
@@ -410,7 +415,7 @@ public class ShellViewModel : ViewModelBase
 
     private void BuildSongQueue()
     {
-        _songQueue = _songQueueFactory.Create(CurrentSong!);
+        _songQueue = _songQueueFactory.Create(CurrentSong!, Songs);
     }
 
     public void PlaySong()
@@ -418,7 +423,7 @@ public class ShellViewModel : ViewModelBase
         InitializePlaySong()
             .IfSuccess(_ =>
             {
-                _playerController.PlaySong(_songQueue);
+                _playerController.PlaySong(_songQueue!);
 
                 var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
                 if (playingNow is not null)
@@ -587,7 +592,7 @@ public class ShellViewModel : ViewModelBase
 
     public void PreviousSong()
     {
-        if (CurrentSong is null)
+        if (CurrentSong is null || _songQueue is null)
             return;
 
         _playerController.Previous(_songQueue, ElapsedRunningTime);
@@ -595,7 +600,7 @@ public class ShellViewModel : ViewModelBase
 
     public void NextSong()
     {
-        if (CurrentSong is null)
+        if (CurrentSong is null || _songQueue is null)
             return;
 
         _playerController.Skip(_songQueue);
