@@ -3,6 +3,7 @@ using NUnit.Framework;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Factories;
 using ShufflerPro.Tests.Base;
 
 namespace ShufflerPro.Tests.Tests;
@@ -264,6 +265,7 @@ public class SourceTreeTests : UnitTestBase
     public void Remove_Source_Folder_Remove_Child_Multiple_Album()
     {
         var sourceFolders = new List<SourceFolder>();
+        var libraryFactory = new LibraryFactory();
 
         var root = new SourceFolder(@"C:", "C:", true, null);
         sourceFolders.Add(root);
@@ -274,7 +276,7 @@ public class SourceTreeTests : UnitTestBase
         var level2 = new SourceFolder(@"Folder_1", @"C:\UnitTest\Folder_1", false, level1);
         level1.Items.Add(level2);
 
-        var library = new Library();
+        var library = libraryFactory.Create(sourceFolders.ToObservableCollection());
         var artist = new Artist("Artist_1", []);
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
