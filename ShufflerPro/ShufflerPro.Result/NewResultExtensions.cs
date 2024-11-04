@@ -11,7 +11,7 @@ public static class NewResultExtensions
     {
         return new NewResult<T>(ex);
     }
-    
+
     public static NewResult<T> CreateFail<T>()
     {
         return new NewResult<T>();
@@ -94,6 +94,13 @@ public static class NewResultExtensions
     {
         var item = await task;
         item.IfSuccess(f);
+        return item;
+    }
+
+    public static async Task<NewResult<T>> IfSuccessAsync<T>(this Task<NewResult<T>> task, Func<T, Task> f)
+    {
+        var item = await task;
+        await item.IfSuccessAsync(async x => await f(x));
         return item;
     }
 }

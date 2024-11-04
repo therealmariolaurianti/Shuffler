@@ -90,5 +90,10 @@ public class NewResult<T>
             func(FirstException);
         return this;
     }
-
+    
+    public async Task IfSuccessAsync(Func<T, Task> action)
+    {
+        if (Success)
+            await action(Item);
+    }
 }

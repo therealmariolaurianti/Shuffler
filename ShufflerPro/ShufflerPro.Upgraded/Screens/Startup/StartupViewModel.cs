@@ -25,19 +25,18 @@ public class StartupViewModel : ViewModelBase
     protected override void OnViewLoaded(object view)
     {
         RunAsync(async () => await Load());
-        base.OnViewLoaded(view);
     }
-
+    
     private async Task Load()
     {
         await _libraryController.Initialize()
             .IfFail(_ => { })
-            .IfSuccess(library =>
+            .IfSuccessAsync(async library =>
             {
                 var viewModel = _shellViewModelFactory.Create(library);
-                _windowManager.ShowWindowAsync(viewModel);
+                await _windowManager.ShowWindowAsync(viewModel);
             });
-        
-        await TryCloseAsync(true);
+
+        await TryCloseAsync();
     }
 }
