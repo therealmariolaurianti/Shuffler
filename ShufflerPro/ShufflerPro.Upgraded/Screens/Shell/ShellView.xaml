@@ -10,12 +10,13 @@
     xmlns:wpf="clr-namespace:ShufflerPro.Upgraded.Framework.WPF"
     xmlns:enums="clr-namespace:ShufflerPro.Client.Enums;assembly=ShufflerPro.Client"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:controls="clr-namespace:ShufflerPro.Upgraded.Framework.WPF.Controls"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
     Width="1200"
     Height="825"
-    Background="{StaticResource MahApps.Brushes.Control.Background}"
+    Background="{DynamicResource MahApps.Brushes.Control.Background}"
     d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
     <Window.Resources>
         <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
@@ -44,7 +45,7 @@
                     </Grid.ColumnDefinitions>
                     <Border
                         Margin="10"
-                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <StackPanel
@@ -55,7 +56,7 @@
                                 Width="50"
                                 Height="50"
                                 Name="PreviousSong"
-                                Background="{StaticResource MahApps.Brushes.Button.Flat.Background}"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
                                 Style="{StaticResource CircleButton}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -70,7 +71,7 @@
                                 Width="70"
                                 Height="70"
                                 Style="{StaticResource CircleButton}"
-                                Background="{StaticResource MahApps.Brushes.Button.Flat.Background}"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
                                 Name="PlayPause">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -92,7 +93,7 @@
                                 Width="50"
                                 Height="50"
                                 Name="NextSong"
-                                Background="{StaticResource MahApps.Brushes.Button.Flat.Background}"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
                                 Style="{StaticResource CircleButton}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -108,7 +109,7 @@
                     <Border
                         Grid.Column="1"
                         Margin="10"
-                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <StackPanel
@@ -154,7 +155,7 @@
                     <Border
                         Margin="10"
                         Grid.Column="2"
-                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
                         <Grid
@@ -199,7 +200,7 @@
                                 Margin="20,0">
                                 <wpf:WatermarkService.Watermark>
                                     <TextBlock
-                                        Foreground="{StaticResource MahApps.Brushes.ThemeForeground}"
+                                        Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Left"
                                         FontSize="14"
@@ -250,7 +251,7 @@
                     </Grid.RowDefinitions>
                     <Border
                         Margin="2,0,2,2"
-                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1">
                         <Grid>
                             <Grid.RowDefinitions>
@@ -264,7 +265,7 @@
                                 FontSize="16"
                                 TextAlignment="Center"
                                 FontWeight="SemiBold"
-                                Background="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Text="Source" />
                             <TreeView
                                 Margin="2,0,2,2"
@@ -296,7 +297,7 @@
                         Visibility="{calcBinding:Binding IsLoadingSourceFolders, FalseToVisibility=Collapsed}"
                         Grid.Column="0"
                         Height="35"
-                        Background="{StaticResource MahApps.Brushes.Progress}"
+                        Background="{DynamicResource MahApps.Brushes.Progress}"
                         Margin="2"
                         IsIndeterminate="{Binding IsLoadingSourceFolders}" />
                 </Grid>
@@ -322,7 +323,7 @@
                         </Grid.ColumnDefinitions>
                         <Border
                             Margin="2,0,0,0"
-                            BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -332,7 +333,7 @@
                                 <TextBlock
                                     Margin="2"
                                     FontSize="16"
-                                    Background="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     TextAlignment="Center"
                                     FontWeight="SemiBold"
                                     Text="Artist" />
@@ -360,7 +361,7 @@
                         <Border
                             Margin="0,0,2,0"
                             Grid.Column="1"
-                            BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -371,7 +372,7 @@
                                     Margin="2"
                                     FontSize="16"
                                     TextAlignment="Center"
-                                    Background="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     FontWeight="SemiBold"
                                     Text="Album" />
                                 <ListBox
@@ -406,7 +407,7 @@
                         ResizeDirection="Rows" />
                     <Border
                         Margin="2"
-                        BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         Grid.Row="2">
                         <DataGrid
@@ -446,7 +447,7 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn
                                     Header="Song"
-                                    HeaderStyle="{StaticResource MahApps.Styles.DataGridColumnHeader}"
+                                    HeaderStyle="{DynamicResource MahApps.Styles.DataGridColumnHeader}"
                                     Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Time"
@@ -475,7 +476,7 @@
             <Border
                 Margin="2"
                 Grid.Row="2"
-                BorderBrush="{StaticResource MahApps.Brushes.DataGrid.Selection.Background}"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 BorderThickness="1">
                 <Grid>
                     <StackPanel
@@ -514,13 +515,20 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Text="{Binding LibrarySummary, Mode=OneWay}" />
-                    <Button
-                        Name="AddSource"
+                    <StackPanel
+                        Orientation="Horizontal"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        Width="100"
-                        Margin="10"
-                        Content="Import" />
+                        VerticalAlignment="Center">
+                        <controls:ThemeComboBox
+                            Margin="10"
+                            Width="85"
+                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"/>
+                        <Button
+                            Name="AddSource"
+                            Width="100"
+                            Margin="10"
+                            Content="Import" />
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>

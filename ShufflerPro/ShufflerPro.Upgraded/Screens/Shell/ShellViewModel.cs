@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using ControlzEx.Theming;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -14,7 +15,10 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
+using ShufflerPro.Upgraded.Framework.WPF.Controls;
+using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
+using Theme = ShufflerPro.Client.Entities.Theme;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
@@ -57,6 +61,7 @@ public class ShellViewModel : ViewModelBase
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
+    private Theme _selectedTheme;
 
     public ShellViewModel(
         Library library,
@@ -280,6 +285,18 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public Theme SelectedTheme
+    {
+        get => _selectedTheme;
+        set
+        {
+            if (Equals(value, _selectedTheme)) return;
+            _selectedTheme = value;
+            NotifyOfPropertyChange();
+            ThemeController.ChangeTheme(value);
+        }
+    }
+
     private void OnPlayerDisposed()
     {
         if (CurrentSong is not null)
@@ -343,6 +360,7 @@ public class ShellViewModel : ViewModelBase
         SourceTreeItems = [];
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
+        SelectedTheme = Themes.Default;
         InitializeApplicationVolume();
         StartLibrary();
 
@@ -637,5 +655,10 @@ public class ShellViewModel : ViewModelBase
             return;
 
         _playerController.Skip(_songQueue);
+    }
+
+    public void This()
+    {
+        
     }
 }
