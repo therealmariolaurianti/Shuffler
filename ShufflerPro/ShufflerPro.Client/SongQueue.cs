@@ -1,6 +1,6 @@
 ﻿using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Client.Controllers;
+namespace ShufflerPro.Client;
 
 public class SongQueue
 {
