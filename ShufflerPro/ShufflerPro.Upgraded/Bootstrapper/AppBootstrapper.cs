@@ -7,6 +7,7 @@ using Ninject;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Upgraded.Screens.Shell;
+using ShufflerPro.Upgraded.Screens.Startup;
 
 namespace ShufflerPro.Upgraded.Bootstrapper;
 
@@ -57,6 +58,6 @@ public class AppBootstrapper : BootstrapperBase
             .With.AutoMapper()
             .Start();
 
-        await DisplayRootViewForAsync<ShellViewModel>();
+        await DisplayRootViewForAsync<StartupViewModel>();
     }
 }

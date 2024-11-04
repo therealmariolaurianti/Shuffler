@@ -19,6 +19,7 @@
       <PackageReference Include="MahApps.Metro" Version="2.4.10" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="Ninject" Version="3.3.6" />
+      <PackageReference Include="Ninject.Extensions.Conventions" Version="3.3.0" />
       <PackageReference Include="TagLibSharp" Version="2.3.0" />
     </ItemGroup>
 

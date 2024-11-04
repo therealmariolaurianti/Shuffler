@@ -10,6 +10,7 @@ using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Enums;
 using ShufflerPro.Client.Factories;
+using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
@@ -18,12 +19,18 @@ using MessageBox = System.Windows.MessageBox;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
 
+public interface IShellViewModelFactory : IFactory
+{
+    ShellViewModel Create(Library library);
+}
+
 public class ShellViewModel : ViewModelBase
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly BinaryHelper _binaryHelper;
 
     private readonly ContextMenuBuilder _contextMenuBuilder;
+    private readonly Library _library;
 
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
@@ -36,7 +43,6 @@ public class ShellViewModel : ViewModelBase
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
-    private Library? _library;
     private LibrarySearchType _librarySearchType;
     private string _searchText;
     private Album? _selectedAlbum;
@@ -50,11 +56,15 @@ public class ShellViewModel : ViewModelBase
     private CountDownTimer? _timer;
 
     public ShellViewModel(
+        Library library,
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        BinaryHelper binaryHelper, LibraryController libraryController, ContextMenuBuilder contextMenuBuilder,
-        SongQueueFactory songQueueFactory, AlbumArtLoader albumArtLoader)
+        BinaryHelper binaryHelper,
+        LibraryController libraryController,
+        ContextMenuBuilder contextMenuBuilder,
+        SongQueueFactory songQueueFactory,
+        AlbumArtLoader albumArtLoader)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -64,6 +74,7 @@ public class ShellViewModel : ViewModelBase
         _contextMenuBuilder = contextMenuBuilder;
         _songQueueFactory = songQueueFactory;
         _albumArtLoader = albumArtLoader;
+        _library = library;
 
         TimeSpan = new TimeSpan();
 
@@ -101,24 +112,9 @@ public class ShellViewModel : ViewModelBase
         SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
         AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
 
-    public Library? Library
-    {
-        get => _library;
-        private set
-        {
-            if (Equals(value, _library)) return;
-            _library = value;
-            NotifyOfPropertyChange();
-            NotifyCollectionsChanged();
-        }
-    }
-
-    public IReadOnlyCollection<Artist> Artists => Library?.Artists.OrderBy(a => a.Name).ToReadOnlyCollection()
-                                                  ?? new ReadOnlyCollection<Artist>(new List<Artist>());
-
-    private IReadOnlyCollection<Song> AllSongs => Library?.Songs ?? new ReadOnlyCollection<Song>(new List<Song>());
-
-    private IReadOnlyCollection<Album> AllAlbums => Library?.Albums ?? new ReadOnlyCollection<Album>(new List<Album>());
+    public IReadOnlyCollection<Artist> Artists => _library.Artists.OrderBy(a => a.Name).ToReadOnlyCollection();
+    private IReadOnlyCollection<Song> AllSongs => _library.Songs;
+    private IReadOnlyCollection<Album> AllAlbums => _library.Albums;
 
     public Artist? SelectedArtist
     {
@@ -157,7 +153,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string LibrarySummary => Library?.Summary ?? string.Empty;
+    public string LibrarySummary => _library.Summary;
 
     public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
 
@@ -200,11 +196,11 @@ public class ShellViewModel : ViewModelBase
 
     public ObservableCollection<SourceFolder> SourceFolders
     {
-        get => Library?.SourceFolders ?? [];
+        get => _library.SourceFolders ?? [];
         set
         {
-            if (Equals(value, Library!.SourceFolders)) return;
-            Library!.SourceFolders = value;
+            if (Equals(value, _library.SourceFolders)) return;
+            _library.SourceFolders = value;
             NotifyOfPropertyChange();
         }
     }
@@ -325,14 +321,22 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
-    protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
+    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "Shuffler";
         SourceTreeItems = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
+        StartLibrary();
 
-        await Load();
+        return base.OnInitializeAsync(cancellationToken);
+    }
+
+    private void StartLibrary()
+    {
+        ElapsedRunningTime = 0;
+        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
+        ProcessSourceFolders();
     }
 
     private void InitializeApplicationVolume()
@@ -341,20 +345,6 @@ public class ShellViewModel : ViewModelBase
 
         var calculatedVolume = (ushort)(currentVolume & 0x0000ffff);
         ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10);
-    }
-
-    private async Task Load()
-    {
-        await _libraryController.Initialize()
-            .IfFail(_ => MessageBox.Show("Failed to load library."))
-            .IfSuccess(library =>
-            {
-                Library = library;
-                ElapsedRunningTime = 0;
-                ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
-
-                ProcessSourceFolders();
-            });
     }
 
     public void PlayArtist()
@@ -523,7 +513,7 @@ public class ShellViewModel : ViewModelBase
             await Task.Run(() =>
             {
                 _sourceFolderController.BuildSourceFolders(folderPath, state)
-                    .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, Library!))
+                    .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, _library))
                     .Do(_ => SourceFolders = state.SourceFolders);
             }).ConfigureAwait(true);
             return state;
@@ -569,7 +559,7 @@ public class ShellViewModel : ViewModelBase
             "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         if (messageResult == MessageBoxResult.Yes)
-            RunAsync(async () => await _sourceFolderController.Remove(Library!, _selectedTreeViewItem.SourceFolder)
+            RunAsync(async () => await _sourceFolderController.Remove(_library, _selectedTreeViewItem.SourceFolder)
                 .IfFail(exception => MessageBox.Show(exception.Message))
                 .IfSuccess(_ =>
                 {
