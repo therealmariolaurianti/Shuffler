@@ -1,27 +1,35 @@
 using ShufflerPro.Database.Interfaces;
+using ShufflerPro.Result;
 
 namespace ShufflerPro.Database;
 
 public class DatabasePath : IDatabasePath
 {
-    public DatabasePath()
+    private readonly string _currentDirectory;
+
+    public DatabasePath(string currentDirectory)
     {
-        var root = FindRoot();
-        Path = $@"{root}\local.db";
+        _currentDirectory = currentDirectory;
     }
 
-    public string Path { get; }
+    public string Path { get; private set; } = string.Empty;
 
-    public static string FindRoot()
+    public NewResult<string> Start()
     {
-        var currentDirectory = Directory.GetCurrentDirectory();
+        return FindRoot()
+            .IfSuccess(root => Path = $@"{root}\local.db");
+    }
+
+    public NewResult<string> FindRoot()
+    {
+        var currentDirectory = _currentDirectory;
         while (true)
         {
             if (Directory.GetFiles(currentDirectory, ".root").Any())
                 return currentDirectory;
             var directoryInfo = Directory.GetParent(currentDirectory);
             if (directoryInfo == null)
-                throw new ApplicationException("Cannot find .root");
+                return NewResultExtensions.CreateFail<string>(new Exception("Failed to find root."));
             currentDirectory = directoryInfo.FullName;
         }
     }

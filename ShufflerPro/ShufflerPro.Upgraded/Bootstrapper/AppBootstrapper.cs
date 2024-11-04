@@ -1,12 +1,11 @@
 ﻿using System.Windows;
+using System.Windows.Threading;
 using Bootstrap.AutoMapper;
 using Bootstrap.Extensions.StartupTasks;
 using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
-using ShufflerPro.Database;
 using ShufflerPro.Database.Bootstrapper;
-using ShufflerPro.Upgraded.Screens.Shell;
 using ShufflerPro.Upgraded.Screens.Startup;
 
 namespace ShufflerPro.Upgraded.Bootstrapper;
@@ -59,5 +58,11 @@ public class AppBootstrapper : BootstrapperBase
             .Start();
 
         await DisplayRootViewForAsync<StartupViewModel>();
+    }
+
+    protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+    {
+        Execute.OnUIThread(() => MessageBox.Show("An unexpected error has occurred."));
+        Application.Shutdown();
     }
 }

@@ -18,7 +18,12 @@ public class NinjectRegistration : INinjectRegistration
 {
     public void Register(IKernel container)
     {
-        var localDatabasePath = new DatabasePath();
-        container.Bind<IDatabasePath>().ToConstant(localDatabasePath);
+        var localDatabasePath = new DatabasePath(Directory.GetCurrentDirectory());
+        localDatabasePath.Start()
+            .IfSuccess(_ =>
+            {
+                container.Bind<IDatabasePath>().ToConstant(localDatabasePath);
+            })
+            .IfFail(_ => throw new ApplicationException(_.Message));
     }
 }
