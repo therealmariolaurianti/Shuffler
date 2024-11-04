@@ -11,9 +11,6 @@ public class LocalDatabase
 
     private LiteDatabaseAsync CreateDatabase(string fileName)
     {
-        var directory = Path.GetDirectoryName(fileName);
-        if (!Directory.Exists(directory))
-            Directory.CreateDirectory(directory);
         var liteDatabase = new LiteDatabaseAsync(fileName);
         return liteDatabase;
     }

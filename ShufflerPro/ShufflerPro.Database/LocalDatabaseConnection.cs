@@ -13,7 +13,7 @@ public class LocalDatabaseConnection : IDisposable
 
     public void Dispose()
     {
-        _liteDatabase?.Dispose();
+        _liteDatabase.Dispose();
     }
 
     public LocalDatabaseCollection<T> GetCollection<T>(string? collectionName = null)

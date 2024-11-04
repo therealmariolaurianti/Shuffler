@@ -12,19 +12,4 @@ public class LocalDatabaseKey
     }
 
     public object Value => _value;
-
-    public static implicit operator LocalDatabaseKey(int value)
-    {
-        return new LocalDatabaseKey(value);
-    }
-
-    public static implicit operator LocalDatabaseKey(Guid value)
-    {
-        return new LocalDatabaseKey(value);
-    }
-
-    public static implicit operator LocalDatabaseKey(string value)
-    {
-        return new LocalDatabaseKey(value);
-    }
 }

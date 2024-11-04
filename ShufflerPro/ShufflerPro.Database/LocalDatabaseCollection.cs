@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using LiteDB;
 using LiteDB.Async;
 
 namespace ShufflerPro.Database;
@@ -13,12 +12,6 @@ public class LocalDatabaseCollection<T>
         _collection = collection;
     }
 
-    public async Task<T> FindById(LocalDatabaseKey id)
-    {
-        var bsonValue = id.AsBsonValue();
-        return await _collection.FindByIdAsync(bsonValue);
-    }
-
     public async Task<LocalDatabaseKey> Insert(T item)
     {
         var value = await _collection.InsertAsync(item);
@@ -30,23 +23,13 @@ public class LocalDatabaseCollection<T>
         return await _collection.DeleteManyAsync(predicate);
     }
 
-    public async Task<bool> Upsert(T item)
+    public async Task<int> DeleteAll()
     {
-        return await _collection.UpsertAsync(item);
-    }
-
-    public async Task<bool> Update(T item)
-    {
-        return await _collection.UpdateAsync(item);
+        return await _collection.DeleteAllAsync();
     }
 
     public async Task<IEnumerable<T>> FindAll()
     {
         return await _collection.FindAllAsync();
-    }
-
-    public async Task<bool> Upsert(LocalDatabaseKey key, T item)
-    {
-        return await _collection.UpsertAsync(key.AsBsonValue(), item);
     }
 }
