@@ -119,12 +119,15 @@
                             VerticalAlignment="Center">
                             <TextBlock
                                 TextAlignment="Center"
+                                FontSize="14"
                                 Text="{Binding CurrentSong.Title, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
+                                FontSize="14"
                                 Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
                             <TextBlock
                                 TextAlignment="Center"
+                                FontSize="14"
                                 Text="{Binding CurrentSong.Album, FallbackValue=''}" />
                             <Grid
                                 Margin="20,5">
@@ -429,9 +432,7 @@
                             SelectedItem="{Binding SelectedSong}"
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
-                            CanUserSortColumns="False"
-                            AlternationCount="2"
-                            IsReadOnly="True">
+                            CanUserSortColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn
                                     Width="25"
