@@ -37,7 +37,8 @@
             <Border
                 Margin="2"
                 BorderThickness="1">
-                <Grid>
+                <Grid
+                    MaxWidth="1400">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="275" />
                         <ColumnDefinition Width="*" />
