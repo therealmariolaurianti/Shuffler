@@ -527,7 +527,7 @@
                         TextAlignment="Center"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Text="{Binding LibrarySummary, Mode=OneWay}" />
+                        Text="{Binding SongSelectionSummary, Mode=OneWay}" />
                     <StackPanel
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"

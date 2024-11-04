@@ -5,7 +5,6 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using ControlzEx.Theming;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -15,8 +14,6 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
-using ShufflerPro.Upgraded.Framework.WPF.Controls;
-using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 using Theme = ShufflerPro.Client.Entities.Theme;
 
@@ -55,13 +52,13 @@ public class ShellViewModel : ViewModelBase
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
+    private Theme _selectedTheme;
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
-    private Theme _selectedTheme;
 
     public ShellViewModel(
         Library library,
@@ -115,6 +112,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _songs)) return;
             _songs = value;
             NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(SongSelectionSummary));
         }
     }
 
@@ -148,6 +146,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedAlbum)) return;
             _selectedAlbum = value;
             NotifyOfPropertyChange();
+            
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
@@ -163,7 +162,21 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string LibrarySummary => _library.Summary;
+    public string SongSelectionSummary
+    {
+        get
+        {
+            var totalSongs = Songs.Count;
+            var totalSpan = Songs
+                .Aggregate(TimeSpan.Zero, (sumSoFar, nextMyObject) =>
+                {
+                    if (nextMyObject.Duration.HasValue)
+                        return sumSoFar + nextMyObject.Duration.Value;
+                    return sumSoFar;
+                });
+            return $"{totalSongs} songs, {totalSpan.Duration().StripMilliseconds()} total time";
+        }
+    }
 
     public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
 
@@ -350,7 +363,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(Songs));
         NotifyOfPropertyChange(nameof(AllSongs));
         NotifyOfPropertyChange(nameof(AllAlbums));
-        NotifyOfPropertyChange(nameof(LibrarySummary));
+        NotifyOfPropertyChange(nameof(SongSelectionSummary));
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
@@ -458,9 +471,9 @@ public class ShellViewModel : ViewModelBase
 
     private void BuildSongQueue()
     {
-        _songQueue = IsShuffleChecked ? 
-            _randomSongQueueFactory.Create(CurrentSong!, Songs, _songStack) : 
-            _songQueueFactory.Create(CurrentSong!, Songs);
+        _songQueue = IsShuffleChecked
+            ? _randomSongQueueFactory.Create(CurrentSong!, Songs, _songStack)
+            : _songQueueFactory.Create(CurrentSong!, Songs);
     }
 
     public void PlaySong()
@@ -659,6 +672,5 @@ public class ShellViewModel : ViewModelBase
 
     public void This()
     {
-        
     }
 }
