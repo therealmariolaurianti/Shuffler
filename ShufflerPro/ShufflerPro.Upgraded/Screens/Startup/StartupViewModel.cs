@@ -1,5 +1,6 @@
 ﻿using Caliburn.Micro;
 using ShufflerPro.Client.Controllers;
+using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework.WPF;
 using ShufflerPro.Upgraded.Screens.Shell;
@@ -35,14 +36,24 @@ public class StartupViewModel : ViewModelBase
 
     private async Task Load()
     {
-        await _libraryController.Initialize()
-            .IfFail(_ => { })
-            .IfSuccessAsync(async library =>
-            {
-                var viewModel = _shellViewModelFactory.Create(library);
-                await _windowManager.ShowWindowAsync(viewModel);
-            });
+        Library? library = null;
+        await Task.Run(async () =>
+        {
+            await _libraryController.Initialize()
+                .IfFail(_ => { library = null;})
+                .IfSuccess(createdLibrary => library = createdLibrary);
+        }).ConfigureAwait(true);
 
-        await TryCloseAsync();
+        if (library is null)
+        {
+            
+        }
+        else
+        {
+            var viewModel = _shellViewModelFactory.Create(library);
+            await _windowManager.ShowWindowAsync(viewModel);
+
+            await TryCloseAsync();
+        }
     }
 }

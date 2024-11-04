@@ -12,8 +12,8 @@
     Background="{StaticResource MahApps.Brushes.Control.Background}"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">
-    <Grid>
-        <TextBlock 
-            Text="Loading"/>
-    </Grid>
+    <TextBlock 
+        VerticalAlignment="Center"
+        HorizontalAlignment="Center"
+        Text="Warming Up"/>
 </mah:MetroWindow>
