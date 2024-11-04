@@ -497,6 +497,7 @@
                         </ToggleButton>
                         <ToggleButton
                             ToolTip="Shuffle"
+                            IsChecked="{Binding IsShuffleChecked}"
                             Width="50">
                             <StackPanel
                                 HorizontalAlignment="Center"

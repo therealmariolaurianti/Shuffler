@@ -34,7 +34,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         PlayerDisposed.Invoke();
     }
 
-    private void StartNextSong(SongQueue songQueue)
+    private void StartNextSong(ISongQueue songQueue)
     {
         if (songQueue.NextSong is null)
             Dispose();
@@ -42,7 +42,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
             SongChanged.Invoke(songQueue.NextSong);
     }
     
-    private void StartPreviousSong(SongQueue songQueue)
+    private void StartPreviousSong(ISongQueue songQueue)
     {
         if (songQueue.NextSong is null)
             Dispose();
@@ -63,7 +63,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         ReInitialize();
     }
 
-    public void PlaySong(SongQueue? songQueue)
+    public void PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
             return;
@@ -120,12 +120,12 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         }
     }
 
-    public void Skip(SongQueue songQueue)
+    public void Skip(ISongQueue songQueue)
     {
         StartNextSong(songQueue);
     }
 
-    public void Previous(SongQueue songQueue, double elapsedRunningTime)
+    public void Previous(ISongQueue songQueue, double elapsedRunningTime)
     {
         if (elapsedRunningTime >= 5)
             SongChanged.Invoke(songQueue.CurrentSong!);

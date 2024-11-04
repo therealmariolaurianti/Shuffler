@@ -34,22 +34,26 @@ public class ShellViewModel : ViewModelBase
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
+    private readonly RandomSongQueueFactory _randomSongQueueFactory;
 
     private readonly SongQueueFactory _songQueueFactory;
+
+    private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
     private double _applicationVolumeLevel;
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
+    private bool _isShuffleChecked;
     private LibrarySearchType _librarySearchType;
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private Song? _selectedSong;
     private SourceTreeViewItem? _selectedTreeViewItem;
-    private SongQueue? _songQueue;
-    private ObservableCollection<Song>? _songs;
+    private ISongQueue? _songQueue;
+    private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
@@ -63,7 +67,7 @@ public class ShellViewModel : ViewModelBase
         LibraryController libraryController,
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
-        AlbumArtLoader albumArtLoader)
+        AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -73,6 +77,8 @@ public class ShellViewModel : ViewModelBase
         _contextMenuBuilder = contextMenuBuilder;
         _songQueueFactory = songQueueFactory;
         _albumArtLoader = albumArtLoader;
+        _randomSongQueueFactory = randomSongQueueFactory;
+        _songStack = songStack;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -96,7 +102,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Song>? Songs
+    public ObservableCollection<Song> Songs
     {
         get => _songs;
         set
@@ -263,6 +269,17 @@ public class ShellViewModel : ViewModelBase
 
     public bool HasAlbumArt => CurrentSongPicture != null;
 
+    public bool IsShuffleChecked
+    {
+        get => _isShuffleChecked;
+        set
+        {
+            if (value == _isShuffleChecked) return;
+            _isShuffleChecked = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     private void OnPlayerDisposed()
     {
         if (CurrentSong is not null)
@@ -324,6 +341,7 @@ public class ShellViewModel : ViewModelBase
     {
         DisplayName = "Shuffler";
         SourceTreeItems = [];
+        Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
         InitializeApplicationVolume();
         StartLibrary();
@@ -367,7 +385,10 @@ public class ShellViewModel : ViewModelBase
     public void PlayPause()
     {
         if (_songQueue?.CurrentSong is null)
+        {
             PlaySong();
+            return;
+        }
 
         if (_playerController.Playing)
         {
@@ -395,7 +416,7 @@ public class ShellViewModel : ViewModelBase
     {
         if (SelectedSong is null)
         {
-            var firstSong = Songs?.FirstOrDefault();
+            var firstSong = Songs.FirstOrDefault();
             if (firstSong is null)
                 return NewResultExtensions.CreateFail<NewUnit>();
 
@@ -419,7 +440,9 @@ public class ShellViewModel : ViewModelBase
 
     private void BuildSongQueue()
     {
-        _songQueue = _songQueueFactory.Create(CurrentSong!, Songs);
+        _songQueue = IsShuffleChecked ? 
+            _randomSongQueueFactory.Create(CurrentSong!, Songs, _songStack) : 
+            _songQueueFactory.Create(CurrentSong!, Songs);
     }
 
     public void PlaySong()
