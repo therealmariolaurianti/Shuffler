@@ -224,7 +224,7 @@
                                     Grid.Column="1"
                                     cal:Message.Attach="[Event ValueChanged] = [Action AdjustApplicationVolume()]"
                                     Value="{Binding ApplicationVolumeLevel}"
-                                    Maximum="10"
+                                    Maximum="9"
                                     Margin="10" />
                                 <Image
                                     Height="15"

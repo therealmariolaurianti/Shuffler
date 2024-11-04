@@ -10,6 +10,7 @@ public class SourceFolder
         Parent = parent;
         Items = new List<SourceFolder>();
         Id = Guid.NewGuid();
+        IsValid = true;
     }
 
     public SourceFolder(string name, string fullPath, bool isRoot, SourceFolder? parent)
@@ -20,6 +21,7 @@ public class SourceFolder
         Parent = parent;
         Items = new List<SourceFolder>();
         Id = Guid.NewGuid();
+        IsValid = true;
     }
 
     public string Header { get; }
@@ -29,6 +31,7 @@ public class SourceFolder
     public SourceFolder? Parent { get; set; }
     public bool IsProcessed { get; set; }
     public Guid Id { get; }
+    public bool IsValid { get; set; }
 
     private static string BuildHeader(string header)
     {

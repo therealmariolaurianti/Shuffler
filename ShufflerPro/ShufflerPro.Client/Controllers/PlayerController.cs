@@ -63,9 +63,9 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         ReInitialize();
     }
 
-    public void PlaySong(SongQueue songQueue)
+    public void PlaySong(SongQueue? songQueue)
     {
-        if (songQueue.CurrentSong is null)
+        if (songQueue?.CurrentSong is null)
             return;
         
         try

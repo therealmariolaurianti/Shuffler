@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -345,13 +346,15 @@ public class ShellViewModel : ViewModelBase
     private async Task Load()
     {
         await _libraryController.Initialize()
-            .Do(library =>
+            .IfFail(_ => MessageBox.Show("Failed to load library."))
+            .IfSuccess(library =>
             {
                 Library = library;
                 ElapsedRunningTime = 0;
                 ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
-            })
-            .Do(_ => ProcessSourceFolders());
+
+                ProcessSourceFolders();
+            });
     }
 
     public void PlayArtist()
@@ -596,6 +599,12 @@ public class ShellViewModel : ViewModelBase
             SourceFolder = sourceFolder
         };
 
+        if (!sourceFolder.IsValid)
+        {
+            treeItem.Foreground = Brushes.Red;
+            treeItem.ToolTip = $"Failed to connect to path '{sourceFolder.FullPath}'";
+        }
+
         foreach (var sourceFolderItem in sourceFolder.Items)
             treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem, contextMenu));
 
@@ -609,7 +618,7 @@ public class ShellViewModel : ViewModelBase
 
         _playerController.Previous(_songQueue, ElapsedRunningTime);
     }
-    
+
     public void NextSong()
     {
         if (CurrentSong is null || _songQueue is null)

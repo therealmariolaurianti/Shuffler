@@ -26,7 +26,7 @@ public class MediaController(
         if (sourceFolder is { IsRoot: false, IsProcessed: false, Items.Count: 0 })
         {
             var path = sourceFolder.FullPath;
-            var loadSongsInPath = LoadSongsInPath(path);
+            var loadSongsInPath = LoadSongsInPath(path, sourceFolder);
 
             Process(library, loadSongsInPath);
         }
@@ -37,13 +37,21 @@ public class MediaController(
             ProcessPath(library, folderItem);
     }
 
-    private static List<Song> LoadSongsInPath(string mediaLibraryPath)
+    private static List<Song> LoadSongsInPath(string mediaLibraryPath, SourceFolder sourceFolder)
     {
-        var songsPaths = Path.GetFullPath(mediaLibraryPath)
-            .GetFilesByExtension()
-            .ToHashSet();
-
-        return songsPaths.Select(SongFactory.Create).ToList();
+        try
+        {
+            var songsPaths = Path.GetFullPath(mediaLibraryPath)
+                .GetFilesByExtension()
+                .ToHashSet();
+            
+            return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
+        }
+        catch (Exception)
+        {
+            sourceFolder.IsValid = false;
+            return new List<Song>();
+        }
     }
 
     private void Process(Library library, List<Song> songs)
