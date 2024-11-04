@@ -104,10 +104,10 @@ public class SourceFolderController(DatabaseController databaseController)
             if (level == root)
                 continue;
 
-            var sourceFolder = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
-            if (sourceFolder is not null)
+            var existingFolder = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
+            if (existingFolder is not null)
             {
-                rootFolder = sourceFolder;
+                rootFolder = existingFolder;
                 continue;
             }
 
@@ -115,8 +115,8 @@ public class SourceFolderController(DatabaseController databaseController)
             if (currentPath == fullPath)
                 addedSourceFolders.Add(item);
 
-            var existingParentFolder = allFolders
-                .SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
+            var existingParentFolder = allFolders.SingleOrDefault(f => f.Header == item.Header && 
+                                                                       f.Parent?.Header == item.Parent?.Header);
             if (existingParentFolder is not null)
             {
                 rootFolder = existingParentFolder;
@@ -125,6 +125,7 @@ public class SourceFolderController(DatabaseController databaseController)
             {
                 rootFolder.Items.Add(item);
                 rootFolder = item;
+                
                 allFolders.Add(item);
             }
 

@@ -40,7 +40,7 @@ public class StartupViewModel : ViewModelBase
         await Task.Run(async () =>
         {
             await _libraryController.Initialize()
-                .IfFail(_ => { library = null;})
+                .IfFail(_ => library = null)
                 .IfSuccess(createdLibrary => library = createdLibrary);
         }).ConfigureAwait(true);
 

@@ -37,7 +37,7 @@ public class ShellViewModel : ViewModelBase
 
     private readonly SongQueueFactory _songQueueFactory;
     private readonly SourceFolderController _sourceFolderController;
-    private int _applicationVolumeLevel;
+    private double _applicationVolumeLevel;
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
@@ -195,7 +195,7 @@ public class ShellViewModel : ViewModelBase
 
     public ObservableCollection<SourceFolder> SourceFolders
     {
-        get => _library.SourceFolders ?? [];
+        get => _library.SourceFolders;
         set
         {
             if (Equals(value, _library.SourceFolders)) return;
@@ -215,7 +215,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public int ApplicationVolumeLevel
+    public double ApplicationVolumeLevel
     {
         get => _applicationVolumeLevel;
         set
@@ -343,7 +343,7 @@ public class ShellViewModel : ViewModelBase
         WinImport.waveOutGetVolume(IntPtr.Zero, out var currentVolume);
 
         var calculatedVolume = (ushort)(currentVolume & 0x0000ffff);
-        ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10);
+        ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10d);
     }
 
     public void PlayArtist()
@@ -385,7 +385,7 @@ public class ShellViewModel : ViewModelBase
 
     public void AdjustApplicationVolume()
     {
-        var newVolume = ushort.MaxValue / 10 * ApplicationVolumeLevel;
+        var newVolume = ushort.MaxValue / 10d * ApplicationVolumeLevel;
         var newVolumeAllChannels = ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
 
         WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
