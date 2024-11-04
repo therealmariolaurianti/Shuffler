@@ -195,15 +195,16 @@ public class SourceTreeTests : UnitTestBase
         level1.Items.Add(level2);
 
         var library = new Library();
+        var artist = new Artist("Artist_1", []);
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
-        var album = new Album("Artist_1", "Album_1", [song]);
-        var artist = new Artist("Artist_1", [album]);
 
+        var album = new Album(artist, "Album_1", [song]);
         song.CreatedAlbum = album;
-        album.CreatedArtist = artist;
 
+        artist.Albums.Add(album);
         library.Artists.Add(artist);
+
         library.SourceFolders = sourceFolders.ToObservableCollection();
 
         var sourceFolderController = CreateSourceFolderController();
@@ -232,17 +233,17 @@ public class SourceTreeTests : UnitTestBase
         level1.Items.Add(level2);
 
         var library = new Library();
+        var artist = new Artist("Artist_1", []);
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
         var song2 = new Song(null, "C:\\UnitTest");
 
-        var album = new Album("Artist_1", "Album_1", [song, song2]);
-        var artist = new Artist("Artist_1", [album]);
+        var album = new Album(artist, "Album_1", [song, song2]);
 
         song.CreatedAlbum = album;
         song2.CreatedAlbum = album;
-        album.CreatedArtist = artist;
 
+        artist.Albums.Add(album);
         library.Artists.Add(artist);
 
         library.SourceFolders = sourceFolders.ToObservableCollection();
@@ -273,23 +274,20 @@ public class SourceTreeTests : UnitTestBase
         level1.Items.Add(level2);
 
         var library = new Library();
+        var artist = new Artist("Artist_1", []);
 
         var song = new Song(null, "C:\\UnitTest\\Folder_1");
         var song2 = new Song(null, "C:\\UnitTest");
         var song3 = new Song(null, "D:\\UnitTest");
 
-        var album = new Album("Artist_1", "Album_1", [song, song2]);
-        var album2 = new Album("Artist_1", "Album_2", [song3]);
-
-        var artist = new Artist("Artist_1", [album, album2]);
+        var album = new Album(artist, "Album_1", [song, song2]);
+        var album2 = new Album(artist, "Album_2", [song3]);
 
         song.CreatedAlbum = album;
         song2.CreatedAlbum = album;
         song3.CreatedAlbum = album2;
 
-        album.CreatedArtist = artist;
-        album2.CreatedArtist = artist;
-
+        artist.Albums.AddRange([album, album2]);
         library.Artists.Add(artist);
 
         library.SourceFolders = sourceFolders.ToObservableCollection();

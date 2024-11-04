@@ -39,7 +39,8 @@ public class MediaController(
 
     private static List<Song> LoadSongsInPath(string mediaLibraryPath)
     {
-        var songsPaths = Path.GetFullPath(mediaLibraryPath).GetFilesByExtension()
+        var songsPaths = Path.GetFullPath(mediaLibraryPath)
+            .GetFilesByExtension()
             .ToHashSet();
 
         return songsPaths.Select(SongFactory.Create).ToList();
@@ -47,39 +48,33 @@ public class MediaController(
 
     private void Process(Library library, List<Song> songs)
     {
-        var songFilesWithArtists = songs
-            .Distinct()
-            .Where(s => !string.IsNullOrEmpty(s.Artist))
-            .ToList();
-
-        var albums = songFilesWithArtists
-            .GroupBy(song => song.Album)
-            .ToDictionary(s => s.Key, g => g.ToList());
-
-        var albumList = new List<Album>();
-        foreach (var kvp in albums)
+        var songDictionary = songs.GroupBy(s => new
         {
-            var artist = kvp.Value.First().Artist;
-            var album = albumFactory.Create(artist, kvp.Key, kvp.Value);
-            albumList.Add(album);
-        }
+            s.Artist,
+            s.Album
+        }).ToDictionary(s => s.Key, s => s.ToList());
 
-        var groupedAlbums = albumList
-            .GroupBy(a => a.Artist)
-            .ToDictionary(s => s.Key, g => g.ToList());
-
-        foreach (var groupedAlbum in groupedAlbums)
+        foreach (var keyValue in songDictionary)
         {
-            var existingArtist = library.Artists.SingleOrDefault(a => a.Name == groupedAlbum.Key);
-            if (existingArtist is not null)
+            var artistKey = keyValue.Key.Artist;
+            var artist = library.Artists.SingleOrDefault(a => a.Name == artistKey);
+            if (artist is not null)
             {
-                foreach (var album in groupedAlbum.Value) 
-                    album.CreatedArtist = existingArtist;
-                
-                existingArtist.Albums.AddRange(groupedAlbum.Value);
+                var album = albumFactory.Create(artist,
+                    keyValue.Key.Album,
+                    keyValue.Value.OrderBy(v => v.Track).ToList());
+                artist.Albums.Add(album);
             }
             else
-                library.Artists.Add(artistFactory.Create(groupedAlbum.Key, groupedAlbum.Value));
+            {
+                var createdArtist = artistFactory.Create(artistKey, []);
+                var album = albumFactory.Create(createdArtist,
+                    keyValue.Key.Album,
+                    keyValue.Value.OrderBy(v => v.Track).ToList());
+
+                createdArtist.Albums.Add(album);
+                library.Artists.Add(createdArtist);
+            }
         }
     }
 }

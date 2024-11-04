@@ -609,7 +609,7 @@ public class ShellViewModel : ViewModelBase
 
         _playerController.Previous(_songQueue, ElapsedRunningTime);
     }
-
+    
     public void NextSong()
     {
         if (CurrentSong is null || _songQueue is null)

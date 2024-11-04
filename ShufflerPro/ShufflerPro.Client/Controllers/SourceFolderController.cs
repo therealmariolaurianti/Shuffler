@@ -74,9 +74,9 @@ public class SourceFolderController
                 foreach (var song in songs)
                     if (song.CreatedAlbum?.Songs.Count - 1 == 0)
                     {
-                        song.CreatedAlbum!.CreatedArtist!.Albums.Remove(song.CreatedAlbum);
-                        if (song.CreatedAlbum!.CreatedArtist!.Albums.Count == 0)
-                            library.Artists.Remove(song.CreatedAlbum!.CreatedArtist!);
+                        song.CreatedAlbum!.Artist.Albums.Remove(song.CreatedAlbum);
+                        if (song.CreatedAlbum!.Artist.Albums.Count == 0)
+                            library.Artists.Remove(song.CreatedAlbum!.Artist);
                     }
                     else
                     {

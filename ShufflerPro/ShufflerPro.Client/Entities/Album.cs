@@ -2,15 +2,22 @@ namespace ShufflerPro.Client.Entities;
 
 public class Album
 {
-    public Album(string artist, string name, List<Song> songs)
+    public Album(Artist artist, string name, List<Song> songs)
     {
         Artist = artist;
         Name = name;
-        Songs = songs.OrderBy(s => s.Track).ToList();
+
+        AddSongs(songs);
     }
 
-    public string Artist { get; }
     public string Name { get; }
-    public List<Song> Songs { get; }
-    public Artist? CreatedArtist { get; set; }
+    public List<Song> Songs { get; private set; } = [];
+    public Artist Artist { get; set; }
+
+    private void AddSongs(List<Song> songs)
+    {
+        var list = songs.OrderBy(s => s.Track).ToList();
+        songs.ForEach(s => s.CreatedAlbum = this);
+        Songs = list;
+    }
 }
