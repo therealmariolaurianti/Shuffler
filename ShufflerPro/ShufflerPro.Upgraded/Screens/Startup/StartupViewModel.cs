@@ -26,7 +26,13 @@ public class StartupViewModel : ViewModelBase
     {
         RunAsync(async () => await Load());
     }
-    
+
+    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+    {
+        DisplayName = "Shuffler";
+        return base.OnInitializeAsync(cancellationToken);
+    }
+
     private async Task Load()
     {
         await _libraryController.Initialize()

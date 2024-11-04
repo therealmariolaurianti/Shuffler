@@ -1,14 +1,19 @@
-﻿<UserControl
+﻿<mah:MetroWindow
     x:Class="ShufflerPro.Upgraded.Screens.Startup.StartupView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     mc:Ignorable="d"
     Height="300"
     Width="300"
-    d:DesignHeight="300" d:DesignWidth="300">
+    WindowStartupLocation="CenterScreen"
+    Background="{StaticResource MahApps.Brushes.Control.Background}"
+    WindowStyle="ToolWindow"
+    ResizeMode="NoResize">
     <Grid>
-        <TextBlock Text="Loading"/>
+        <TextBlock 
+            Text="Loading"/>
     </Grid>
-</UserControl>
+</mah:MetroWindow>

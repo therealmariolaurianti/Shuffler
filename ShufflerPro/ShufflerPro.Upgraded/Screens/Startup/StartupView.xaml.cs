@@ -1,8 +1,6 @@
-﻿using System.Windows.Controls;
+﻿namespace ShufflerPro.Upgraded.Screens.Startup;
 
-namespace ShufflerPro.Upgraded.Screens.Startup;
-
-public partial class StartupView : UserControl
+public partial class StartupView
 {
     public StartupView()
     {
