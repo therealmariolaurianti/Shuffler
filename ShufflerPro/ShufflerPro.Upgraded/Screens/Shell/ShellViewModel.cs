@@ -511,7 +511,7 @@ public class ShellViewModel : ViewModelBase
             var state = new SourceFolderState(SourceFolders);
             await Task.Run(() =>
             {
-                _sourceFolderController.BuildSourceFolders(folderPath, state)
+                _sourceFolderController.BuildFromPath(folderPath, state)
                     .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, _library))
                     .Do(_ => SourceFolders = state.SourceFolders);
             }).ConfigureAwait(true);

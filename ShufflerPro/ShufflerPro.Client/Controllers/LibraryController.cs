@@ -27,7 +27,7 @@ public class LibraryController
     {
         return await _databaseController.LoadSources()
             .Bind(sourcePaths => _sourceFolderController
-                .BuildSourceFolders(sourcePaths, new SourceFolderState(new List<SourceFolder>()))
+                .BuildFromSources(sourcePaths, new SourceFolderState(new List<SourceFolder>()))
                 .Bind(state =>
                 {
                     var library = _libraryFactory.Create(state.SourceFolders);

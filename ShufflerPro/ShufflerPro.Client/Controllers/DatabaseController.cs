@@ -17,14 +17,14 @@ public class DatabaseController
         _databasePath = databasePath;
     }
 
-    public async Task<NewResult<List<string>>> LoadSources()
+    public async Task<NewResult<List<Source>>> LoadSources()
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var sources = connection.GetCollection<Source>();
             var sourcePaths = await sources.FindAll().ConfigureAwait(true);
 
-            return sourcePaths.Select(s => s.FolderPath).ToList();
+            return sourcePaths.ToList();
         }
     }
 

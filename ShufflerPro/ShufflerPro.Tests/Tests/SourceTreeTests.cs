@@ -17,7 +17,7 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\", new SourceFolderState(new List<SourceFolder>()))
+            .BuildFromPath(@"C:\Level1\", new SourceFolderState(new List<SourceFolder>()))
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -35,7 +35,7 @@ public class SourceTreeTests : UnitTestBase
         var folderBrowserController = CreateSourceFolderController();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\Level2\Level3\Level4", new SourceFolderState(new List<SourceFolder>()))
+            .BuildFromPath(@"C:\Level1\Level2\Level3\Level4", new SourceFolderState(new List<SourceFolder>()))
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -65,7 +65,7 @@ public class SourceTreeTests : UnitTestBase
 
         var sourceFolderState = new SourceFolderState(existingSourceFolders);
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\", sourceFolderState)
+            .BuildFromPath(@"C:\Level1\", sourceFolderState)
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -77,7 +77,7 @@ public class SourceTreeTests : UnitTestBase
             });
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1_Second\", sourceFolderState)
+            .BuildFromPath(@"C:\Level1_Second\", sourceFolderState)
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -97,7 +97,7 @@ public class SourceTreeTests : UnitTestBase
 
         var sourceFolderState = new SourceFolderState(existingSourceFolders);
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\SubLevel1", sourceFolderState)
+            .BuildFromPath(@"C:\Level1\SubLevel1", sourceFolderState)
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -110,7 +110,7 @@ public class SourceTreeTests : UnitTestBase
             });
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\Level1\SubLevel2", sourceFolderState)
+            .BuildFromPath(@"C:\Level1\SubLevel2", sourceFolderState)
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();
@@ -132,7 +132,7 @@ public class SourceTreeTests : UnitTestBase
         var existingSourceFolders = new List<SourceFolder>();
 
         folderBrowserController
-            .BuildSourceFolders(@"C:\UnitTest", new SourceFolderState(existingSourceFolders))
+            .BuildFromPath(@"C:\UnitTest", new SourceFolderState(existingSourceFolders))
             .Do(sourceFolders =>
             {
                 var root = sourceFolders.SourceFolders.First();

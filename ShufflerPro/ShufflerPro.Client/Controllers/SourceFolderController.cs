@@ -1,31 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using ShufflerPro.Client.Entities;
+﻿using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class SourceFolderState(ICollection<SourceFolder> existingSourceFolders)
+public class SourceFolderController(DatabaseController databaseController)
 {
-    public ObservableCollection<SourceFolder> SourceFolders { get; } =
-        existingSourceFolders.ToObservableCollection();
-
-    public List<SourceFolder> AddedSourceFolders { get; } = new();
-}
-
-public class SourceFolderController
-{
-    private readonly DatabaseController _databaseController;
-
-    public SourceFolderController(DatabaseController databaseController)
+    public NewResult<SourceFolderState> BuildFromSources(List<Source> sources, SourceFolderState state)
     {
-        _databaseController = databaseController;
-    }
-
-    public NewResult<SourceFolderState> BuildSourceFolders(List<string> folderPaths, SourceFolderState state)
-    {
-        foreach (var folderPath in folderPaths)
+        foreach (var source in sources)
         {
-            var result = BuildSourceFolders(folderPath, state);
+            var result = BuildFromPath(source.FolderPath, state);
             if (result.Fail)
                 return result;
         }
@@ -33,21 +17,21 @@ public class SourceFolderController
         return state;
     }
 
-    public NewResult<SourceFolderState> BuildSourceFolders(string folderPath, SourceFolderState state)
+    public NewResult<SourceFolderState> BuildFromPath(string folderPath, SourceFolderState state)
     {
         return FindRoot(folderPath, state.SourceFolders)
             .Map(rootFolder =>
             {
                 var allFolders = new List<SourceFolder> { rootFolder };
+                
                 FindAllFolders(rootFolder, allFolders);
 
                 var addedSourceFolders = new List<SourceFolder>();
-
                 var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
+                
                 Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath, addedSourceFolders);
 
                 state.AddedSourceFolders.AddRange(addedSourceFolders);
-
                 return state;
             });
     }
@@ -61,7 +45,7 @@ public class SourceFolderController
 
     private async Task<NewResult<NewUnit>> RemoveFolderFromDatabase(SourceFolder sourceFolder)
     {
-        return await _databaseController.DeleteSource(sourceFolder);
+        return await databaseController.DeleteSource(sourceFolder);
     }
 
     private NewResult<NewUnit> RemoveSongsFromLibrary(Library library, SourceFolder sourceFolder)
@@ -114,29 +98,28 @@ public class SourceFolderController
         List<SourceFolder> allFolders, string fullPath, List<SourceFolder> addedSourceFolders)
     {
         var lastLevel = levels.Last();
-
         foreach (var level in levels)
         {
-            var index = levels.IndexOf(level);
-            var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
-
+            var currentPath = BuildCurrentPath(levels, level);
             if (level == root)
                 continue;
 
-            var items = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
-            if (items is not null)
+            var sourceFolder = allFolders.SingleOrDefault(af => af.Header == level && af.FullPath == currentPath);
+            if (sourceFolder is not null)
             {
-                rootFolder = items;
+                rootFolder = sourceFolder;
                 continue;
             }
 
             var item = new SourceFolder(level, rootFolder, currentPath);
-            addedSourceFolders.Add(item);
-            var existingFolder = allFolders
+            if (currentPath == fullPath)
+                addedSourceFolders.Add(item);
+
+            var existingParentFolder = allFolders
                 .SingleOrDefault(f => f.Header == item.Header && f.Parent?.Header == item.Parent?.Header);
-            if (existingFolder is not null)
+            if (existingParentFolder is not null)
             {
-                rootFolder = existingFolder;
+                rootFolder = existingParentFolder;
             }
             else
             {
@@ -148,6 +131,13 @@ public class SourceFolderController
             if (lastLevel == level)
                 BuildChildDirectories(root, rootFolder, allFolders, fullPath, addedSourceFolders);
         }
+    }
+
+    private static string BuildCurrentPath(List<string> levels, string level)
+    {
+        var index = levels.IndexOf(level);
+        var currentPath = string.Join(Path.DirectorySeparatorChar, levels.Take(index + 1));
+        return currentPath;
     }
 
     private static void BuildChildDirectories(string root, SourceFolder rootFolder, List<SourceFolder> allFolders,
@@ -174,7 +164,7 @@ public class SourceFolderController
     {
         var rootPath = Path.GetPathRoot((string?)folderPath)?.Replace(Path.DirectorySeparatorChar, ' ').Trim();
         if (rootPath is null)
-            return new Exception("Failed to load source");
+            return NewResultExtensions.CreateFail<SourceFolder>(new Exception("Failed to load source"));
 
         var root = existingSourceFolders.SingleOrDefault(sf => sf.IsRoot && sf.Header == rootPath);
         return root ?? BuildRoot(rootPath, existingSourceFolders);
