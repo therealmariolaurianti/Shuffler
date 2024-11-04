@@ -2,14 +2,13 @@
 using NUnit.Framework;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Database;
+using ShufflerPro.Tests.Base;
 
-namespace ShufflerPro.Tests;
+namespace ShufflerPro.Tests.Tests;
 
 [TestFixture]
 public class DatabaseTests : UnitTestBase
 {
-    private const string _testFolderPath = "D:\\Projects\\Shuffler\\Tests";
-
     [TestCase]
     public void Find_Root()
     {

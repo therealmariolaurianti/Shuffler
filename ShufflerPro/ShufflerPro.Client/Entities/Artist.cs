@@ -10,6 +10,4 @@ public class Artist
 
     public string Name { get; }
     public List<Album> Albums { get; }
-
-    public List<Song> Songs => Albums.SelectMany(a => a.Songs).ToList();
 }

@@ -1,8 +1,7 @@
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Factories;
-using ShufflerPro.Database;
 
-namespace ShufflerPro.Tests;
+namespace ShufflerPro.Tests.Base;
 
 public class UnitTestBase
 {
@@ -10,7 +9,9 @@ public class UnitTestBase
     {
         return new SourceFolderController(null);
     }
-
+    
+    //TODO get relative path
+    internal const string _testFolderPath = "D:\\Projects\\Shuffler\\Tests";
 
     public MediaController CreateMediaController()
     {

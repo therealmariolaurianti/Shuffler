@@ -3,8 +3,9 @@ using NUnit.Framework;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Tests.Base;
 
-namespace ShufflerPro.Tests;
+namespace ShufflerPro.Tests.Tests;
 
 [TestFixture]
 public class SourceTreeTests : UnitTestBase
