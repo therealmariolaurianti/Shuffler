@@ -14,7 +14,6 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 using ShufflerPro.Upgraded.Framework;
 using ShufflerPro.Upgraded.Framework.WPF;
-using TagLib;
 using MessageBox = System.Windows.MessageBox;
 
 namespace ShufflerPro.Upgraded.Screens.Shell;
@@ -615,16 +614,5 @@ public class ShellViewModel : ViewModelBase
             return;
 
         _playerController.Skip(_songQueue);
-    }
-}
-
-public class AlbumArtLoader
-{
-    public IPicture? Load(string? currentSongPath)
-    {
-        if (currentSongPath is null)
-            return null;
-        var albumArt = File.Create(currentSongPath).Tag.Pictures.FirstOrDefault();
-        return albumArt;
     }
 }

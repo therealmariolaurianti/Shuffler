@@ -36,8 +36,8 @@ public class StartupViewModel : ViewModelBase
             {
                 var viewModel = _shellViewModelFactory.Create(library);
                 _windowManager.ShowWindowAsync(viewModel);
-
-                TryCloseAsync(true);
             });
+        
+        await TryCloseAsync(true);
     }
 }
