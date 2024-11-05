@@ -11,13 +11,39 @@
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
     xmlns:shell="clr-namespace:ShufflerPro.Screens.Shell"
+    xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
     Width="1200"
     Height="825"
-    Background="{DynamicResource MahApps.Brushes.Control.Background}"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button
+                cal:Message.Attach="LaunchGitHubSite"
+                Cursor="Hand"
+                ToolTip="Open up the GitHub site">
+                <iconPacks:PackIconModern
+                    Width="22"
+                    Height="22"
+                    Kind="SocialGithubOctocat" />
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button
+                Cursor="Hand"
+                cal:Message.Attach="LaunchSettings"
+                ToolTip="Change Settings">
+                <iconPacks:PackIconModern
+                    Width="20"
+                    Height="20"
+                    Kind="Settings" />
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <Window.Resources>
         <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
     </Window.Resources>
@@ -58,6 +84,8 @@
                                 Height="50"
                                 Margin="1"
                                 Name="PreviousSong"
+                                Cursor="Hand"
+                                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -72,6 +100,8 @@
                                 Width="70"
                                 Height="70"
                                 Margin="1"
+                                Cursor="Hand"
+                                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}"
                                 Name="PlayPause">
                                 <StackPanel
@@ -94,7 +124,9 @@
                                 Width="50"
                                 Height="50"
                                 Margin="1"
+                                Cursor="Hand"
                                 Name="NextSong"
+                                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -524,6 +556,7 @@
                         VerticalAlignment="Center"
                         HorizontalAlignment="Left">
                         <ToggleButton
+                            Cursor="Hand"
                             ToolTip="Replay Album"
                             IsChecked="{Binding IsRepeatChecked}"
                             Width="50">
@@ -537,6 +570,7 @@
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton
+                            Cursor="Hand"
                             ToolTip="Shuffle"
                             IsChecked="{Binding IsShuffleChecked}"
                             Width="50">
@@ -559,12 +593,23 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
-                        <controls:ThemeComboBox
+                        <StackPanel
                             Margin="10"
-                            Width="85"
-                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
+                            HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                            <mah:ToggleSwitch
+                                IsOn="{Binding IsDarkModeEnabled}"
+                                FontWeight="12"
+                                HorizontalAlignment="Right"
+                                OffContent="Light"
+                                OnContent="Dark" />
+                            <controls:ThemeComboBox
+                                Width="85"
+                                SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
+                        </StackPanel>
                         <Button
                             Name="AddSource"
+                            Cursor="Hand"
                             Width="100"
                             Margin="10"
                             Content="Import" />

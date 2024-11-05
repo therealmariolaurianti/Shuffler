@@ -4,6 +4,8 @@ namespace ShufflerPro.Framework.WPF;
 
 public static class Themes
 {
+    public static readonly Theme Default = new("Steel");
+
     public static IEnumerable<Theme> Items => new[]
     {
         new Theme("Red"),
@@ -30,6 +32,4 @@ public static class Themes
         new Theme("Taupe"),
         new Theme("Sienna")
     }.OrderBy(d => d.Name);
-    
-    public static readonly Theme Default = new("Steel");
 }

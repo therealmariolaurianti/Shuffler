@@ -7,9 +7,10 @@ namespace ShufflerPro.Framework.WPF;
 
 public static class ThemeController
 {
-    public static void ChangeTheme(Theme theme)
+    public static void ChangeTheme(Theme theme, bool isDarkModeEnabled)
     {
-        var newTheme = ThemeManager.Current.GetTheme($"dark.{theme.Name}");
+        var lightOrDark = isDarkModeEnabled ? "dark" : "light";
+        var newTheme = ThemeManager.Current.GetTheme($"{lightOrDark}.{theme.Name}");
         if (newTheme != null)
             ThemeManager.Current.ChangeTheme(Application.Current, newTheme);
     }

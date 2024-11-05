@@ -19,6 +19,7 @@
       <PackageReference Include="CalcBinding" Version="2.5.2" />
       <PackageReference Include="Caliburn.Micro" Version="4.0.212" />
       <PackageReference Include="MahApps.Metro" Version="2.4.10" />
+      <PackageReference Include="MahApps.Metro.IconPacks" Version="5.1.0" />
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="Ninject" Version="3.3.6" />
       <PackageReference Include="Ninject.Extensions.Conventions" Version="3.3.0" />

@@ -46,6 +46,7 @@ public class ShellViewModel : ViewModelBase
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
+    private bool _isDarkModeEnabled;
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
@@ -311,7 +312,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedTheme)) return;
             _selectedTheme = value;
             NotifyOfPropertyChange();
-            ThemeController.ChangeTheme(value);
+            ThemeController.ChangeTheme(value, IsDarkModeEnabled);
         }
     }
 
@@ -325,6 +326,18 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             if (IsShuffleChecked && IsRepeatChecked)
                 IsShuffleChecked = false;
+        }
+    }
+
+    public bool IsDarkModeEnabled
+    {
+        get => _isDarkModeEnabled;
+        set
+        {
+            if (value == _isDarkModeEnabled) return;
+            _isDarkModeEnabled = value;
+            NotifyOfPropertyChange();
+            ThemeController.ChangeTheme(SelectedTheme, value);
         }
     }
 
@@ -721,5 +734,14 @@ public class ShellViewModel : ViewModelBase
             return;
 
         _playerController.Skip(_songQueue);
+    }
+
+    public void LaunchGitHubSite()
+    {
+        WebsiteLauncher.OpenWebsite("https://github.com/therealmariolaurianti/Shuffler");
+    }
+
+    public void LaunchSettings()
+    {
     }
 }
