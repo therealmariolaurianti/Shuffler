@@ -16,6 +16,7 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
     Width="1200"
+    Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
     <mah:MetroWindow.LeftWindowCommands>
@@ -72,6 +73,7 @@
                     </Grid.ColumnDefinitions>
                     <Border
                         Margin="10"
+                        Background="{DynamicResource MahApps.Brushes.Control.Background}"
                         BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
@@ -142,6 +144,7 @@
                     <Border
                         Grid.Column="1"
                         Margin="10"
+                        Background="{DynamicResource MahApps.Brushes.Control.Background}"
                         BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
@@ -191,6 +194,7 @@
                     <Border
                         Margin="10"
                         Grid.Column="2"
+                        Background="{DynamicResource MahApps.Brushes.Control.Background}"
                         BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         CornerRadius="20">
@@ -291,20 +295,29 @@
                         BorderThickness="1">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height=".5*" />
+                                <RowDefinition Height="*" />
                                 <RowDefinition Height="5" />
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-                            <TextBlock
-                                Margin="2"
-                                FontSize="16"
-                                TextAlignment="Center"
-                                FontWeight="SemiBold"
-                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                                Text="Playlists" />
-                            <ListBox
-                                Grid.Row="1" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height=".5*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Margin="2"
+                                    FontSize="16"
+                                    TextAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    Text="Playlists" />
+                                <ListBox
+                                    Grid.Row="1" />
+                                <Separator
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    Grid.Row="2" />
+                            </Grid>
                             <GridSplitter
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Stretch"
@@ -312,9 +325,9 @@
                                 Background="Transparent"
                                 VerticalContentAlignment="Stretch"
                                 ResizeDirection="Rows"
-                                Grid.Row="2" />
+                                Grid.Row="1" />
                             <Grid
-                                Grid.Row="3">
+                                Grid.Row="2">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height=".5*" />
@@ -547,6 +560,7 @@
             <Border
                 Margin="2"
                 Grid.Row="2"
+                Background="{DynamicResource MahApps.Brushes.Control.Background}"
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 BorderThickness="1">
                 <Grid>

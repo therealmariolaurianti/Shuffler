@@ -23,12 +23,12 @@ public class SourceFolderController(DatabaseController databaseController)
             .Map(rootFolder =>
             {
                 var allFolders = new List<SourceFolder> { rootFolder };
-                
+
                 FindAllFolders(rootFolder, allFolders);
 
                 var addedSourceFolders = new List<SourceFolder>();
                 var levels = folderPath.Split(Path.DirectorySeparatorChar).ToList();
-                
+
                 Build(rootFolder.Header, levels, rootFolder, allFolders, folderPath, addedSourceFolders);
 
                 state.AddedSourceFolders.AddRange(addedSourceFolders);
@@ -115,7 +115,7 @@ public class SourceFolderController(DatabaseController databaseController)
             if (currentPath == fullPath)
                 addedSourceFolders.Add(item);
 
-            var existingParentFolder = allFolders.SingleOrDefault(f => f.Header == item.Header && 
+            var existingParentFolder = allFolders.SingleOrDefault(f => f.Header == item.Header &&
                                                                        f.Parent?.Header == item.Parent?.Header);
             if (existingParentFolder is not null)
             {
@@ -125,7 +125,7 @@ public class SourceFolderController(DatabaseController databaseController)
             {
                 rootFolder.Items.Add(item);
                 rootFolder = item;
-                
+
                 allFolders.Add(item);
             }
 
@@ -147,7 +147,7 @@ public class SourceFolderController(DatabaseController databaseController)
         try
         {
             var directories = Directory.GetDirectories(fullPath);
-            if (!directories.Any())
+            if (directories.Length == 0)
                 return;
             foreach (var directory in directories)
             {
@@ -171,7 +171,7 @@ public class SourceFolderController(DatabaseController databaseController)
         return root ?? BuildRoot(rootPath, existingSourceFolders);
     }
 
-    private NewResult<SourceFolder> BuildRoot(string rootPath, ICollection<SourceFolder> existingSourceFolders)
+    private static NewResult<SourceFolder> BuildRoot(string rootPath, ICollection<SourceFolder> existingSourceFolders)
     {
         var root = new SourceFolder(rootPath, rootPath, true, null);
         existingSourceFolders.Add(root);
