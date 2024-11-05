@@ -1,0 +1,551 @@
+<mah:MetroWindow
+    x:Class="ShufflerPro.Screens.Shell.ShellView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:cal="http://www.caliburnproject.org"
+    xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
+    xmlns:enums="clr-namespace:ShufflerPro.Client.Enums;assembly=ShufflerPro.Client"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
+    xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
+    mc:Ignorable="d"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="ThreeDBorderWindow"
+    Width="1200"
+    Height="825"
+    Background="{DynamicResource MahApps.Brushes.Control.Background}"
+    d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
+    <Window.Resources>
+        <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="1"
+            Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="150" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="60" />
+            </Grid.RowDefinitions>
+            <Border
+                Margin="2"
+                BorderThickness="1">
+                <Grid
+                    MaxWidth="1400">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="275" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="275" />
+                    </Grid.ColumnDefinitions>
+                    <Border
+                        Margin="10"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderThickness="1"
+                        CornerRadius="20">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal">
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Name="PreviousSong"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
+                                Style="{StaticResource CircleButton}">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <Image
+                                        Height="15"
+                                        Width="15"
+                                        Source="{StaticResource PreviousImage}" />
+                                </StackPanel>
+                            </Button>
+                            <Button
+                                Width="70"
+                                Height="70"
+                                Style="{StaticResource CircleButton}"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
+                                Name="PlayPause">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <Image
+                                        Margin="5,0,0,0"
+                                        Height="25"
+                                        Width="25"
+                                        Visibility="{calcBinding:Binding '!IsPlaying'}"
+                                        Source="{StaticResource PlayImage}" />
+                                    <Image
+                                        Height="25"
+                                        Width="25"
+                                        Visibility="{calcBinding:Binding 'IsPlaying'}"
+                                        Source="{StaticResource PauseImage}" />
+                                </StackPanel>
+                            </Button>
+                            <Button
+                                Width="50"
+                                Height="50"
+                                Name="NextSong"
+                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
+                                Style="{StaticResource CircleButton}">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <Image
+                                        Height="15"
+                                        Width="15"
+                                        Source="{StaticResource NextImage}" />
+                                </StackPanel>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+                    <Border
+                        Grid.Column="1"
+                        Margin="10"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderThickness="1"
+                        CornerRadius="20">
+                        <StackPanel
+                            Margin="2"
+                            Orientation="Vertical"
+                            VerticalAlignment="Center">
+                            <TextBlock
+                                TextAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding CurrentSong.Title, FallbackValue=''}" />
+                            <TextBlock
+                                TextAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
+                            <TextBlock
+                                TextAlignment="Center"
+                                FontSize="14"
+                                Text="{Binding CurrentSong.Album, FallbackValue=''}" />
+                            <Grid
+                                Margin="20,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Right"
+                                    Text="{Binding ElapsedRunningTimeDisplay}" />
+                                <Slider
+                                    Margin="5"
+                                    Grid.Column="1"
+                                    Minimum="0"
+                                    Interval="1000"
+                                    Maximum="{Binding MaxRunTime}"
+                                    Value="{Binding ElapsedRunningTime}" />
+                                <TextBlock
+                                    Grid.Column="2"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Left"
+                                    Text="{Binding CurrentSongTime}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                    <Border
+                        Margin="10"
+                        Grid.Column="2"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderThickness="1"
+                        CornerRadius="20">
+                        <Grid
+                            VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <StackPanel
+                                Margin="5"
+                                HorizontalAlignment="Center"
+                                Grid.Row="0"
+                                Orientation="Horizontal">
+                                <RadioButton
+                                    Margin="2"
+                                    IsChecked="{Binding LibrarySearchType,
+                                    Converter={StaticResource EnumRadioButtonConverter},
+                                    ConverterParameter={x:Static enums:LibrarySearchType.Artist}}"
+                                    Content="Artist" />
+                                <RadioButton
+                                    Margin="2"
+                                    IsChecked="{Binding LibrarySearchType,
+                                    Converter={StaticResource EnumRadioButtonConverter},
+                                    ConverterParameter={x:Static enums:LibrarySearchType.Song}}"
+                                    Content="Song" />
+                                <RadioButton
+                                    Margin="2"
+                                    IsChecked="{Binding LibrarySearchType,
+                                    Converter={StaticResource EnumRadioButtonConverter},
+                                    ConverterParameter={x:Static enums:LibrarySearchType.Album}}"
+                                    Content="Album" />
+                            </StackPanel>
+                            <TextBox
+                                Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                VerticalAlignment="Center"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                VerticalContentAlignment="Center"
+                                Height="30"
+                                Width="200"
+                                Margin="20,0">
+                                <wpf:WatermarkService.Watermark>
+                                    <TextBlock
+                                        Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Left"
+                                        FontSize="14"
+                                        Text="Search" />
+                                </wpf:WatermarkService.Watermark>
+                            </TextBox>
+                            <Grid
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    Height="15"
+                                    Width="15"
+                                    Source="{StaticResource VolumeSoftImage}" />
+                                <Slider
+                                    Width="100"
+                                    Grid.Column="1"
+                                    cal:Message.Attach="[Event ValueChanged] = [Action AdjustApplicationVolume()]"
+                                    Value="{Binding ApplicationVolumeLevel}"
+                                    Maximum="10"
+                                    Margin="10" />
+                                <Image
+                                    Height="15"
+                                    Width="15"
+                                    Grid.Column="2"
+                                    Source="{StaticResource VolumeLoudImage}" />
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Border>
+            <Grid
+                Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition Width="3.5*" />
+                </Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Margin="2,0,2,2"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height=".5*"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Margin="2"
+                                FontSize="16"
+                                TextAlignment="Center"
+                                FontWeight="SemiBold"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Text="Playlists" />
+                            <TextBlock
+                                Margin="2"
+                                FontSize="16"
+                                Grid.Row="2"
+                                TextAlignment="Center"
+                                FontWeight="SemiBold"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Text="Sources" />
+                            <TreeView
+                                Margin="2,0,2,2"
+                                Grid.Row="3"
+                                cal:Message.Attach="[Event SelectedItemChanged] = [Action SelectedTreeViewItemChanged($source, $eventArgs)]"
+                                ItemsSource="{Binding SourceTreeItems}">
+                                <TreeView.ItemContainerStyle>
+                                    <Style TargetType="{x:Type TreeViewItem}">
+                                        <Setter Property="IsExpanded" Value="True" />
+                                    </Style>
+                                </TreeView.ItemContainerStyle>
+                            </TreeView>
+                            <Separator
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
+                                Grid.Row="4" />
+                            <Border
+                                Grid.Row="5"
+                                Margin="2,0,2,2"
+                                Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
+                                BorderThickness="0">
+                                <Image
+                                    MaxHeight="250"
+                                    Source="{Binding CurrentSongPicture}" />
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <ProgressBar
+                        Grid.Row="1"
+                        Visibility="{calcBinding:Binding IsLoadingSourceFolders, FalseToVisibility=Collapsed}"
+                        Grid.Column="0"
+                        Height="35"
+                        Background="{DynamicResource MahApps.Brushes.Progress}"
+                        Margin="2"
+                        IsIndeterminate="{Binding IsLoadingSourceFolders}" />
+                </Grid>
+                <GridSplitter
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="Transparent"
+                    VerticalContentAlignment="Stretch"
+                    ResizeDirection="Columns"
+                    Grid.Column="1" />
+                <Grid
+                    Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="10" />
+                        <RowDefinition Height="2.5*" />
+                    </Grid.RowDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border
+                            Margin="2,0,0,0"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Margin="2"
+                                    FontSize="16"
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    TextAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Artists" />
+                                <ListBox
+                                    Margin="2,0,2,2"
+                                    Grid.Row="1"
+                                    cal:Message.Attach="[Event MouseDoubleClick] = [Action PlayArtist()]"
+                                    SelectedItem="{Binding SelectedArtist}"
+                                    ItemsSource="{Binding Artists}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition
+                                                        SharedSizeGroup="NameColumn" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock
+                                                    Text="{Binding Name, Mode=OneTime}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+                        <Border
+                            Margin="0,0,2,0"
+                            Grid.Column="1"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    Margin="2"
+                                    FontSize="16"
+                                    TextAlignment="Center"
+                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    FontWeight="SemiBold"
+                                    Text="Albums" />
+                                <ListBox
+                                    Margin="2,0,2,2"
+                                    Grid.Row="1"
+                                    cal:Message.Attach="[Event MouseDoubleClick] = [Action PlayAlbum()]"
+                                    SelectedItem="{Binding SelectedAlbum}"
+                                    ItemsSource="{Binding Albums}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition
+                                                        SharedSizeGroup="NameColumn" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock
+                                                    Text="{Binding Name, Mode=OneTime}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                    <GridSplitter
+                        Grid.Row="1"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Background="Transparent"
+                        VerticalContentAlignment="Stretch"
+                        ResizeDirection="Rows" />
+                    <Border
+                        Margin="2"
+                        BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        BorderThickness="1"
+                        Grid.Row="2">
+                        <DataGrid
+                            RowHeight="23"
+                            cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
+                            AutoGenerateColumns="False"
+                            SelectedItem="{Binding SelectedSong}"
+                            ScrollViewer.CanContentScroll="True"
+                            ItemsSource="{Binding Songs}"
+                            IsReadOnly="True"
+                            CanUserSortColumns="False">
+                            <DataGrid.Columns>
+                                <DataGridTemplateColumn
+                                    Width="25"
+                                    CanUserResize="False"
+                                    IsReadOnly="True">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image
+                                                Visibility="{calcBinding:Binding 'IsPlaying'}"
+                                                Width="10"
+                                                Height="10"
+                                                Source="{StaticResource VolumeLoudImage}" />
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                                <DataGridTextColumn
+                                    Header="#"
+                                    CanUserResize="False"
+                                    Binding="{Binding Track, Mode=OneTime, FallbackValue=null}"
+                                    Width="25">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Center" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn
+                                    Header="Song"
+                                    HeaderStyle="{DynamicResource MahApps.Styles.DataGridColumnHeader}"
+                                    Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
+                                <DataGridTextColumn
+                                    Header="Time"
+                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
+                                    <DataGridTextColumn.ElementStyle>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="HorizontalAlignment" Value="Right" />
+                                            <Setter Property="Margin" Value="5,0" />
+                                        </Style>
+                                    </DataGridTextColumn.ElementStyle>
+                                </DataGridTextColumn>
+                                <DataGridTextColumn
+                                    Header="Artist"
+                                    Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
+                                <DataGridTextColumn
+                                    Header="Album"
+                                    Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
+                                <DataGridTextColumn
+                                    Header="Genre"
+                                    Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Border>
+                </Grid>
+            </Grid>
+            <Border
+                Margin="2"
+                Grid.Row="2"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                BorderThickness="1">
+                <Grid>
+                    <StackPanel
+                        Margin="10"
+                        Orientation="Horizontal"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                        <ToggleButton
+                            ToolTip="Replay Album"
+                            IsChecked="{Binding IsRepeatChecked}"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Image
+                                    Height="23"
+                                    Width="23"
+                                    Source="{StaticResource ReplayImage}" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <ToggleButton
+                            ToolTip="Shuffle"
+                            IsChecked="{Binding IsShuffleChecked}"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <Image
+                                    Height="23"
+                                    Width="23"
+                                    Source="{StaticResource ShuffleImage}" />
+                            </StackPanel>
+                        </ToggleButton>
+                    </StackPanel>
+                    <TextBlock
+                        TextAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Text="{Binding SongSelectionSummary, Mode=OneWay}" />
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center">
+                        <controls:ThemeComboBox
+                            Margin="10"
+                            Width="85"
+                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"/>
+                        <Button
+                            Name="AddSource"
+                            Width="100"
+                            Margin="10"
+                            Content="Import" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</mah:MetroWindow>

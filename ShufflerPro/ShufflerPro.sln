@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Upgraded", "ShufflerPro.Upgraded\ShufflerPro.Upgraded.csproj", "{A90DEF9B-8E9E-48AE-98DA-302AA958381B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro", "ShufflerPro\ShufflerPro.csproj", "{A90DEF9B-8E9E-48AE-98DA-302AA958381B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Client", "ShufflerPro.Client\ShufflerPro.Client.csproj", "{BACE64A1-3BF8-4695-B9F4-4202AE887C23}"
 EndProject
