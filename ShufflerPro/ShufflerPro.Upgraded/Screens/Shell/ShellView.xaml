@@ -432,6 +432,7 @@
                             SelectedItem="{Binding SelectedSong}"
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
+                            IsReadOnly="True"
                             CanUserSortColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn

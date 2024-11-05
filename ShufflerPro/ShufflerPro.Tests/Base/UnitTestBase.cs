@@ -1,4 +1,7 @@
+using System.Collections.ObjectModel;
+using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
+using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
 
 namespace ShufflerPro.Tests.Base;

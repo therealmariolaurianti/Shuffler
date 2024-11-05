@@ -23,9 +23,19 @@ public static class Extensions
     {
         return new ReadOnlyCollection<T>(new List<T>(items));
     }
-    
+
     public static TimeSpan StripMilliseconds(this TimeSpan time)
     {
         return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds);
+    }
+
+    public static double Reset(this double value)
+    {
+        return 0d;
+    }
+
+    public static string DefaultTimeSpan(this string timeSpanDisplay)
+    {
+        return new TimeSpan().ToString("mm':'ss");
     }
 }

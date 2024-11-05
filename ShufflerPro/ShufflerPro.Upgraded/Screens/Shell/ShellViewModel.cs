@@ -146,7 +146,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedAlbum)) return;
             _selectedAlbum = value;
             NotifyOfPropertyChange();
-            
+
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
@@ -338,25 +338,29 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    private void WireTimer()
+    private NewResult<NewUnit> WireTimer()
     {
-        _timer = new CountDownTimer();
-
-        _timer!.SetTime(CurrentSong!.Duration!.Value);
-        _timer.TimeChanged += () =>
+        return NewResultExtensions.Try(() =>
         {
-            var timeSpan = CurrentSong?.Duration!.Value.Subtract(_timer.TimeLeft);
+            _timer = new CountDownTimer();
 
-            ElapsedRunningTime = timeSpan?.TotalSeconds ?? 0;
-            ElapsedRunningTimeDisplay = timeSpan?.ToString("mm':'ss") ?? TimeSpan.ToString("mm':'ss");
-        };
+            _timer.SetTime(CurrentSong!.Duration!.Value);
+            _timer.TimeChanged += () =>
+            {
+                var timeSpan = CurrentSong!.Duration!.Value.Subtract(_timer.TimeLeft);
 
-        _timer!.Start();
+                ElapsedRunningTime = timeSpan.TotalSeconds;
+                ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+            };
+
+            _timer.Start();
+
+            return NewUnit.Default;
+        });
     }
 
     private void NotifyCollectionsChanged()
     {
-        NotifyOfPropertyChange(nameof(Library));
         NotifyOfPropertyChange(nameof(SelectedArtist));
         NotifyOfPropertyChange(nameof(Artists));
         NotifyOfPropertyChange(nameof(Albums));
@@ -382,8 +386,8 @@ public class ShellViewModel : ViewModelBase
 
     private void StartLibrary()
     {
-        ElapsedRunningTime = 0;
-        ElapsedRunningTimeDisplay = TimeSpan.ToString("mm':'ss");
+        ElapsedRunningTime.Reset();
+        ElapsedRunningTimeDisplay.DefaultTimeSpan();
         ProcessSourceFolders();
     }
 
@@ -445,56 +449,66 @@ public class ShellViewModel : ViewModelBase
 
     public NewResult<NewUnit> InitializePlaySong()
     {
-        if (SelectedSong is null)
-        {
-            var firstSong = Songs.FirstOrDefault();
-            if (firstSong is null)
-                return NewResultExtensions.CreateFail<NewUnit>();
-
-            SelectedSong = firstSong;
-        }
-
         return NewResultExtensions.Try(() =>
-        {
-            if (_playerController.Playing || _playerController.IsPaused)
-                _playerController.Cancel();
+            {
+                if (_playerController.Playing || _playerController.IsPaused)
+                    _playerController.Cancel();
 
-            CurrentSong = SelectedSong;
-            ElapsedRunningTime = 0;
+                CurrentSong = SelectedSong;
+                ElapsedRunningTime.Reset();
 
-            WireTimer();
-            BuildSongQueue();
-
-            return NewUnit.Default;
-        });
+                return NewUnit.Default;
+            })
+            .Bind(_ => WireTimer()
+                .Do(_ => BuildSongQueue()
+                    .Do(songQueue => _songQueue = songQueue)));
     }
 
-    private void BuildSongQueue()
+    private NewResult<ISongQueue> BuildSongQueue()
     {
-        _songQueue = IsShuffleChecked
+        return NewResultExtensions.Try(() => IsShuffleChecked
             ? _randomSongQueueFactory.Create(CurrentSong!, Songs, _songStack)
-            : _songQueueFactory.Create(CurrentSong!, Songs);
+            : _songQueueFactory.Create(CurrentSong!, Songs));
     }
 
     public void PlaySong()
     {
-        InitializePlaySong()
-            .IfSuccess(_ =>
+        HandleSelectedSong()
+            .IfFail(exception => MessageBox.Show(exception.Message))
+            .IfSuccess(_ => InitializePlaySong()
+                .IfSuccess(_ =>
+                {
+                    _playerController.PlaySong(_songQueue!);
+
+                    var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
+                    if (playingNow is not null)
+                        playingNow.IsPlaying = false;
+
+                    CurrentSong!.IsPlaying = true;
+
+                    NotifyOfPropertyChange(nameof(IsPlaying));
+                    NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
+                    NotifyOfPropertyChange(nameof(ElapsedRunningTime));
+                    NotifyOfPropertyChange(nameof(CurrentSongPicture));
+                    NotifyOfPropertyChange(nameof(HasAlbumArt));
+                }));
+    }
+
+    private NewResult<NewResult<NewUnit>> HandleSelectedSong()
+    {
+        return NewResultExtensions.Try(() =>
+        {
+            if (SelectedSong is null)
             {
-                _playerController.PlaySong(_songQueue!);
+                var firstSong = Songs.FirstOrDefault();
+                if (firstSong is null)
+                    return NewResultExtensions.CreateFail<NewUnit>();
 
-                var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
-                if (playingNow is not null)
-                    playingNow.IsPlaying = false;
+                SelectedSong = firstSong;
+            }
 
-                CurrentSong!.IsPlaying = true;
-
-                NotifyOfPropertyChange(nameof(IsPlaying));
-                NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
-                NotifyOfPropertyChange(nameof(ElapsedRunningTime));
-                NotifyOfPropertyChange(nameof(CurrentSongPicture));
-                NotifyOfPropertyChange(nameof(HasAlbumArt));
-            });
+            return NewUnit.Default;
+        });
     }
 
     private IEnumerable<Song> FilterSongs(string? artist, string? album)
@@ -596,7 +610,6 @@ public class ShellViewModel : ViewModelBase
             SourceTreeItems.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
         HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
-
         NotifyCollectionsChanged();
 
         IsLoadingSourceFolders = false;
@@ -659,7 +672,7 @@ public class ShellViewModel : ViewModelBase
         if (CurrentSong is null || _songQueue is null)
             return;
 
-        _playerController.Previous(_songQueue, ElapsedRunningTime);
+        _playerController.Previous(_songQueue, ElapsedRunningTime, _songStack);
     }
 
     public void NextSong()
@@ -668,9 +681,5 @@ public class ShellViewModel : ViewModelBase
             return;
 
         _playerController.Skip(_songQueue);
-    }
-
-    public void This()
-    {
     }
 }

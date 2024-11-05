@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using FluentAssertions;
 using NUnit.Framework;
+using ShufflerPro.Client;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Tests.Base;
@@ -94,5 +95,34 @@ public class FactoryTests : UnitTestBase
         songQueue.PreviousSong.Should().Be(previousSong);
         songQueue.CurrentSong.Should().Be(currentSong);
         songQueue.NextSong.Should().Be(null);
+    }
+
+    [TestCase]
+    public void Create_Random_Song_Queue()
+    {
+        var song1 = SongFactory.Create("random_1");
+        var song2 = SongFactory.Create("random_2");
+        var song3 = SongFactory.Create("random_3");
+        var song4 = SongFactory.Create("random_4");
+        var song5 = SongFactory.Create("random_5");
+
+        var allSongs = new ObservableCollection<Song> { song1, song2, song3, song4, song5 };
+        var songStack = new SongStack();
+        
+        var randomSongQueueFactory = new RandomSongQueueFactory();
+        var randomSongQueue = randomSongQueueFactory.Create(null, allSongs, songStack);
+
+        randomSongQueue.CurrentSong.Should().NotBeNull();
+        randomSongQueue.PreviousSong.Should().BeNull();
+        randomSongQueue.NextSong.Should().NotBeSameAs(randomSongQueue.CurrentSong);
+        
+        var currentSong = randomSongQueue.CurrentSong;
+        
+        randomSongQueue = randomSongQueueFactory.Create(currentSong, allSongs, songStack);
+        
+        randomSongQueue.CurrentSong.Should().NotBeSameAs(currentSong);
+        randomSongQueue.CurrentSong.Should().NotBeNull();
+        randomSongQueue.PreviousSong.Should().Be(currentSong);
+        randomSongQueue.NextSong.Should().NotBeSameAs(randomSongQueue.CurrentSong);
     }
 }

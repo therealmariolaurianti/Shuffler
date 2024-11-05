@@ -9,9 +9,9 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     private AudioFileReader? _audioFileReader;
     private WaveOutEvent? _outEvent = outEvent;
     private Timer? _timer;
-
-    public required Action<Song> SongChanged;
+    
     public required Action PlayerDisposed;
+    public required Action<Song> SongChanged;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
@@ -30,7 +30,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         _timer = null;
         _outEvent = null;
         _audioFileReader = null;
-        
+
         PlayerDisposed.Invoke();
     }
 
@@ -41,7 +41,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         else
             SongChanged.Invoke(songQueue.NextSong);
     }
-    
+
     private void StartPreviousSong(ISongQueue songQueue)
     {
         if (songQueue.NextSong is null)
@@ -49,7 +49,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         else
             SongChanged.Invoke(songQueue.PreviousSong!);
     }
-    
+
     public void ReInitialize()
     {
         Dispose();
@@ -67,7 +67,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     {
         if (songQueue?.CurrentSong is null)
             return;
-        
+
         try
         {
             using (_audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path))
@@ -125,7 +125,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         StartNextSong(songQueue);
     }
 
-    public void Previous(ISongQueue songQueue, double elapsedRunningTime)
+    public void Previous(ISongQueue songQueue, double elapsedRunningTime, SongStack songStack)
     {
         if (elapsedRunningTime >= 5)
             SongChanged.Invoke(songQueue.CurrentSong!);
