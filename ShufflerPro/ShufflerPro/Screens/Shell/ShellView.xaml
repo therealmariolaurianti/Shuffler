@@ -236,7 +236,7 @@
                                 Margin="20,0">
                                 <wpf:WatermarkService.Watermark>
                                     <TextBlock
-                                        Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
+                                        Foreground="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                         VerticalAlignment="Center"
                                         HorizontalAlignment="Left"
                                         FontSize="14"

@@ -55,7 +55,7 @@ public class DatabaseController
                     continue;
                 var result = await sourceCollection.Delete(_deleteExpression(folder));
                 if (result == 0)
-                    return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source"));
+                    return NewResultExtensions.CreateFail<NewUnit>(new Exception("Failed to delete source or source doesnt exist."));
             }
         }
 
