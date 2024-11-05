@@ -454,21 +454,24 @@ public class ShellViewModel : ViewModelBase
                 if (_playerController.Playing || _playerController.IsPaused)
                     _playerController.Cancel();
 
-                CurrentSong = SelectedSong;
                 ElapsedRunningTime.Reset();
 
-                return NewUnit.Default;
+                return SelectedSong;
             })
-            .Bind(_ => WireTimer()
-                .Do(_ => BuildSongQueue()
-                    .Do(songQueue => _songQueue = songQueue)));
+            .Bind(currentSong => BuildSongQueue(currentSong!)
+                .Do(songQueue =>
+                {
+                    _songQueue = songQueue;
+                    CurrentSong = _songQueue.CurrentSong;
+                })
+                .Bind(_ => WireTimer()));
     }
 
-    private NewResult<ISongQueue> BuildSongQueue()
+    private NewResult<ISongQueue> BuildSongQueue(Song currentSong)
     {
         return NewResultExtensions.Try(() => IsShuffleChecked
-            ? _randomSongQueueFactory.Create(CurrentSong!, Songs, _songStack)
-            : _songQueueFactory.Create(CurrentSong!, Songs));
+            ? _randomSongQueueFactory.Create(currentSong, Songs, _songStack)
+            : _songQueueFactory.Create(currentSong, Songs));
     }
 
     public void PlaySong()
