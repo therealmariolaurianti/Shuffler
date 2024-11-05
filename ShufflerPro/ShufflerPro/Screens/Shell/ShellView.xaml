@@ -588,6 +588,7 @@
                         TextAlignment="Center"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
+                        FontWeight="14"
                         Text="{Binding SongSelectionSummary, Mode=OneWay}" />
                     <StackPanel
                         Orientation="Horizontal"

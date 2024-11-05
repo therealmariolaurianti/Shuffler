@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using LiteDB;
 using NUnit.Framework;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Database;
@@ -77,7 +78,7 @@ public class DatabaseTests : UnitTestBase
         {
             var sourceCollection = connection.GetCollection<Source>();
 
-            var source = new Source(Path.GetTempPath());
+            var source = new Source(Path.GetTempPath(), ObjectId.NewObjectId());
             var insertResult = await sourceCollection.Insert(source);
             insertResult.Value.Should().NotBeNull();
         }
@@ -97,14 +98,19 @@ public class DatabaseTests : UnitTestBase
         using (var connection = localDatabase.CreateConnection(databasePath.Path))
         {
             var sourceCollection = connection.GetCollection<Source>();
+            await sourceCollection.DeleteAll();
 
             var folderPath = Path.GetTempPath();
-            var source = new Source(folderPath);
+            var source = new Source(folderPath, ObjectId.NewObjectId());
 
-            await sourceCollection.Insert(source);
+            var id = await sourceCollection.Insert(source);
 
-            var deleteResult = await sourceCollection.Delete(s => s.FolderPath == folderPath);
-            deleteResult.Should().Be(1);
+            var deleteResult = await sourceCollection.Delete(id);
+
+            var items = (await sourceCollection.FindAll()).ToList();
+
+            items.Count.Should().Be(0);
+            deleteResult.Should().Be(true);
         }
     }
 
@@ -125,8 +131,8 @@ public class DatabaseTests : UnitTestBase
 
             await sourceCollection.DeleteAll();
 
-            var source = new Source(Path.GetTempPath());
-            var source2 = new Source(Path.GetTempPath());
+            var source = new Source(Path.GetTempPath(), ObjectId.NewObjectId());
+            var source2 = new Source(Path.GetTempPath(), ObjectId.NewObjectId());
 
             await sourceCollection.Insert(source);
             await sourceCollection.Insert(source2);

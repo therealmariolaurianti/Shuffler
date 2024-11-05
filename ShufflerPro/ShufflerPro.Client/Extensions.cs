@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using LiteDB;
+using ShufflerPro.Database;
 
 namespace ShufflerPro.Client;
 

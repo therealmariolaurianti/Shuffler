@@ -681,9 +681,7 @@ public class ShellViewModel : ViewModelBase
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
                     {
                         parent.Items.Remove(_selectedTreeViewItem);
-
-                        if (parent.Items.Count == 0)
-                            SourceTreeItems.Remove(parent);
+                        ClearEmptyParents(parent);
                     }
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                     {
@@ -693,6 +691,20 @@ public class ShellViewModel : ViewModelBase
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                     NotifyCollectionsChanged();
                 }));
+    }
+
+    private void ClearEmptyParents(SourceTreeViewItem parent)
+    {
+        if (parent.Items.Count == 0)
+            if (parent.Parent is SourceTreeViewItem parentItem)
+            {
+                parentItem.Items.Remove(parent);
+                ClearEmptyParents(parentItem);
+            }
+            else if (parent.Parent is null)
+            {
+                SourceTreeItems.Remove(parent);
+            }
     }
 
     private static SourceTreeViewItem BuildTreeGridItem(SourceFolder sourceFolder, ContextMenu contextMenu)

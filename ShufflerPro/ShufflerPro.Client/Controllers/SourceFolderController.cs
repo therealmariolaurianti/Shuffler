@@ -45,13 +45,7 @@ public class SourceFolderController(DatabaseController databaseController)
 
     private async Task<NewResult<NewUnit>> RemoveFolderFromDatabase(SourceFolder sourceFolder)
     {
-        var sourceFolderContents = sourceFolder.Flatten();
-        foreach (var folder in sourceFolderContents)
-        {
-            await databaseController.DeleteSource(folder);
-        }
-
-        return NewUnit.Default;
+        return await databaseController.DeleteSource(sourceFolder);
     }
 
     private NewResult<NewUnit> RemoveSongsFromLibrary(Library library, SourceFolder sourceFolder)

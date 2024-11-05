@@ -1,4 +1,6 @@
-﻿namespace ShufflerPro.Client.Entities;
+﻿using ShufflerPro.Database;
+
+namespace ShufflerPro.Client.Entities;
 
 public class SourceFolder
 {
@@ -29,9 +31,15 @@ public class SourceFolder
     public SourceFolder? Parent { get; set; }
     public bool IsProcessed { get; set; }
     public bool IsValid { get; set; }
+    public LocalDatabaseKey? Id { get; private set; }
 
     private static string BuildHeader(string header)
     {
         return header.Replace(Path.DirectorySeparatorChar, ' ').Trim();
+    }
+
+    public void SetId(LocalDatabaseKey localDatabaseKey)
+    {
+        Id = localDatabaseKey;
     }
 }
