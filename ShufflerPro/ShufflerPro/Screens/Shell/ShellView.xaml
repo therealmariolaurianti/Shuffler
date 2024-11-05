@@ -84,9 +84,10 @@
                             <Button
                                 Width="50"
                                 Height="50"
-                                Margin="1"
+                                Margin="2"
                                 Name="PreviousSong"
                                 Cursor="Hand"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background.MouseOver}"
                                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
@@ -101,8 +102,9 @@
                             <Button
                                 Width="70"
                                 Height="70"
-                                Margin="1"
+                                Margin="2"
                                 Cursor="Hand"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background.MouseOver}"
                                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}"
                                 Name="PlayPause">
@@ -125,9 +127,10 @@
                             <Button
                                 Width="50"
                                 Height="50"
-                                Margin="1"
+                                Margin="2"
                                 Cursor="Hand"
                                 Name="NextSong"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background.MouseOver}"
                                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                 Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
@@ -572,6 +575,8 @@
                         <ToggleButton
                             Cursor="Hand"
                             ToolTip="Replay Album"
+                            Margin="2"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             IsChecked="{Binding IsRepeatChecked}"
                             Width="50">
                             <StackPanel
@@ -586,6 +591,8 @@
                         <ToggleButton
                             Cursor="Hand"
                             ToolTip="Shuffle"
+                            Margin="2"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             IsChecked="{Binding IsShuffleChecked}"
                             Width="50">
                             <StackPanel
@@ -625,6 +632,7 @@
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             Width="100"
                             Margin="10"
                             Content="Import" />
