@@ -110,7 +110,8 @@ public class FactoryTests : UnitTestBase
         var songStack = new SongStack();
 
         var randomSongQueueFactory = new RandomSongQueueFactory();
-        var randomSongQueue = randomSongQueueFactory.Create(new RandomSongQueueState(null, allSongs, songStack, false));
+        var randomSongQueue =
+            randomSongQueueFactory.Create(new RandomSongQueueState(null, allSongs, songStack, false, false));
 
         randomSongQueue.CurrentSong.Should().NotBeNull();
         randomSongQueue.PreviousSong.Should().BeNull();
@@ -119,7 +120,7 @@ public class FactoryTests : UnitTestBase
         var currentSong = randomSongQueue.CurrentSong;
 
         randomSongQueue =
-            randomSongQueueFactory.Create(new RandomSongQueueState(currentSong, allSongs, songStack, false));
+            randomSongQueueFactory.Create(new RandomSongQueueState(currentSong, allSongs, songStack, false, false));
 
         randomSongQueue.CurrentSong.Should().NotBeSameAs(currentSong);
         randomSongQueue.CurrentSong.Should().NotBeNull();

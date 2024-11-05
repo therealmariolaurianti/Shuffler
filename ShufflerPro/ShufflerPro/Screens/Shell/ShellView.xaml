@@ -10,13 +10,14 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
+    xmlns:shell="clr-namespace:ShufflerPro.Screens.Shell"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
     Width="1200"
     Height="825"
     Background="{DynamicResource MahApps.Brushes.Control.Background}"
-    d:DataContext="{d:DesignInstance upgraded:ShellViewModel }">
+    d:DataContext="{d:DesignInstance shell:ShellViewModel}">
     <Window.Resources>
         <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
     </Window.Resources>
@@ -259,8 +260,8 @@
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height=".5*"/>
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height=".5*" />
+                                <RowDefinition Height="Auto" />
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
@@ -426,7 +427,7 @@
                         Grid.Row="2">
                         <DataGrid
                             RowHeight="23"
-                            cal:Message.Attach="[Event MouseDoubleClick] = [Action PlaySong()]"
+                            cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)]"
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             ScrollViewer.CanContentScroll="True"
@@ -537,7 +538,7 @@
                         <controls:ThemeComboBox
                             Margin="10"
                             Width="85"
-                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}"/>
+                            SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
                         <Button
                             Name="AddSource"
                             Width="100"

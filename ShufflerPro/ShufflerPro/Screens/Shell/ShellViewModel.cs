@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
@@ -464,7 +465,7 @@ public class ShellViewModel : ViewModelBase
         WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
     }
 
-    public NewResult<NewUnit> InitializePlaySong()
+    public NewResult<NewUnit> InitializePlaySong(bool isSourceGrid)
     {
         return NewResultExtensions.Try(() =>
             {
@@ -475,7 +476,7 @@ public class ShellViewModel : ViewModelBase
 
                 return SelectedSong;
             })
-            .Bind(currentSong => BuildSongQueue(currentSong!)
+            .Bind(currentSong => BuildSongQueue(currentSong!, isSourceGrid)
                 .Do(songQueue =>
                 {
                     _songQueue = songQueue;
@@ -484,7 +485,7 @@ public class ShellViewModel : ViewModelBase
                 .Bind(_ => WireTimer()));
     }
 
-    private NewResult<ISongQueue> BuildSongQueue(Song currentSong)
+    private NewResult<ISongQueue> BuildSongQueue(Song currentSong, bool isSourceGrid)
     {
         return NewResultExtensions.Try(() =>
         {
@@ -492,7 +493,7 @@ public class ShellViewModel : ViewModelBase
             {
                 var songQueue = _randomSongQueueFactory
                     .Create(new RandomSongQueueState(currentSong, Songs,
-                        _songStack, _playingPrevious));
+                        _songStack, _playingPrevious, isSourceGrid));
                 _playingPrevious = false;
                 return songQueue;
             }
@@ -501,11 +502,16 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
-    public void PlaySong()
+    public void GridDoubleClicked(object sender, MouseButtonEventArgs e)
+    {
+        PlaySong(true);
+    }
+
+    public void PlaySong(bool isSourceGrid = false)
     {
         HandleSelectedSong()
             .IfFail(exception => MessageBox.Show(exception.Message))
-            .IfSuccess(_ => InitializePlaySong()
+            .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
                     _playerController.PlaySong(_songQueue!);
