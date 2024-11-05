@@ -46,6 +46,7 @@ public class ShellViewModel : ViewModelBase
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
+    private bool _isRepeatChecked;
     private bool _isShuffleChecked;
     private LibrarySearchType _librarySearchType;
     private bool _playingPrevious;
@@ -296,6 +297,8 @@ public class ShellViewModel : ViewModelBase
             if (value == _isShuffleChecked) return;
             _isShuffleChecked = value;
             NotifyOfPropertyChange();
+            if (IsRepeatChecked && IsShuffleChecked)
+                IsRepeatChecked = false;
         }
     }
 
@@ -308,6 +311,19 @@ public class ShellViewModel : ViewModelBase
             _selectedTheme = value;
             NotifyOfPropertyChange();
             ThemeController.ChangeTheme(value);
+        }
+    }
+
+    public bool IsRepeatChecked
+    {
+        get => _isRepeatChecked;
+        set
+        {
+            if (value == _isRepeatChecked) return;
+            _isRepeatChecked = value;
+            NotifyOfPropertyChange();
+            if (IsShuffleChecked && IsRepeatChecked)
+                IsShuffleChecked = false;
         }
     }
 
@@ -685,8 +701,8 @@ public class ShellViewModel : ViewModelBase
     {
         if (CurrentSong is null || _songQueue is null)
             return;
-        
-        if(ElapsedRunningTime >= 5)
+
+        if (ElapsedRunningTime >= 5)
             OnSongChanged(CurrentSong);
 
         _playingPrevious = true;

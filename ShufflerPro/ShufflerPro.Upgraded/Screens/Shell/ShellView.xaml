@@ -501,6 +501,7 @@
                         HorizontalAlignment="Left">
                         <ToggleButton
                             ToolTip="Replay Album"
+                            IsChecked="{Binding IsRepeatChecked}"
                             Width="50">
                             <StackPanel
                                 HorizontalAlignment="Center"
