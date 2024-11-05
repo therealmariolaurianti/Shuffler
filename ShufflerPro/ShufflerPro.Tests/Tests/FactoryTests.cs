@@ -122,7 +122,9 @@ public class FactoryTests : UnitTestBase
         
         randomSongQueue.CurrentSong.Should().NotBeSameAs(currentSong);
         randomSongQueue.CurrentSong.Should().NotBeNull();
+        
         randomSongQueue.PreviousSong.Should().Be(currentSong);
+        
         randomSongQueue.NextSong.Should().NotBeSameAs(randomSongQueue.CurrentSong);
     }
 }

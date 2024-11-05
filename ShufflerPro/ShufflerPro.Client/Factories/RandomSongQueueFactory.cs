@@ -7,28 +7,27 @@ public class RandomSongQueueFactory
 {
     public ISongQueue Create(Song? currentSong, ObservableCollection<Song> songs, SongStack songStack)
     {
+        var newCurrentSong = GetRandomSong(currentSong, songs);
         var songQueue = new SongQueue
         {
-            CurrentSong = GetRandomSong(currentSong, songs),
+            CurrentSong = newCurrentSong,
             PreviousSong = GetPreviousSong(currentSong, songStack),
-            NextSong = GetRandomSong(currentSong, songs)
+            NextSong = GetRandomSong(newCurrentSong, songs)
         };
-        
+
         songStack.Stack.Add(songQueue.CurrentSong);
-        
+
         return songQueue;
     }
 
     private Song GetRandomSong(Song? currentSong, ObservableCollection<Song> songs)
     {
         var random = new Random();
-        var index = random.Next(songs.Count);
-        var nextSong = songs[index];
-        
-        if(currentSong == nextSong)
-            GetRandomSong(currentSong, songs);
+        var item = songs.Where(s => s.Id != currentSong?.Id).OrderBy(_ => random.Next()).First();
+        if (item == currentSong)
+            GetRandomSong(item, songs);
 
-        return nextSong;
+        return item;
     }
 
     private Song? GetPreviousSong(Song? currentSong, SongStack songStack)
