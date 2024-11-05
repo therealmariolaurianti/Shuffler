@@ -695,19 +695,35 @@ public class ShellViewModel : ViewModelBase
 
     private void ClearEmptyParents(SourceTreeViewItem parent)
     {
-        if (parent.Items.Count == 0)
-            if (parent.Parent is SourceTreeViewItem parentItem)
-            {
-                parentItem.Items.Remove(parent);
-                ClearEmptyParents(parentItem);
-            }
-            else if (parent.Parent is null)
-            {
-                SourceTreeItems.Remove(parent);
-            }
+        while (true)
+        {
+            if (parent.Items.Count == 0)
+                switch (parent.Parent)
+                {
+                    case SourceTreeViewItem parentItem:
+                        parentItem.Items.Remove(parent);
+                        parent = parentItem;
+                        continue;
+                    case null:
+                        SourceTreeItems.Remove(parent);
+                        break;
+                }
+
+            break;
+        }
     }
 
     private static SourceTreeViewItem BuildTreeGridItem(SourceFolder sourceFolder, ContextMenu contextMenu)
+    {
+        var treeItem = CreateSourceTreeViewItem(sourceFolder, contextMenu);
+
+        foreach (var sourceFolderItem in sourceFolder.Items)
+            treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem, contextMenu));
+
+        return treeItem;
+    }
+
+    private static SourceTreeViewItem CreateSourceTreeViewItem(SourceFolder sourceFolder, ContextMenu contextMenu)
     {
         var treeItem = new SourceTreeViewItem
         {
@@ -721,9 +737,6 @@ public class ShellViewModel : ViewModelBase
             treeItem.Foreground = Brushes.Red;
             treeItem.ToolTip = $"Failed to connect to path '{sourceFolder.FullPath}'";
         }
-
-        foreach (var sourceFolderItem in sourceFolder.Items)
-            treeItem.Items.Add(BuildTreeGridItem(sourceFolderItem, contextMenu));
 
         return treeItem;
     }
