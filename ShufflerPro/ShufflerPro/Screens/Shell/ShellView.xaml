@@ -433,7 +433,14 @@
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
                             IsReadOnly="True"
+                            AlternationCount="2"
                             CanUserSortColumns="False">
+                            <DataGrid.Style>
+                                <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+                                    <Setter Property="AlternatingRowBackground"
+                                            Value="{StaticResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                </Style>
+                            </DataGrid.Style>
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn
                                     Width="25"
