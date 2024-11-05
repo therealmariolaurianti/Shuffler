@@ -34,11 +34,6 @@ public static class Extensions
         return 0d;
     }
 
-    public static string DefaultTimeSpan(this string timeSpanDisplay)
-    {
-        return new TimeSpan().ToString("mm':'ss");
-    }
-    
     public static T? TryGetIndex<T>(this List<T> items, int index)
     {
         try

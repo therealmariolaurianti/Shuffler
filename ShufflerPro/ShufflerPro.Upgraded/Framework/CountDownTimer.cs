@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Timer = System.Timers.Timer;
 
-namespace ShufflerPro.Client;
+namespace ShufflerPro.Upgraded.Framework;
 
 public class CountDownTimer : IDisposable
 {

@@ -404,7 +404,7 @@ public class ShellViewModel : ViewModelBase
     private void StartLibrary()
     {
         ElapsedRunningTime.Reset();
-        ElapsedRunningTimeDisplay.DefaultTimeSpan();
+        ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
         ProcessSourceFolders();
     }
 

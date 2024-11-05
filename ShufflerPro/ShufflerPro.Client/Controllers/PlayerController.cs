@@ -8,8 +8,8 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
     private WaveOutEvent? _outEvent = outEvent;
-    private Timer? _timer;
-    
+    private PausableTimer? _timer;
+
     public required Action PlayerDisposed;
     public required Action<Song> SongChanged;
 
@@ -88,36 +88,29 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
     public void DelayAction(double millisecond, Action action)
     {
-        _timer = new Timer();
+        _timer = new PausableTimer(millisecond);
 
         _timer.Elapsed += delegate
         {
             _timer.Stop();
             action.Invoke();
         };
-
-        _timer.Interval = millisecond;
+        
         _timer.Start();
     }
 
     public void Pause()
     {
-        if (Playing)
-        {
-            _outEvent?.Pause();
-            _timer?.Stop();
-            IsPaused = true;
-        }
+        _outEvent?.Pause();
+        _timer?.Pause();
+        IsPaused = true;
     }
 
     public void Resume()
     {
-        if (!Playing)
-        {
-            _outEvent?.Play();
-            _timer?.Start();
-            IsPaused = false;
-        }
+        _outEvent?.Play();
+        _timer?.Resume();
+        IsPaused = false;
     }
 
     public void Skip(ISongQueue songQueue)
