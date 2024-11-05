@@ -56,9 +56,9 @@
                             <Button
                                 Width="50"
                                 Height="50"
+                                Margin="1"
                                 Name="PreviousSong"
-                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
-                                Style="{StaticResource CircleButton}">
+                                Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
@@ -71,8 +71,8 @@
                             <Button
                                 Width="70"
                                 Height="70"
-                                Style="{StaticResource CircleButton}"
-                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
+                                Margin="1"
+                                Style="{DynamicResource MahApps.Styles.Button.Circle}"
                                 Name="PlayPause">
                                 <StackPanel
                                     HorizontalAlignment="Center"
@@ -93,9 +93,9 @@
                             <Button
                                 Width="50"
                                 Height="50"
+                                Margin="1"
                                 Name="NextSong"
-                                Background="{DynamicResource MahApps.Brushes.Button.Flat.Background}"
-                                Style="{StaticResource CircleButton}">
+                                Style="{DynamicResource MahApps.Styles.Button.Circle}">
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
