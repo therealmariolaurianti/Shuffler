@@ -48,6 +48,7 @@ public class ShellViewModel : ViewModelBase
     private bool _isLoadingSourceFolders;
     private bool _isShuffleChecked;
     private LibrarySearchType _librarySearchType;
+    private bool _playingPrevious;
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
@@ -469,9 +470,19 @@ public class ShellViewModel : ViewModelBase
 
     private NewResult<ISongQueue> BuildSongQueue(Song currentSong)
     {
-        return NewResultExtensions.Try(() => IsShuffleChecked
-            ? _randomSongQueueFactory.Create(currentSong, Songs, _songStack)
-            : _songQueueFactory.Create(currentSong, Songs));
+        return NewResultExtensions.Try(() =>
+        {
+            if (IsShuffleChecked)
+            {
+                var songQueue = _randomSongQueueFactory
+                    .Create(new RandomSongQueueState(currentSong, Songs,
+                        _songStack, _playingPrevious));
+                _playingPrevious = false;
+                return songQueue;
+            }
+
+            return _songQueueFactory.Create(currentSong, Songs);
+        });
     }
 
     public void PlaySong()
@@ -674,8 +685,12 @@ public class ShellViewModel : ViewModelBase
     {
         if (CurrentSong is null || _songQueue is null)
             return;
+        
+        if(ElapsedRunningTime >= 5)
+            OnSongChanged(CurrentSong);
 
-        _playerController.Previous(_songQueue, ElapsedRunningTime, _songStack);
+        _playingPrevious = true;
+        _playerController.Previous(_songQueue);
     }
 
     public void NextSong()

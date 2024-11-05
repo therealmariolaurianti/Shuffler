@@ -3,37 +3,56 @@ using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Client.Factories;
 
+public class RandomSongQueueState
+{
+    public RandomSongQueueState(Song? currentSong, ObservableCollection<Song> songs, SongStack songStack,
+        bool playingPrevious)
+    {
+        CurrentSong = currentSong;
+        Songs = songs;
+        SongStack = songStack;
+        PlayingPrevious = playingPrevious;
+    }
+
+    public Song? CurrentSong { get; }
+    public ObservableCollection<Song> Songs { get; }
+    public SongStack SongStack { get; }
+    public bool PlayingPrevious { get; set; }
+}
+
 public class RandomSongQueueFactory
 {
-    public ISongQueue Create(Song? currentSong, ObservableCollection<Song> songs, SongStack songStack)
+    public ISongQueue Create(RandomSongQueueState state)
     {
-        var newCurrentSong = GetRandomSong(currentSong, songs);
+        var newCurrentSong = state.CurrentSong;
+        if (!state.PlayingPrevious)
+        {
+            newCurrentSong = GetRandomSong(state.CurrentSong, state);
+            state.SongStack.Stack.Add(newCurrentSong);
+        }
+
         var songQueue = new SongQueue
         {
             CurrentSong = newCurrentSong,
-            PreviousSong = GetPreviousSong(currentSong, songStack),
-            NextSong = GetRandomSong(newCurrentSong, songs)
+            PreviousSong = GetPreviousSong(newCurrentSong, state),
+            NextSong = GetRandomSong(newCurrentSong, state)
         };
-
-        songStack.Stack.Add(songQueue.CurrentSong);
 
         return songQueue;
     }
 
-    private Song GetRandomSong(Song? currentSong, ObservableCollection<Song> songs)
+    private Song GetRandomSong(Song? currentSong, RandomSongQueueState state)
     {
         var random = new Random();
-        var item = songs.Where(s => s.Id != currentSong?.Id).OrderBy(_ => random.Next()).First();
+        var item = state.Songs.Where(s => s.Id != currentSong?.Id).OrderBy(_ => random.Next()).First();
         if (item == currentSong)
-            GetRandomSong(item, songs);
+            GetRandomSong(item, state);
 
         return item;
     }
 
-    private Song? GetPreviousSong(Song? currentSong, SongStack songStack)
+    private Song? GetPreviousSong(Song? newCurrentSong, RandomSongQueueState state)
     {
-        var index = songStack.Stack.IndexOf(currentSong) - 1;
-        var previousSong = songStack.Stack.Skip(index).FirstOrDefault();
-        return previousSong;
+        return state.SongStack.GetPrevious(newCurrentSong);
     }
 }

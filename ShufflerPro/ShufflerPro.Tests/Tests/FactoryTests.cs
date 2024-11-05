@@ -108,23 +108,37 @@ public class FactoryTests : UnitTestBase
 
         var allSongs = new ObservableCollection<Song> { song1, song2, song3, song4, song5 };
         var songStack = new SongStack();
-        
+
         var randomSongQueueFactory = new RandomSongQueueFactory();
-        var randomSongQueue = randomSongQueueFactory.Create(null, allSongs, songStack);
+        var randomSongQueue = randomSongQueueFactory.Create(new RandomSongQueueState(null, allSongs, songStack, false));
 
         randomSongQueue.CurrentSong.Should().NotBeNull();
         randomSongQueue.PreviousSong.Should().BeNull();
         randomSongQueue.NextSong.Should().NotBeSameAs(randomSongQueue.CurrentSong);
-        
+
         var currentSong = randomSongQueue.CurrentSong;
-        
-        randomSongQueue = randomSongQueueFactory.Create(currentSong, allSongs, songStack);
-        
+
+        randomSongQueue =
+            randomSongQueueFactory.Create(new RandomSongQueueState(currentSong, allSongs, songStack, false));
+
         randomSongQueue.CurrentSong.Should().NotBeSameAs(currentSong);
         randomSongQueue.CurrentSong.Should().NotBeNull();
-        
         randomSongQueue.PreviousSong.Should().Be(currentSong);
-        
         randomSongQueue.NextSong.Should().NotBeSameAs(randomSongQueue.CurrentSong);
+    }
+
+    [TestCase]
+    public void Random_Song_Queue_Go_To_Previous()
+    {
+        var song1 = SongFactory.Create("random_1");
+        var song2 = SongFactory.Create("random_2");
+        var song3 = SongFactory.Create("random_3");
+        var song4 = SongFactory.Create("random_4");
+        var song5 = SongFactory.Create("random_5");
+
+        var allSongs = new ObservableCollection<Song> { song1, song2, song3, song4, song5 };
+        var songStack = new SongStack();
+
+        var randomSongQueueFactory = new RandomSongQueueFactory();
     }
 }

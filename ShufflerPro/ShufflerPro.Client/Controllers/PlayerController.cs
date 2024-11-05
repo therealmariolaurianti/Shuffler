@@ -125,11 +125,8 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         StartNextSong(songQueue);
     }
 
-    public void Previous(ISongQueue songQueue, double elapsedRunningTime, SongStack songStack)
+    public void Previous(ISongQueue songQueue)
     {
-        if (elapsedRunningTime >= 5)
-            SongChanged.Invoke(songQueue.CurrentSong!);
-        else
-            StartPreviousSong(songQueue);
+        StartPreviousSong(songQueue);
     }
 }

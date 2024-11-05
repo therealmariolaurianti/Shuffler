@@ -38,4 +38,16 @@ public static class Extensions
     {
         return new TimeSpan().ToString("mm':'ss");
     }
+    
+    public static T? TryGetIndex<T>(this List<T> items, int index)
+    {
+        try
+        {
+            return items[index];
+        }
+        catch (Exception)
+        {
+            return default;
+        }
+    }
 }
