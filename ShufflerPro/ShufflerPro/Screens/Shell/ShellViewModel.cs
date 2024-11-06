@@ -215,7 +215,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 0;
+    public double MaxRunTime => CurrentSong?.Duration?.TotalSeconds ?? 1;
 
     public double ElapsedRunningTime
     {

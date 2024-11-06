@@ -19,7 +19,7 @@ public class Song : EntityBase
         Time = songFile?.Properties.Duration.ToString("mm':'ss");
         Duration = songFile?.Properties.Duration;
 
-        var input = $"{Title}{Artist}{Album}{Time}";
+        var input = $"{path}{Title}{Artist}{Album}{Time}";
         using (var md5 = MD5.Create())
         {
             var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
