@@ -331,7 +331,6 @@
                                     Text="Playlists" />
                                 <ListBox
                                     Margin="2,0,2,2"
-                                    AllowDrop="True"
                                     ContextMenu="{StaticResource PlaylistContextMenu}"
                                     ItemsSource="{Binding Playlists}"
                                     SelectedItem="{Binding SelectedPlaylist}"
@@ -339,7 +338,8 @@
                                     Grid.Row="1">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid>
+                                            <Grid
+                                                AllowDrop="True">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="30" />
                                                     <ColumnDefinition />
