@@ -31,11 +31,6 @@ public static class Extensions
         return new TimeSpan(time.Days, time.Hours, time.Minutes, time.Seconds);
     }
 
-    public static double Reset(this double value)
-    {
-        return 0d;
-    }
-
     public static T? TryGetIndex<T>(this List<T> items, int index)
     {
         try

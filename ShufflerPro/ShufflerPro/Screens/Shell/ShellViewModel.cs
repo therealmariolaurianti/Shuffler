@@ -479,7 +479,7 @@ public class ShellViewModel : ViewModelBase
 
     private void ResetCurrentElapsed()
     {
-        ElapsedRunningTime.Reset();
+        ElapsedRunningTime = 0;
         ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
     }
 
@@ -546,7 +546,7 @@ public class ShellViewModel : ViewModelBase
                 if (_playerController.Playing || _playerController.IsPaused)
                     _playerController.Cancel();
 
-                ElapsedRunningTime.Reset();
+                ElapsedRunningTime = 0;
 
                 return SelectedSong;
             })
