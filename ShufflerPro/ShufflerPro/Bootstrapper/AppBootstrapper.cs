@@ -5,8 +5,12 @@ using Bootstrap.Extensions.StartupTasks;
 using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Screens.Startup;
+using LogManager = NLog.LogManager;
 
 namespace ShufflerPro.Bootstrapper;
 
@@ -50,6 +54,11 @@ public class AppBootstrapper : BootstrapperBase
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
 
+        _kernel.BindLogging();
+
+        var logger = _kernel.Get<ILogger>();
+        logger.Error("Test");
+
         Bootstrap.Bootstrapper
             .Including.ShufflerProDatabase()
             .With.Ninject().WithContainer(_kernel)
@@ -64,5 +73,25 @@ public class AppBootstrapper : BootstrapperBase
     {
         Execute.OnUIThread(() => MessageBox.Show("An unexpected error has occurred."));
         Application.Shutdown();
+    }
+}
+
+public static class BootstrapperExtensions
+{
+    public static void BindLogging(this IKernel container)
+    {
+        var config = new LoggingConfiguration();
+        var logfile = new FileTarget("logfile") { FileName = "Exceptions.log" };
+
+        config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
+
+        LogManager.Configuration = config;
+
+        container.Bind<ILogger>().ToMethod(p =>
+        {
+            var logger = LogManager
+                .GetLogger(p.Request.Target?.Member.DeclaringType?.FullName ?? typeof(App).FullName);
+            return logger;
+        });
     }
 }

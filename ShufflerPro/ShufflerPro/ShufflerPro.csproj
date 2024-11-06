@@ -23,6 +23,7 @@
       <PackageReference Include="NAudio" Version="2.2.1" />
       <PackageReference Include="Ninject" Version="3.3.6" />
       <PackageReference Include="Ninject.Extensions.Conventions" Version="3.3.0" />
+      <PackageReference Include="NLog" Version="5.3.4" />
       <PackageReference Include="TagLibSharp" Version="2.3.0" />
     </ItemGroup>
 
@@ -57,6 +58,9 @@
       <Resource Include="Images\replay.png" />
       <None Remove="Images\shuffle.png" />
       <Resource Include="Images\shuffle.png" />
+      <None Update="NLog.config">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
