@@ -321,21 +321,23 @@
                                     Text="Playlists" />
                                 <ListBox
                                     Margin="2,0,2,2"
+                                    AllowDrop="True"
                                     ItemsSource="{Binding Playlists}"
                                     SelectedItem="{Binding SelectedPlaylist}"
+                                    cal:Message.Attach="[Event Drop] = [Action PlaylistDrop($source, $eventArgs)]"
                                     Grid.Row="1">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="30"/>
+                                                    <ColumnDefinition Width="30" />
                                                     <ColumnDefinition />
                                                 </Grid.ColumnDefinitions>
-                                                <iconPacks:PackIconModern 
+                                                <iconPacks:PackIconModern
                                                     Height="16"
                                                     Width="16"
                                                     Kind="Music" />
-                                                <TextBlock 
+                                                <TextBlock
                                                     Grid.Column="1"
                                                     Text="{Binding Name, Mode=OneTime}" />
                                             </Grid>
@@ -520,7 +522,7 @@
                         Grid.Row="2">
                         <DataGrid
                             RowHeight="23"
-                            cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)]"
+                            cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)]; [Event MouseMove]= [Action GridMouseLeftButtonDown($source, $eventArgs)]"
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             ScrollViewer.CanContentScroll="True"

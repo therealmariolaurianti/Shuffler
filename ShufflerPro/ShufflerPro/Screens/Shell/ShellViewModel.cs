@@ -15,7 +15,11 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
+using DragDropEffects = System.Windows.DragDropEffects;
+using DragEventArgs = System.Windows.DragEventArgs;
+using ListBox = System.Windows.Controls.ListBox;
 using MessageBox = System.Windows.MessageBox;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using Theme = ShufflerPro.Client.Entities.Theme;
 
 namespace ShufflerPro.Screens.Shell;
@@ -47,6 +51,7 @@ public class ShellViewModel : ViewModelBase
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
     private double _applicationVolumeLevel;
+
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
@@ -550,7 +555,6 @@ public class ShellViewModel : ViewModelBase
     public void PlaySong(bool isSourceGrid = false)
     {
         HandleSelectedSong()
-            .IfFail(exception => MessageBox.Show(exception.Message))
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
@@ -570,21 +574,18 @@ public class ShellViewModel : ViewModelBase
                 }));
     }
 
-    private NewResult<NewResult<NewUnit>> HandleSelectedSong()
+    private NewResult<NewUnit> HandleSelectedSong()
     {
-        return NewResultExtensions.Try(() =>
+        if (SelectedSong is null)
         {
-            if (SelectedSong is null)
-            {
-                var firstSong = Songs.FirstOrDefault();
-                if (firstSong is null)
-                    return NewResultExtensions.CreateFail<NewUnit>();
+            var firstSong = Songs.FirstOrDefault();
+            if (firstSong is null)
+                return NewResultExtensions.CreateFail<NewUnit>(new Exception("No song to plays"));
 
-                SelectedSong = firstSong;
-            }
+            SelectedSong = firstSong;
+        }
 
-            return NewUnit.Default;
-        });
+        return NewUnit.Default;
     }
 
     private void HandleFilterSongs(string? artist = null, string? album = null)
@@ -762,5 +763,38 @@ public class ShellViewModel : ViewModelBase
 
     public void LaunchSettings()
     {
+    }
+
+    public void GridMouseLeftButtonDown(object source, MouseEventArgs mouseEventArgs)
+    {
+        if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
+            if (source is DependencyObject dp)
+                DragDrop.DoDragDrop(dp, SelectedSong!, DragDropEffects.Move);
+    }
+
+    public void PlaylistDrop(object source, DragEventArgs dragEventArgs)
+    {
+        var inputElement = (ListBox)source;
+        var mousePosition = dragEventArgs.GetPosition(inputElement);
+        if (inputElement.InputHitTest(mousePosition) is UIElement element)
+        {
+            var data = DependencyProperty.UnsetValue;
+            while (data == DependencyProperty.UnsetValue)
+                if (element != null)
+                {
+                    data = inputElement.ItemContainerGenerator.ItemFromContainer(element);
+
+                    if (data == DependencyProperty.UnsetValue)
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                }
+
+            if (data != DependencyProperty.UnsetValue)
+            {
+                var eventData = dragEventArgs.Data.GetData(typeof(Song));
+
+                if (data is Playlist playlist && eventData is Song song)
+                    playlist.AddSong(song);
+            }
+        }
     }
 }
