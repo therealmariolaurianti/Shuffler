@@ -53,11 +53,7 @@ public class AppBootstrapper : BootstrapperBase
     {
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
-
         _kernel.BindLogging();
-
-        var logger = _kernel.Get<ILogger>();
-        logger.Error("Test");
 
         Bootstrap.Bootstrapper
             .Including.ShufflerProDatabase()
@@ -71,6 +67,9 @@ public class AppBootstrapper : BootstrapperBase
 
     protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
+        var logger = _kernel.Get<ILogger>();
+        logger.Error(e);
+        
         Execute.OnUIThread(() => MessageBox.Show("An unexpected error has occurred."));
         Application.Shutdown();
     }
@@ -80,13 +79,6 @@ public static class BootstrapperExtensions
 {
     public static void BindLogging(this IKernel container)
     {
-        var config = new LoggingConfiguration();
-        var logfile = new FileTarget("logfile") { FileName = "Exceptions.log" };
-
-        config.AddRule(LogLevel.Debug, LogLevel.Fatal, logfile);
-
-        LogManager.Configuration = config;
-
         container.Bind<ILogger>().ToMethod(p =>
         {
             var logger = LogManager
