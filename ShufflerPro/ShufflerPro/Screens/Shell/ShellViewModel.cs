@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Caliburn.Micro;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -15,6 +16,7 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.Settings;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
 using ListBox = System.Windows.Controls.ListBox;
@@ -55,7 +57,7 @@ public class ShellViewModel : ViewModelBase
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
-    private bool _isDarkModeEnabled;
+    
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
@@ -66,13 +68,17 @@ public class ShellViewModel : ViewModelBase
     private Artist? _selectedArtist;
     private Playlist? _selectedPlaylist;
     private Song? _selectedSong;
-    private Theme _selectedTheme;
+    
     private SourceTreeViewItem? _selectedTreeViewItem;
+
+    private readonly ISettingsViewModelFactory _settingsViewModelFactory;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
+
+    private readonly IWindowManager _windowManager;
 
     public ShellViewModel(
         Library library,
@@ -84,7 +90,8 @@ public class ShellViewModel : ViewModelBase
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
         AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack,
-        PlaylistController playlistController, SongFilterController songFilterController)
+        PlaylistController playlistController, SongFilterController songFilterController,
+        ISettingsViewModelFactory settingsViewModelFactory, IWindowManager windowManager)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -98,6 +105,8 @@ public class ShellViewModel : ViewModelBase
         _songStack = songStack;
         _playlistController = playlistController;
         _songFilterController = songFilterController;
+        _settingsViewModelFactory = settingsViewModelFactory;
+        _windowManager = windowManager;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -320,17 +329,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public Theme SelectedTheme
-    {
-        get => _selectedTheme;
-        set
-        {
-            if (Equals(value, _selectedTheme)) return;
-            _selectedTheme = value;
-            NotifyOfPropertyChange();
-            ThemeController.ChangeTheme(value, IsDarkModeEnabled);
-        }
-    }
+    
 
     public bool IsRepeatChecked
     {
@@ -345,17 +344,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public bool IsDarkModeEnabled
-    {
-        get => _isDarkModeEnabled;
-        set
-        {
-            if (value == _isDarkModeEnabled) return;
-            _isDarkModeEnabled = value;
-            NotifyOfPropertyChange();
-            ThemeController.ChangeTheme(SelectedTheme, value);
-        }
-    }
+    
 
     public ObservableCollection<Playlist> Playlists => _library.Playlists;
 
@@ -444,7 +433,6 @@ public class ShellViewModel : ViewModelBase
         SourceTreeItems = [];
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
-        SelectedTheme = Themes.Default;
         InitializeApplicationVolume();
         StartLibrary();
 
@@ -787,6 +775,11 @@ public class ShellViewModel : ViewModelBase
 
     public void LaunchSettings()
     {
+        RunAsync(async () =>
+        {
+            var viewModel = _settingsViewModelFactory.Create();
+            await _windowManager.ShowDialogAsync(viewModel);
+        });
     }
 
     public void GridMouseLeftButtonDown(object source, MouseEventArgs mouseEventArgs)

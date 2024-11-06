@@ -9,7 +9,6 @@
     Height="300"
     Width="300"
     WindowStartupLocation="CenterScreen"
-    Background="{StaticResource MahApps.Brushes.Control.Background}"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">
     <TextBlock

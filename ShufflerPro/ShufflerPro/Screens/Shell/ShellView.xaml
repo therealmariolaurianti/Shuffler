@@ -639,20 +639,6 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
-                        <StackPanel
-                            Margin="10"
-                            HorizontalAlignment="Right"
-                            Orientation="Horizontal">
-                            <mah:ToggleSwitch
-                                IsOn="{Binding IsDarkModeEnabled}"
-                                FontWeight="12"
-                                HorizontalAlignment="Right"
-                                OffContent="Light"
-                                OnContent="Dark" />
-                            <controls:ThemeComboBox
-                                Width="85"
-                                SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" />
-                        </StackPanel>
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
