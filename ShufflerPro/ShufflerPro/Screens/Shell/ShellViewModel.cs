@@ -859,7 +859,9 @@ public class ShellViewModel : ViewModelBase
     public void AddPlaylist()
     {
         var playlist = new Playlist("New Playlist");
-        RunAsync(async () => await _playlistController.AddPlaylist(_library, playlist));
+        RunAsync(async () => await _playlistController
+            .AddPlaylist(_library, playlist)
+            .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
 
     public void RenamePlaylist()
