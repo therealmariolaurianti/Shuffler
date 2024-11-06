@@ -6,11 +6,9 @@ using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
 using NLog;
-using NLog.Config;
-using NLog.Targets;
 using ShufflerPro.Database.Bootstrapper;
+using ShufflerPro.Screens.Exceptions;
 using ShufflerPro.Screens.Startup;
-using LogManager = NLog.LogManager;
 
 namespace ShufflerPro.Bootstrapper;
 
@@ -69,21 +67,11 @@ public class AppBootstrapper : BootstrapperBase
     {
         var logger = _kernel.Get<ILogger>();
         logger.Error(e);
-        
-        Execute.OnUIThread(() => MessageBox.Show("An unexpected error has occurred."));
-        Application.Shutdown();
-    }
-}
 
-public static class BootstrapperExtensions
-{
-    public static void BindLogging(this IKernel container)
-    {
-        container.Bind<ILogger>().ToMethod(p =>
-        {
-            var logger = LogManager
-                .GetLogger(p.Request.Target?.Member.DeclaringType?.FullName ?? typeof(App).FullName);
-            return logger;
-        });
+        var exceptionViewModel = _kernel.Get<IExceptionViewModelFactory>();
+        var windowManager = _kernel.Get<IWindowManager>();
+
+        Execute.OnUIThread(() => windowManager.ShowDialogAsync(exceptionViewModel.Create(e.Exception)));
+        Application.Shutdown();
     }
 }
