@@ -64,26 +64,45 @@ public class DatabaseController
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var playlistCollection = connection.GetCollection<Playlist>();
-            var findAll = await playlistCollection.FindAll().ConfigureAwait(true);
-            var loadPlaylists = findAll.ToList();
-            return loadPlaylists;
+            var playlistIndexCollection = connection.GetCollection<PlaylistIndex>();
+
+            var playlists = (await playlistCollection.FindAll().ConfigureAwait(true)).ToList();
+            var playlistIndexes = await playlistIndexCollection.FindAll().ConfigureAwait(true);
+
+            var indexDic = playlistIndexes.GroupBy(pi => pi.PlaylistId!)
+                .ToDictionary(d => d.Key, d => d.ToList());
+
+            foreach (var (objectId, playlistIndices) in indexDic)
+            {
+                var playlist = playlists.Single(p => p.Id == objectId);
+                playlist.Indexes.AddRange(playlistIndices);
+            }
+
+            return playlists.ToList();
         }
     }
 
-    public async Task<NewResult<NewUnit>> SavePlaylist(Playlist playlist)
+    public async Task<NewResult<NewUnit>> AddPlaylist(Playlist playlist)
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
-            var playlistIndexCollection = connection.GetCollection<PlaylistIndex>();
-            foreach (var playlistIndex in playlist.Indexes)
-            {
-                await playlistIndexCollection.Insert(playlistIndex);
-            }
-            
             var playlistCollection = connection.GetCollection<Playlist>();
             var localDatabaseKey = await playlistCollection.Insert(playlist);
 
             playlist.SetId(localDatabaseKey.AsBsonValue());
+        }
+
+        return NewUnit.Default;
+    }
+
+    public async Task<NewResult<NewUnit>> AddPlaylistIndex(PlaylistIndex playlistIndex)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<PlaylistIndex>();
+            var localDatabaseKey = await playlistCollection.Insert(playlistIndex);
+
+            playlistIndex.SetId(localDatabaseKey.AsBsonValue());
         }
 
         return NewUnit.Default;

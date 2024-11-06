@@ -846,7 +846,7 @@ public class ShellViewModel : ViewModelBase
                 var eventData = dragEventArgs.Data.GetData(typeof(Song));
 
                 if (data is Playlist playlist && eventData is Song song)
-                    _playlistController.AddSong(playlist, song);
+                    RunAsync(async () => await _playlistController.AddSong(playlist, song));
             }
         }
     }

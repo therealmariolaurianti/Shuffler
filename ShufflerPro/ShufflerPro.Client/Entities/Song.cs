@@ -1,4 +1,6 @@
-﻿using File = TagLib.File;
+﻿using System.Security.Cryptography;
+using System.Text;
+using File = TagLib.File;
 
 namespace ShufflerPro.Client.Entities;
 
@@ -16,7 +18,15 @@ public class Song : EntityBase
         Path = path;
         Time = songFile?.Properties.Duration.ToString("mm':'ss");
         Duration = songFile?.Properties.Duration;
-        Id = Guid.NewGuid();
+
+        var input = $"{Title}{Artist}{Album}{Time}";
+        using (var md5 = MD5.Create())
+        {
+            var hash = md5.ComputeHash(Encoding.UTF8.GetBytes(input));
+            var result = new Guid(hash);
+            
+            Id = result;
+        }
     }
 
     public Guid Id { get; }
