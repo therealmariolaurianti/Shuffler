@@ -5,6 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:gif="http://wpfanimatedgif.codeplex.com"
     mc:Ignorable="d"
     Height="300"
     Width="300"
@@ -13,32 +14,27 @@
     Topmost="True"
     ShowCloseButton="False"
     WindowStyle="None"
+    IsWindowDraggable="False"
     ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height=".5*" />
             <RowDefinition />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height=".5*" />
         </Grid.RowDefinitions>
-        <Grid
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <!-- <iconPacks:PackIconModern -->
-            <!--     HorizontalAlignment="Center" -->
-            <!--     VerticalAlignment="Center" -->
-            <!--     Kind="FlagWavy" /> -->
-            <TextBlock
-                Grid.Row="1"
-                FontSize="20"
-                x:Name="LoadingTextBlock"
-                VerticalAlignment="Center"
-                HorizontalAlignment="Center" />
-        </Grid>
         <TextBlock
+            Grid.Row="0"
+            FontSize="20"
+            Text="Shuffler Pro"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center" />
+        <Image
             Grid.Row="1"
+            Height="100"
+            Width="100"
+            gif:ImageBehavior.AnimatedSource="{StaticResource ServerGif}" />
+        <TextBlock
+            Grid.Row="2"
             TextWrapping="Wrap"
             Margin="10"
             HorizontalAlignment="Center"
