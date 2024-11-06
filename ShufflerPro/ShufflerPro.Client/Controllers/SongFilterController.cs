@@ -1,7 +1,24 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
+
+public class PlaylistState(IReadOnlyCollection<Song> songs)
+{
+    public IReadOnlyCollection<Artist> Artists => Albums
+        .Select(s => s.Artist)
+        .Distinct()
+        .ToReadOnlyCollection();
+
+    public ObservableCollection<Album> Albums => Songs
+        .Where(s => s.CreatedAlbum != null)
+        .Select(s => s.CreatedAlbum!)
+        .Distinct()
+        .ToObservableCollection();
+
+    public ObservableCollection<Song> Songs { get; set; } = songs.ToObservableCollection();
+}
 
 public class SongFilterController
 {
@@ -12,15 +29,15 @@ public class SongFilterController
         _playlistController = playlistController;
     }
 
-    public ObservableCollection<Song> FilterSongs(IReadOnlyCollection<Song> allSongs, Playlist? playlist)
+    public NewResult<PlaylistState> FilterSongs(IReadOnlyCollection<Song> allSongs, Playlist? playlist)
     {
         if (playlist is null)
-            return allSongs.ToObservableCollection();
+            return new PlaylistState(allSongs);
 
-        var songIds = playlist.Songs.Select(s => s.Id).ToList();
+        var songIds = playlist.Index.Keys;
         var songs = allSongs.Where(a => songIds.Contains(a.Id)).ToList();
 
-        return _playlistController.IndexSongs(playlist, songs);
+        return new PlaylistState(_playlistController.IndexSongs(playlist, songs));
     }
 
     public ObservableCollection<Song> FilterSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album)

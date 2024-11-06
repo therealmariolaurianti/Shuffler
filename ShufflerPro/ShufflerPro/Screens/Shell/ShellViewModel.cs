@@ -66,6 +66,7 @@ public class ShellViewModel : ViewModelBase
     private bool _isShuffleChecked;
     private LibrarySearchType _librarySearchType;
     private bool _playingPrevious;
+    private PlaylistState? _playlistState;
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
@@ -142,10 +143,10 @@ public class ShellViewModel : ViewModelBase
     }
 
     public ObservableCollection<Album> Albums =>
-        SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
-        (SelectedPlaylist?.Albums ?? AllAlbums.OrderBy(a => a.Name).ToObservableCollection());
+        SelectedArtist?.Albums.Where(a => a.Songs.Count != 0).OrderBy(a => a.Name).ToObservableCollection() ??
+        (_playlistState?.Albums ?? AllAlbums.OrderBy(a => a.Name).ToObservableCollection());
 
-    public IReadOnlyCollection<Artist> Artists => SelectedPlaylist?.Artists ?? _library
+    public IReadOnlyCollection<Artist> Artists => _playlistState?.Artists ?? _library
         .Artists
         .OrderBy(a => a.Name).ToReadOnlyCollection();
 
@@ -341,8 +342,7 @@ public class ShellViewModel : ViewModelBase
                 IsShuffleChecked = false;
         }
     }
-
-
+    
     public ObservableCollection<Playlist> Playlists => _library.Playlists;
 
     public Playlist? SelectedPlaylist
@@ -353,12 +353,25 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedPlaylist)) return;
             _selectedPlaylist = value;
             NotifyOfPropertyChange();
-
-            SelectedArtist = null;
-            SelectedAlbum = null;
-
-            Songs = _songFilterController.FilterSongs(AllSongs, value);
+            SelectedPlaylistChanged();
         }
+    }
+
+    private void SelectedPlaylistChanged()
+    {
+        SelectedArtist = null;
+        SelectedAlbum = null;
+
+        if (SelectedPlaylist is null)
+            _playlistState = null;
+        else
+            _songFilterController
+                .FilterSongs(AllSongs, SelectedPlaylist)
+                .Do(playlistState =>
+                {
+                    _playlistState = playlistState;
+                    Songs = playlistState.Songs;
+                });
     }
 
     private void OnPlayerDisposed()
@@ -593,7 +606,9 @@ public class ShellViewModel : ViewModelBase
 
     private void HandleFilterSongs(string? artist = null, string? album = null)
     {
-        Songs = _songFilterController.FilterSongs(AllSongs, artist, album);
+        Songs = _songFilterController.FilterSongs(SelectedPlaylist is not null
+            ? _playlistState!.Songs
+            : AllSongs, artist, album);
     }
 
     public void AddSource()

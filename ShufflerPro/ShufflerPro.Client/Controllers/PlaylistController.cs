@@ -7,15 +7,18 @@ public class PlaylistController
 {
     public void Initialize(Library library)
     {
-        var playlist = new Playlist("Favorites");
+        AddPlaylist(library);
+    }
 
-        library.Playlists.Add(playlist);
+    private void AddPlaylist(Library library)
+    {
+        library.Playlists.Add(new Playlist("Favorites"));
     }
 
     public ObservableCollection<Song> IndexSongs(Playlist playlist, List<Song> songs)
     {
         var orderedSongs = new ObservableCollection<Song>();
-        foreach (var songIndex in playlist.SongIndex.Index)
+        foreach (var songIndex in playlist.Index)
         {
             var song = songs.Single(s => s.Id == songIndex.Key);
             orderedSongs.Insert(songIndex.Value, song);
@@ -26,12 +29,8 @@ public class PlaylistController
 
     public void AddSong(Playlist playlist, Song song)
     {
-        if (playlist.Songs.Contains(song))
+        if (playlist.Index.ContainsKey(song.Id))
             return;
-
-        var index = playlist.Songs.Count;
-
-        playlist.SongIndex.Index.Add(song.Id, index);
-        playlist.Songs.Add(song);
+        playlist.Index.Add(song.Id, playlist.SongCount);
     }
 }
