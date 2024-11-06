@@ -9,10 +9,40 @@
     Height="300"
     Width="300"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="ToolWindow"
+    ShowTitleBar="False"
+    Topmost="True"
+    ShowCloseButton="False"
+    WindowStyle="None"
     ResizeMode="NoResize">
-    <TextBlock
-        VerticalAlignment="Center"
-        HorizontalAlignment="Center"
-        Text="Warming Up" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <!-- <iconPacks:PackIconModern -->
+            <!--     HorizontalAlignment="Center" -->
+            <!--     VerticalAlignment="Center" -->
+            <!--     Kind="FlagWavy" /> -->
+            <TextBlock
+                Grid.Row="1"
+                FontSize="20"
+                x:Name="LoadingTextBlock"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center" />
+        </Grid>
+        <TextBlock
+            Grid.Row="1"
+            TextWrapping="Wrap"
+            Margin="10"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Text="{Binding FunFact}" />
+    </Grid>
 </mah:MetroWindow>
