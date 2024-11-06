@@ -142,9 +142,17 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Album> Albums =>
-        SelectedArtist?.Albums.Where(a => a.Songs.Count != 0).OrderBy(a => a.Name).ToObservableCollection() ??
-        (_playlistState?.Albums ?? AllAlbums.OrderBy(a => a.Name).ToObservableCollection());
+    public ObservableCollection<Album> Albums
+    {
+        get
+        {
+            if (_playlistState is not null)
+                return _playlistState.FilterAlbums(SelectedArtist);
+
+            return SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
+                   AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
+        }
+    }
 
     public IReadOnlyCollection<Artist> Artists => _playlistState?.Artists ?? _library
         .Artists
@@ -342,7 +350,7 @@ public class ShellViewModel : ViewModelBase
                 IsShuffleChecked = false;
         }
     }
-    
+
     public ObservableCollection<Playlist> Playlists => _library.Playlists;
 
     public Playlist? SelectedPlaylist
@@ -363,8 +371,12 @@ public class ShellViewModel : ViewModelBase
         SelectedAlbum = null;
 
         if (SelectedPlaylist is null)
+        {
             _playlistState = null;
+            HandleFilterSongs();
+        }
         else
+        {
             _songFilterController
                 .FilterSongs(AllSongs, SelectedPlaylist)
                 .Do(playlistState =>
@@ -372,6 +384,12 @@ public class ShellViewModel : ViewModelBase
                     _playlistState = playlistState;
                     Songs = playlistState.Songs;
                 });
+        }
+
+        NotifyOfPropertyChange(nameof(Artists));
+        NotifyOfPropertyChange(nameof(Albums));
+        NotifyOfPropertyChange(nameof(Songs));
+        NotifyOfPropertyChange(nameof(SongSelectionSummary));
     }
 
     private void OnPlayerDisposed()
@@ -606,9 +624,8 @@ public class ShellViewModel : ViewModelBase
 
     private void HandleFilterSongs(string? artist = null, string? album = null)
     {
-        Songs = _songFilterController.FilterSongs(SelectedPlaylist is not null
-            ? _playlistState!.Songs
-            : AllSongs, artist, album);
+        var songs = SelectedPlaylist is not null && _playlistState is not null ? _playlistState.Songs : AllSongs;
+        Songs = _songFilterController.FilterSongs(songs, artist, album);
     }
 
     public void AddSource()

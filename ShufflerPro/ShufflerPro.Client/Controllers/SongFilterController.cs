@@ -18,6 +18,13 @@ public class PlaylistState(IReadOnlyCollection<Song> songs)
         .ToObservableCollection();
 
     public ObservableCollection<Song> Songs { get; set; } = songs.ToObservableCollection();
+
+    public ObservableCollection<Album> FilterAlbums(Artist? selectedArtist)
+    {
+        return selectedArtist is null
+            ? Albums
+            : Albums.Where(a => a.Artist == selectedArtist).ToObservableCollection();
+    }
 }
 
 public class SongFilterController
