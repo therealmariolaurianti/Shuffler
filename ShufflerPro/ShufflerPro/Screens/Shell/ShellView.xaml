@@ -188,6 +188,9 @@
                                     Margin="5"
                                     Grid.Column="1"
                                     Minimum="0"
+                                    Height="13"
+                                    VerticalAlignment="Center"
+                                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                                     Interval="1000"
                                     Maximum="{Binding MaxRunTime}"
                                     Value="{Binding ElapsedRunningTime}" />
@@ -211,7 +214,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <StackPanel
                                 Margin="5"
@@ -274,6 +277,7 @@
                                     Width="100"
                                     Grid.Column="1"
                                     cal:Message.Attach="[Event ValueChanged] = [Action AdjustApplicationVolume()]"
+                                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                                     Value="{Binding ApplicationVolumeLevel}"
                                     Maximum="10"
                                     Margin="10" />
@@ -545,7 +549,6 @@
                             <DataGrid.Columns>
                                 <DataGridTemplateColumn
                                     Width="25"
-                                    CanUserResize="False"
                                     IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
@@ -560,10 +563,8 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn
-                                    Header="#"
-                                    CanUserResize="False"
                                     Binding="{Binding Track, Mode=OneTime, FallbackValue=null}"
-                                    Width="25">
+                                    Width="40">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="HorizontalAlignment" Value="Center" />
