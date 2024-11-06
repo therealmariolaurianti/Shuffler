@@ -40,6 +40,8 @@ public class ShellViewModel : ViewModelBase
     private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
 
+    private readonly SongFilterController _songFilterController;
+
     private readonly SongQueueFactory _songQueueFactory;
 
     private readonly SongStack _songStack;
@@ -57,6 +59,7 @@ public class ShellViewModel : ViewModelBase
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
+    private Playlist? _selectedPlaylist;
     private Song? _selectedSong;
     private Theme _selectedTheme;
     private SourceTreeViewItem? _selectedTreeViewItem;
@@ -76,7 +79,7 @@ public class ShellViewModel : ViewModelBase
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
         AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack,
-        PlaylistController playlistController)
+        PlaylistController playlistController, SongFilterController songFilterController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -89,6 +92,7 @@ public class ShellViewModel : ViewModelBase
         _randomSongQueueFactory = randomSongQueueFactory;
         _songStack = songStack;
         _playlistController = playlistController;
+        _songFilterController = songFilterController;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -120,15 +124,18 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _songs)) return;
             _songs = value;
             NotifyOfPropertyChange();
-            NotifyOfPropertyChange(nameof(SongSelectionSummary));
+            NotifyCollectionsChanged();
         }
     }
 
     public ObservableCollection<Album> Albums =>
         SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
-        AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
+        (SelectedPlaylist?.Albums ?? AllAlbums.OrderBy(a => a.Name).ToObservableCollection());
 
-    public IReadOnlyCollection<Artist> Artists => _library.Artists.OrderBy(a => a.Name).ToReadOnlyCollection();
+    public IReadOnlyCollection<Artist> Artists => SelectedPlaylist?.Artists ?? _library
+        .Artists
+        .OrderBy(a => a.Name).ToReadOnlyCollection();
+
     private IReadOnlyCollection<Song> AllSongs => _library.Songs;
     private IReadOnlyCollection<Album> AllAlbums => _library.Albums;
 
@@ -347,6 +354,19 @@ public class ShellViewModel : ViewModelBase
 
     public ObservableCollection<Playlist> Playlists => _library.Playlists;
 
+    public Playlist? SelectedPlaylist
+    {
+        get => _selectedPlaylist;
+        set
+        {
+            if (Equals(value, _selectedPlaylist)) return;
+            _selectedPlaylist = value;
+            NotifyOfPropertyChange();
+
+            Songs = _songFilterController.FilterSongs(AllSongs, value);
+        }
+    }
+
     private void OnPlayerDisposed()
     {
         if (CurrentSong is not null)
@@ -362,13 +382,13 @@ public class ShellViewModel : ViewModelBase
         switch (LibrarySearchType)
         {
             case LibrarySearchType.Artist:
-                SearchSongs(SearchText, null, null);
+                Songs = _songFilterController.SearchSongs(AllSongs, SearchText, null, null);
                 break;
             case LibrarySearchType.Song:
-                SearchSongs(null, null, SearchText);
+                Songs = _songFilterController.SearchSongs(AllSongs, null, null, SearchText);
                 break;
             case LibrarySearchType.Album:
-                SearchSongs(null, SearchText, null);
+                Songs = _songFilterController.SearchSongs(AllSongs, null, SearchText, null);
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -567,42 +587,9 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
-    private IEnumerable<Song> FilterSongs(string? artist, string? album)
-    {
-        var filteredSongs = AllSongs.AsEnumerable();
-
-        if (artist != null && album == null)
-            filteredSongs = AllSongs.Where(s => s.Artist == artist);
-        if (artist == null && album != null)
-            filteredSongs = AllSongs.Where(s => s.Album == album);
-        if (artist != null && album != null)
-            filteredSongs = AllSongs.Where(s => s.Artist == artist && s.Album == album);
-        return filteredSongs;
-    }
-
-    private void SearchSongs(string? artist, string? album, string? song)
-    {
-        var filteredSongs = AllSongs.AsEnumerable();
-
-        if (artist != null)
-            filteredSongs = AllSongs.Where(s => s.Artist.Contains(artist, StringComparison.OrdinalIgnoreCase));
-        if (album != null)
-            filteredSongs = AllSongs.Where(s => s.Album.Contains(album, StringComparison.OrdinalIgnoreCase));
-        if (song != null)
-            filteredSongs = AllSongs.Where(s =>
-                s.Title != null && s.Title.Contains(song, StringComparison.OrdinalIgnoreCase));
-
-        Songs = filteredSongs.ToObservableCollection();
-    }
-
     private void HandleFilterSongs(string? artist = null, string? album = null)
     {
-        var filteredSongs = FilterSongs(artist, album);
-        Songs = filteredSongs
-            .OrderBy(s => s.Artist)
-            .ThenBy(s => s.Album)
-            .ThenBy(s => s.Track)
-            .ToObservableCollection();
+        Songs = _songFilterController.FilterSongs(AllSongs, artist, album);
     }
 
     public void AddSource()

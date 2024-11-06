@@ -322,6 +322,7 @@
                                 <ListBox
                                     Margin="2,0,2,2"
                                     ItemsSource="{Binding Playlists}"
+                                    SelectedItem="{Binding SelectedPlaylist}"
                                     Grid.Row="1">
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
