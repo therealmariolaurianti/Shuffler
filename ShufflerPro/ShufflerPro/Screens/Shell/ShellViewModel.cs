@@ -583,8 +583,6 @@ public class ShellViewModel : ViewModelBase
 
     public void PlaySong(bool isSourceGrid = false)
     {
-        throw new Exception("Test");
-        
         HandleSelectedSong()
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
