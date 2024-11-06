@@ -14,7 +14,7 @@ public class SourceFolderController(DatabaseController databaseController)
                 return result;
         }
 
-        return state;
+        return state.WireIds(sources);
     }
 
     public NewResult<SourceFolderState> BuildFromPath(string folderPath, SourceFolderState state)

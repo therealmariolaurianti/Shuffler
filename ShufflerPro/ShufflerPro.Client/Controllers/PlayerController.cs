@@ -1,6 +1,6 @@
 ﻿using NAudio.Wave;
 using ShufflerPro.Client.Entities;
-using Timer = System.Timers.Timer;
+using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
@@ -34,12 +34,16 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         PlayerDisposed.Invoke();
     }
 
-    private void StartNextSong(ISongQueue songQueue)
+    private NewResult<NewUnit> StartNextSong(ISongQueue songQueue)
     {
         if (songQueue.NextSong is null)
+        {
             Dispose();
-        else
-            SongChanged.Invoke(songQueue.NextSong);
+            return NewResultExtensions.CreateFail<NewUnit>("Player disposed.");
+        }
+
+        SongChanged.Invoke(songQueue.NextSong);
+        return NewUnit.Default;
     }
 
     private void StartPreviousSong(ISongQueue songQueue)
@@ -95,7 +99,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
             _timer.Stop();
             action.Invoke();
         };
-        
+
         _timer.Start();
     }
 
@@ -113,9 +117,9 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         IsPaused = false;
     }
 
-    public void Skip(ISongQueue songQueue)
+    public NewResult<NewUnit> Skip(ISongQueue songQueue)
     {
-        StartNextSong(songQueue);
+        return StartNextSong(songQueue);
     }
 
     public void Previous(ISongQueue songQueue)

@@ -8,7 +8,7 @@ public class PlaylistController
     public void Initialize(Library library)
     {
         var playlist = new Playlist("Favorites");
-        
+
         library.Playlists.Add(playlist);
     }
 
@@ -22,5 +22,16 @@ public class PlaylistController
         }
 
         return orderedSongs;
+    }
+
+    public void AddSong(Playlist playlist, Song song)
+    {
+        if (playlist.Songs.Contains(song))
+            return;
+
+        var index = playlist.Songs.Count;
+
+        playlist.SongIndex.Index.Add(song.Id, index);
+        playlist.Songs.Add(song);
     }
 }

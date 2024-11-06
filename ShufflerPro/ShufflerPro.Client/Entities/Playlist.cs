@@ -18,17 +18,6 @@ public class Playlist(string name)
         .Select(s => s.CreatedAlbum!)
         .Distinct()
         .ToObservableCollection();
-
-    public void AddSong(Song song)
-    {
-        if (Songs.Contains(song))
-            return;
-        
-        var index = Songs.Count;
-        
-        SongIndex.Index.Add(song.Id, index);
-        Songs.Add(song);
-    }
 }
 
 public class SongIndex

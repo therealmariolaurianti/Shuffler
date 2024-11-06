@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using LiteDB;
+﻿using LiteDB;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Interfaces;
@@ -39,7 +38,7 @@ public class DatabaseController
 
                 var source = new Source(addedSourceFolder.FullPath, ObjectId.NewObjectId());
                 var localDatabaseKey = await sourceCollection.Insert(source);
-                
+
                 addedSourceFolder.SetId(localDatabaseKey);
             }
         }
@@ -58,10 +57,5 @@ public class DatabaseController
         }
 
         return NewUnit.Default;
-    }
-
-    private Expression<Func<Source, bool>> _deleteExpression(SourceFolder sourceFolder)
-    {
-        return s => s.FolderPath == sourceFolder.FullPath;
     }
 }

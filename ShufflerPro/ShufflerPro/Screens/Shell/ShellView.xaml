@@ -566,18 +566,10 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn
                                     Header="Song"
-                                    HeaderStyle="{DynamicResource MahApps.Styles.DataGridColumnHeader}"
                                     Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Time"
-                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}">
-                                    <DataGridTextColumn.ElementStyle>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="HorizontalAlignment" Value="Right" />
-                                            <Setter Property="Margin" Value="5,0" />
-                                        </Style>
-                                    </DataGridTextColumn.ElementStyle>
-                                </DataGridTextColumn>
+                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}"/>
                                 <DataGridTextColumn
                                     Header="Artist"
                                     Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />

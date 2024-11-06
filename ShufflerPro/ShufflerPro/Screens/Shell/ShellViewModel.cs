@@ -407,18 +407,23 @@ public class ShellViewModel : ViewModelBase
             _timer = new CountDownTimer();
 
             _timer.SetTime(CurrentSong!.Duration!.Value);
-            _timer.TimeChanged += () =>
-            {
-                var timeSpan = CurrentSong!.Duration!.Value.Subtract(_timer.TimeLeft);
-
-                ElapsedRunningTime = timeSpan.TotalSeconds;
-                ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
-            };
+            _timer.TimeChanged += OnTimeChanged;
 
             _timer.Start();
 
             return NewUnit.Default;
         });
+    }
+
+    private void OnTimeChanged()
+    {
+        if (CurrentSong is null || _timer is null)
+            return;
+
+        var timeSpan = CurrentSong.Duration!.Value.Subtract(_timer.TimeLeft);
+
+        ElapsedRunningTime = timeSpan.TotalSeconds;
+        ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
     }
 
     private void NotifyCollectionsChanged()
@@ -448,10 +453,15 @@ public class ShellViewModel : ViewModelBase
 
     private void StartLibrary()
     {
-        ElapsedRunningTime.Reset();
-        ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
+        ResetCurrentElapsed();
         ProcessSourceFolders();
         _playlistController.Initialize(_library);
+    }
+
+    private void ResetCurrentElapsed()
+    {
+        ElapsedRunningTime.Reset();
+        ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
     }
 
     private void InitializeApplicationVolume()
@@ -566,12 +576,17 @@ public class ShellViewModel : ViewModelBase
 
                     CurrentSong!.IsPlaying = true;
 
-                    NotifyOfPropertyChange(nameof(IsPlaying));
-                    NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
-                    NotifyOfPropertyChange(nameof(ElapsedRunningTime));
-                    NotifyOfPropertyChange(nameof(CurrentSongPicture));
-                    NotifyOfPropertyChange(nameof(HasAlbumArt));
+                    NotifyInterfaceChanged();
                 }));
+    }
+
+    private void NotifyInterfaceChanged()
+    {
+        NotifyOfPropertyChange(nameof(IsPlaying));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
+        NotifyOfPropertyChange(nameof(ElapsedRunningTime));
+        NotifyOfPropertyChange(nameof(CurrentSongPicture));
+        NotifyOfPropertyChange(nameof(HasAlbumArt));
     }
 
     private NewResult<NewUnit> HandleSelectedSong()
@@ -753,7 +768,16 @@ public class ShellViewModel : ViewModelBase
         if (CurrentSong is null || _songQueue is null)
             return;
 
-        _playerController.Skip(_songQueue);
+        _playerController
+            .Skip(_songQueue)
+            .IfFail(_ => EndPlaySong());
+    }
+
+    private void EndPlaySong()
+    {
+        _timer?.Stop();
+        ResetCurrentElapsed();
+        NotifyInterfaceChanged();
     }
 
     public void LaunchGitHubSite()
@@ -785,7 +809,11 @@ public class ShellViewModel : ViewModelBase
                     data = inputElement.ItemContainerGenerator.ItemFromContainer(element);
 
                     if (data == DependencyProperty.UnsetValue)
-                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    {
+                        var dependencyObject = VisualTreeHelper.GetParent(element);
+                        if (dependencyObject is UIElement uiElement)
+                            element = uiElement;
+                    }
                 }
 
             if (data != DependencyProperty.UnsetValue)
@@ -793,7 +821,7 @@ public class ShellViewModel : ViewModelBase
                 var eventData = dragEventArgs.Data.GetData(typeof(Song));
 
                 if (data is Playlist playlist && eventData is Song song)
-                    playlist.AddSong(song);
+                    _playlistController.AddSong(playlist, song);
             }
         }
     }

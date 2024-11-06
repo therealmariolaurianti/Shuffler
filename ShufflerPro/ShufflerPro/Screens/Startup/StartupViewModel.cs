@@ -44,16 +44,12 @@ public class StartupViewModel : ViewModelBase
                 .IfSuccess(createdLibrary => library = createdLibrary);
         }).ConfigureAwait(true);
 
-        if (library is null)
-        {
-            
-        }
-        else
-        {
-            var viewModel = _shellViewModelFactory.Create(library);
-            await _windowManager.ShowWindowAsync(viewModel);
+        if (library is null) 
+            throw new ApplicationException("Failed to load library.");
 
-            await TryCloseAsync();
-        }
+        var viewModel = _shellViewModelFactory.Create(library);
+        await _windowManager.ShowWindowAsync(viewModel);
+        
+        await TryCloseAsync();
     }
 }
