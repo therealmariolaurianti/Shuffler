@@ -22,7 +22,6 @@ using DragEventArgs = System.Windows.DragEventArgs;
 using ListBox = System.Windows.Controls.ListBox;
 using MessageBox = System.Windows.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using Theme = ShufflerPro.Client.Entities.Theme;
 
 namespace ShufflerPro.Screens.Shell;
 
@@ -46,18 +45,22 @@ public class ShellViewModel : ViewModelBase
     private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
 
+    private readonly ISettingsViewModelFactory _settingsViewModelFactory;
+
     private readonly SongFilterController _songFilterController;
 
     private readonly SongQueueFactory _songQueueFactory;
 
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
+
+    private readonly IWindowManager _windowManager;
     private double _applicationVolumeLevel;
 
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
-    
+
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
@@ -68,17 +71,13 @@ public class ShellViewModel : ViewModelBase
     private Artist? _selectedArtist;
     private Playlist? _selectedPlaylist;
     private Song? _selectedSong;
-    
-    private SourceTreeViewItem? _selectedTreeViewItem;
 
-    private readonly ISettingsViewModelFactory _settingsViewModelFactory;
+    private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
 
     private CountDownTimer? _timer;
-
-    private readonly IWindowManager _windowManager;
 
     public ShellViewModel(
         Library library,
@@ -329,7 +328,6 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    
 
     public bool IsRepeatChecked
     {
@@ -344,7 +342,6 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    
 
     public ObservableCollection<Playlist> Playlists => _library.Playlists;
 
@@ -356,6 +353,9 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedPlaylist)) return;
             _selectedPlaylist = value;
             NotifyOfPropertyChange();
+
+            SelectedArtist = null;
+            SelectedAlbum = null;
 
             Songs = _songFilterController.FilterSongs(AllSongs, value);
         }
