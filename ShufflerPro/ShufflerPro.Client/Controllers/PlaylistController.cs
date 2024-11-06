@@ -44,4 +44,9 @@ public class PlaylistController(DatabaseController databaseController)
     {
         return await databaseController.AddPlaylist(playlist);
     }
+
+    public async Task<NewResult<NewUnit>> Update(Playlist item)
+    {
+        return await databaseController.UpdatePlaylist(item);
+    }
 }

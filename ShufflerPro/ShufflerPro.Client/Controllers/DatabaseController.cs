@@ -107,4 +107,15 @@ public class DatabaseController
 
         return NewUnit.Default;
     }
+
+    public async Task<NewResult<NewUnit>> UpdatePlaylist(Playlist item)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<Playlist>();
+            var result = await playlistCollection.Update(item);
+        }
+
+        return NewUnit.Default;
+    }
 }

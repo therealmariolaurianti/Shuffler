@@ -470,7 +470,7 @@ public class ShellViewModel : ViewModelBase
 
         InitializeApplicationVolume();
         StartLibrary();
-        
+
         NotifyCollectionsChanged();
 
         return base.OnInitializeAsync(cancellationToken);
@@ -868,10 +868,14 @@ public class ShellViewModel : ViewModelBase
             return;
         SelectedPlaylist.IsInEditMode = true;
     }
-    
+
     public void EditingItemLostFocus()
     {
-        SelectedPlaylist!.IsInEditMode = false;
-        NotifyOfPropertyChange(nameof(Playlists));
+        RunAsync(async () => await _playlistController.Update(SelectedPlaylist!.Item)
+            .Do(_ =>
+            {
+                SelectedPlaylist!.IsInEditMode = false;
+                NotifyOfPropertyChange(nameof(Playlists));
+            }));
     }
 }

@@ -20,14 +20,7 @@ public class LocalDatabaseCollection<T>
     {
         _collection = collection;
     }
-
-    public async Task<T?> FindById(LocalDatabaseKey id)
-    {
-        var bsonValue = id.AsBsonValue();
-        return await _collection.FindByIdAsync(bsonValue);
-    }
-
-
+    
     public async Task<LocalDatabaseKey> Insert(T item)
     {
         var value = await _collection.InsertAsync(item);
@@ -38,6 +31,11 @@ public class LocalDatabaseCollection<T>
     {
         var bsonValue = id.AsBsonValue();
         return await _collection.DeleteAsync(bsonValue);
+    }
+    
+    public async Task<bool> Update(T item)
+    {
+        return await _collection.UpdateAsync(item);
     }
 
     public async Task<int> DeleteAll()
