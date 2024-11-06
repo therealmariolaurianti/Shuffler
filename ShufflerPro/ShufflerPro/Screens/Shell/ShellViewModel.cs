@@ -70,7 +70,7 @@ public class ShellViewModel : ViewModelBase
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
-    private Playlist? _selectedPlaylist;
+    private PlaylistGridItem? _selectedPlaylist;
     private Song? _selectedSong;
 
     private SourceTreeViewItem? _selectedTreeViewItem;
@@ -351,9 +351,12 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Playlist> Playlists => _library.Playlists;
+    public ObservableCollection<PlaylistGridItem> Playlists => _library
+        .Playlists
+        .Select(p => new PlaylistGridItem(p))
+        .ToObservableCollection();
 
-    public Playlist? SelectedPlaylist
+    public PlaylistGridItem? SelectedPlaylist
     {
         get => _selectedPlaylist;
         set
@@ -378,7 +381,7 @@ public class ShellViewModel : ViewModelBase
         else
         {
             _songFilterController
-                .FilterSongs(AllSongs, SelectedPlaylist)
+                .FilterSongs(AllSongs, SelectedPlaylist.Item)
                 .Do(playlistState =>
                 {
                     _playlistState = playlistState;
@@ -458,7 +461,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
-    protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
+    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "Shuffler";
         SourceTreeItems = [];
@@ -467,8 +470,10 @@ public class ShellViewModel : ViewModelBase
 
         InitializeApplicationVolume();
         StartLibrary();
+        
+        NotifyCollectionsChanged();
 
-        await _playlistController.Initialize(_library);
+        return base.OnInitializeAsync(cancellationToken);
     }
 
     private void StartLibrary()

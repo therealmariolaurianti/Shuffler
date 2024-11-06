@@ -33,8 +33,17 @@ public class LibraryController
                     var library = _libraryFactory.Create(state.SourceFolders);
                     return _mediaController
                         .LoadFromFolderPath(state.SourceFolders, library)
+                        .Map(async _ => await LoadPlaylists(library))
                         .Map(_ => library);
                 }));
+    }
+    
+    public async Task<NewResult<NewUnit>> LoadPlaylists(Library library)
+    {
+        return await _databaseController
+            .LoadPlaylists()
+            .Do(playlists => library.Playlists.AddRange(playlists))
+            .ToSuccessAsync();
     }
 
     public async Task<NewResult<NewUnit>> InsertSource(SourceFolderState state)
