@@ -1,16 +1,16 @@
-﻿using ShufflerPro.Database;
+﻿using LiteDB;
 
 namespace ShufflerPro.Client.Entities;
 
 public class Playlist(string name)
 {
-    public LocalDatabaseKey? Id { get; private set; }
+    public ObjectId? Id { get; private set; }
     public string Name { get; set; } = name;
     public int SongCount => Indexes.Count;
 
     public List<PlaylistIndex> Indexes { get; set; } = [];
 
-    public void SetId(LocalDatabaseKey localDatabaseKey)
+    public void SetId(ObjectId localDatabaseKey)
     {
         Id = localDatabaseKey;
     }

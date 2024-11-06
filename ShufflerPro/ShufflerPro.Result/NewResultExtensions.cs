@@ -11,7 +11,7 @@ public static class NewResultExtensions
     {
         return new NewResult<T>(ex);
     }
-    
+
     public static NewResult<T> CreateFail<T>(string message)
     {
         return new NewResult<T>(new Exception(message));
@@ -77,13 +77,6 @@ public static class NewResultExtensions
         }
     }
 
-    public static async Task<NewResult<T1>> Map1<T, T1>(this Task<NewResult<T>> ma,
-        Func<T, T1> func)
-    {
-        var item = await ma;
-        return item.Map(func);
-    }
-
     public static async Task<NewResult<T>> IfFail<T>(this Task<NewResult<T>> ma, Action<Exception> f)
     {
         var item = await ma;
@@ -97,10 +90,8 @@ public static class NewResultExtensions
         return item;
     }
 
-    public static async Task<NewResult<T>> IfSuccessAsync<T>(this Task<NewResult<T>> task, Func<T, Task> f)
+    public static async Task<NewResult<NewUnit>> ToSuccessAsync<T>(this Task<NewResult<T>> item)
     {
-        var item = await task;
-        await item.IfSuccessAsync(async x => await f(x));
-        return item;
+        return await NewUnit.DefaultAsync;
     }
 }

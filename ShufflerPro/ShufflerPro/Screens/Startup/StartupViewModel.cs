@@ -45,7 +45,7 @@ public class StartupViewModel : ViewModelBase
         }).ConfigureAwait(true);
 
         if (library is null) 
-            throw new ApplicationException("Failed to load library.");
+            throw new Exception("Failed to load library.");
 
         var viewModel = _shellViewModelFactory.Create(library);
         await _windowManager.ShowWindowAsync(viewModel);

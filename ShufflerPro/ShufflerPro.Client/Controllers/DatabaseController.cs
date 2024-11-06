@@ -64,7 +64,9 @@ public class DatabaseController
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var playlistCollection = connection.GetCollection<Playlist>();
-            return (await playlistCollection.FindAll()).ToList();
+            var findAll = await playlistCollection.FindAll().ConfigureAwait(true);
+            var loadPlaylists = findAll.ToList();
+            return loadPlaylists;
         }
     }
 
@@ -72,10 +74,16 @@ public class DatabaseController
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
+            var playlistIndexCollection = connection.GetCollection<PlaylistIndex>();
+            foreach (var playlistIndex in playlist.Indexes)
+            {
+                await playlistIndexCollection.Insert(playlistIndex);
+            }
+            
             var playlistCollection = connection.GetCollection<Playlist>();
             var localDatabaseKey = await playlistCollection.Insert(playlist);
 
-            playlist.SetId(localDatabaseKey);
+            playlist.SetId(localDatabaseKey.AsBsonValue());
         }
 
         return NewUnit.Default;

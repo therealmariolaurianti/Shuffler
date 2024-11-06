@@ -6,11 +6,12 @@ namespace ShufflerPro.Client.Controllers;
 
 public class PlaylistController(DatabaseController databaseController)
 {
-    public async Task Initialize(Library library)
+    public async Task<NewResult<NewUnit>> Initialize(Library library)
     {
-        await databaseController
+        return await databaseController
             .LoadPlaylists()
-            .Do(playlists => library.Playlists.AddRange(playlists));
+            .Do(playlists => library.Playlists.AddRange(playlists))
+            .ToSuccessAsync();
     }
 
     public ObservableCollection<Song> IndexSongs(Playlist playlist, List<Song> songs)
@@ -35,7 +36,6 @@ public class PlaylistController(DatabaseController databaseController)
     public async Task<NewResult<NewUnit>> AddPlaylist(Library library, Playlist playlist)
     {
         library.Playlists.Add(playlist);
-        return NewUnit.Default;
         return await SavePlaylist(playlist);
     }
 
