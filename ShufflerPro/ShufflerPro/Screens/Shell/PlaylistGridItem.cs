@@ -3,14 +3,9 @@ using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Screens.Shell;
 
-public class PlaylistGridItem : PropertyChangedBase
+public class PlaylistGridItem(Playlist playlist) : PropertyChangedBase
 {
     private bool _isInEditMode;
-
-    public PlaylistGridItem(Playlist playlist)
-    {
-        Item = playlist;
-    }
 
     public bool IsInEditMode
     {
@@ -34,5 +29,5 @@ public class PlaylistGridItem : PropertyChangedBase
         }
     }
 
-    public Playlist Item { get; set; }
+    public Playlist Item { get; } = playlist;
 }

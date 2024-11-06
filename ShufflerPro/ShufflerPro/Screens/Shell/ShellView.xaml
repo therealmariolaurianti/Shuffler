@@ -9,9 +9,9 @@
     xmlns:enums="clr-namespace:ShufflerPro.Client.Enums;assembly=ShufflerPro.Client"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
-    xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
     xmlns:shell="clr-namespace:ShufflerPro.Screens.Shell"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+    xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
@@ -48,9 +48,10 @@
     <Window.Resources>
         <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
         <ContextMenu x:Key="PlaylistContextMenu">
-            <MenuItem Header="Add" cal:Message.Attach="AddPlaylist"/>
-            <Separator/>
-            <MenuItem IsEnabled="False" Header="Remove"/>
+            <MenuItem Header="Add" cal:Message.Attach="AddPlaylist" />
+            <MenuItem Header="Rename" cal:Message.Attach="RenamePlaylist" />
+            <Separator />
+            <MenuItem IsEnabled="False" Header="Remove" />
         </ContextMenu>
     </Window.Resources>
     <Grid>
@@ -347,9 +348,17 @@
                                                     Height="16"
                                                     Width="16"
                                                     Kind="Music" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Text="{Binding Name, Mode=OneTime}" />
+                                                <Grid
+                                                    Grid.Column="1">
+                                                    <TextBlock
+                                                        Visibility="{calcBinding:Binding '!IsInEditMode'}"
+                                                        Text="{Binding Name, Mode=OneTime}" />
+                                                    <controls:ClickSelectTextBox
+                                                        Visibility="{calcBinding:Binding IsInEditMode}"
+                                                        IsVisibleChanged="UIElement_OnIsVisibleChanged"
+                                                        cal:Message.Attach="[Event LostFocus] = [Action EditingItemLostFocus()]"
+                                                        Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" />
+                                                </Grid>
                                             </Grid>
                                         </DataTemplate>
                                     </ListBox.ItemTemplate>
@@ -576,7 +585,7 @@
                                     Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Time"
-                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}"/>
+                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}" />
                                 <DataGridTextColumn
                                     Header="Artist"
                                     Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
@@ -640,7 +649,7 @@
                         TextAlignment="Center"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        FontWeight="14"
+                        FontSize="14"
                         Text="{Binding SongSelectionSummary, Mode=OneWay}" />
                     <StackPanel
                         Orientation="Horizontal"

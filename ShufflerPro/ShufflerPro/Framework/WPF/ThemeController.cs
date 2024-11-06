@@ -2,7 +2,6 @@
 using ControlzEx.Theming;
 using Theme = ShufflerPro.Client.Entities.Theme;
 
-
 namespace ShufflerPro.Framework.WPF;
 
 public static class ThemeController

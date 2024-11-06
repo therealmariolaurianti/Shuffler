@@ -861,4 +861,17 @@ public class ShellViewModel : ViewModelBase
         var playlist = new Playlist("New Playlist");
         RunAsync(async () => await _playlistController.AddPlaylist(_library, playlist));
     }
+
+    public void RenamePlaylist()
+    {
+        if (SelectedPlaylist is null)
+            return;
+        SelectedPlaylist.IsInEditMode = true;
+    }
+    
+    public void EditingItemLostFocus()
+    {
+        SelectedPlaylist!.IsInEditMode = false;
+        NotifyOfPropertyChange(nameof(Playlists));
+    }
 }
