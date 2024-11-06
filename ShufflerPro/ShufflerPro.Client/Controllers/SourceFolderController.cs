@@ -1,4 +1,5 @@
 ﻿using ShufflerPro.Client.Entities;
+using ShufflerPro.Database;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
@@ -14,7 +15,36 @@ public class SourceFolderController(DatabaseController databaseController)
                 return result;
         }
 
-        return state.WireIds(sources);
+        return WireIds(state, sources);
+    }
+
+    public NewResult<SourceFolderState> WireIds(SourceFolderState state, List<Source> sources)
+    {
+        try
+        {
+            foreach (var sourceFolder in state.AddedSourceFolders.ToList())
+            {
+                var source = sources.SingleOrDefault(s => s.FolderPath == sourceFolder.FullPath);
+                if (source is null)
+                {
+                    state.AddedSourceFolders.Remove(sourceFolder);
+                    if (sourceFolder.Parent != null)
+                        sourceFolder.Parent.Items.Remove(sourceFolder);
+                    else
+                        state.SourceFolders.Remove(sourceFolder);
+                }
+                else
+                {
+                    sourceFolder.SetId(new LocalDatabaseKey(source.Id));
+                }
+            }
+
+            return state;
+        }
+        catch (Exception e)
+        {
+            return NewResultExtensions.CreateFail<SourceFolderState>(e);
+        }
     }
 
     public NewResult<SourceFolderState> BuildFromPath(string folderPath, SourceFolderState state)
