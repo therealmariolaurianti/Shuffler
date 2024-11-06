@@ -58,7 +58,7 @@
       <Resource Include="Images\replay.png" />
       <None Remove="Images\shuffle.png" />
       <Resource Include="Images\shuffle.png" />
-      <None Update="NLog.config">
+      <None Update="NLog\NLog.config">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

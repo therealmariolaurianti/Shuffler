@@ -47,4 +47,12 @@ public static class Extensions
             return default;
         }
     }
+
+    public static void AddRange<T>(this IEnumerable<T> items, ICollection<T> collection)
+    {
+        foreach (var item in items)
+        {
+            collection.Add(item);
+        }
+    }
 }

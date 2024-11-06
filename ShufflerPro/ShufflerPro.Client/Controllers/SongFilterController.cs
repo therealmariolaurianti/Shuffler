@@ -41,7 +41,7 @@ public class SongFilterController
         if (playlist is null)
             return new PlaylistState(allSongs);
 
-        var songIds = playlist.Index.Keys;
+        var songIds = playlist.Indexes.Select(i => i.Id);
         var songs = allSongs.Where(a => songIds.Contains(a.Id)).ToList();
 
         return new PlaylistState(_playlistController.IndexSongs(playlist, songs));

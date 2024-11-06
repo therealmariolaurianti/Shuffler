@@ -47,6 +47,11 @@
     </mah:MetroWindow.RightWindowCommands>
     <Window.Resources>
         <wpf:EnumRadioButtonConverter x:Key="EnumRadioButtonConverter" />
+        <ContextMenu x:Key="PlaylistContextMenu">
+            <MenuItem Header="Add" cal:Message.Attach="AddPlaylist"/>
+            <Separator/>
+            <MenuItem IsEnabled="False" Header="Remove"/>
+        </ContextMenu>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -322,6 +327,7 @@
                                 <ListBox
                                     Margin="2,0,2,2"
                                     AllowDrop="True"
+                                    ContextMenu="{StaticResource PlaylistContextMenu}"
                                     ItemsSource="{Binding Playlists}"
                                     SelectedItem="{Binding SelectedPlaylist}"
                                     cal:Message.Attach="[Event Drop] = [Action PlaylistDrop($source, $eventArgs)]"

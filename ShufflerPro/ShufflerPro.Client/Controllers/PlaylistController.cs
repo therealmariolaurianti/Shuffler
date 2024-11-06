@@ -1,27 +1,25 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class PlaylistController
+public class PlaylistController(DatabaseController databaseController)
 {
-    public void Initialize(Library library)
+    public async Task Initialize(Library library)
     {
-        AddPlaylist(library);
-    }
-
-    private void AddPlaylist(Library library)
-    {
-        library.Playlists.Add(new Playlist("Favorites"));
+        await databaseController
+            .LoadPlaylists()
+            .Do(playlists => library.Playlists.AddRange(playlists));
     }
 
     public ObservableCollection<Song> IndexSongs(Playlist playlist, List<Song> songs)
     {
         var orderedSongs = new ObservableCollection<Song>();
-        foreach (var songIndex in playlist.Index)
+        foreach (var songIndex in playlist.Indexes)
         {
-            var song = songs.Single(s => s.Id == songIndex.Key);
-            orderedSongs.Insert(songIndex.Value, song);
+            var song = songs.Single(s => s.Id == songIndex.Id);
+            orderedSongs.Insert(songIndex.Index, song);
         }
 
         return orderedSongs;
@@ -29,8 +27,20 @@ public class PlaylistController
 
     public void AddSong(Playlist playlist, Song song)
     {
-        if (playlist.Index.ContainsKey(song.Id))
+        if (playlist.Indexes.Any(i => i.Id == song.Id))
             return;
-        playlist.Index.Add(song.Id, playlist.SongCount);
+        playlist.Indexes.Add(new PlaylistIndex(song.Id, playlist.SongCount));
+    }
+
+    public async Task<NewResult<NewUnit>> AddPlaylist(Library library, Playlist playlist)
+    {
+        library.Playlists.Add(playlist);
+        return NewUnit.Default;
+        return await SavePlaylist(playlist);
+    }
+
+    private async Task<NewResult<NewUnit>> SavePlaylist(Playlist playlist)
+    {
+        return await databaseController.SavePlaylist(playlist);
     }
 }

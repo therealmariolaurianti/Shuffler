@@ -58,4 +58,26 @@ public class DatabaseController
 
         return NewUnit.Default;
     }
+
+    public async Task<NewResult<List<Playlist>>> LoadPlaylists()
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<Playlist>();
+            return (await playlistCollection.FindAll()).ToList();
+        }
+    }
+
+    public async Task<NewResult<NewUnit>> SavePlaylist(Playlist playlist)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<Playlist>();
+            var localDatabaseKey = await playlistCollection.Insert(playlist);
+
+            playlist.SetId(localDatabaseKey);
+        }
+
+        return NewUnit.Default;
+    }
 }

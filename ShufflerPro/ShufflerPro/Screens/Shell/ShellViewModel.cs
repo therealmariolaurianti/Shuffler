@@ -458,23 +458,23 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
-    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+    protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
     {
         DisplayName = "Shuffler";
         SourceTreeItems = [];
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
+
         InitializeApplicationVolume();
         StartLibrary();
 
-        return base.OnInitializeAsync(cancellationToken);
+        await _playlistController.Initialize(_library);
     }
 
     private void StartLibrary()
     {
         ResetCurrentElapsed();
         ProcessSourceFolders();
-        _playlistController.Initialize(_library);
     }
 
     private void ResetCurrentElapsed()
@@ -849,5 +849,11 @@ public class ShellViewModel : ViewModelBase
                     _playlistController.AddSong(playlist, song);
             }
         }
+    }
+
+    public void AddPlaylist()
+    {
+        var playlist = new Playlist("New Playlist");
+        RunAsync(async () => await _playlistController.AddPlaylist(_library, playlist));
     }
 }
