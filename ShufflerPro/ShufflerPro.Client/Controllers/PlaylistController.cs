@@ -49,4 +49,10 @@ public class PlaylistController(DatabaseController databaseController)
     {
         return await databaseController.UpdatePlaylist(item);
     }
+
+    public async Task<NewResult<NewUnit>> Delete(Library library, Playlist item)
+    {
+        library.Playlists.Remove(item);
+        return await databaseController.DeletePlaylist(item);
+    }
 }

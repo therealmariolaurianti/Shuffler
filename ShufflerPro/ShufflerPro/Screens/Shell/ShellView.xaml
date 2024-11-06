@@ -51,7 +51,7 @@
             <MenuItem Header="Add" cal:Message.Attach="AddPlaylist" />
             <MenuItem Header="Rename" cal:Message.Attach="RenamePlaylist" />
             <Separator />
-            <MenuItem IsEnabled="False" Header="Remove" />
+            <MenuItem Header="Remove" cal:Message.Attach="RemovePlaylist"/>
         </ContextMenu>
     </Window.Resources>
     <Grid>

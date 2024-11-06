@@ -114,6 +114,26 @@ public class DatabaseController
         {
             var playlistCollection = connection.GetCollection<Playlist>();
             var result = await playlistCollection.Update(item);
+            if (!result)
+                return NewResultExtensions.CreateFail<NewUnit>($"Failed to update {item.Name}");
+        }
+
+        return NewUnit.Default;
+    }
+
+    public async Task<NewResult<NewUnit>> DeletePlaylist(Playlist item)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<Playlist>();
+            var playlistIndexCollection = connection.GetCollection<PlaylistIndex>();
+
+            foreach (var index in item.Indexes)
+                await playlistIndexCollection.Delete(new LocalDatabaseKey(index.Id));
+
+            var result = await playlistCollection.Delete(new LocalDatabaseKey(item.Id));
+            if (!result)
+                return NewResultExtensions.CreateFail<NewUnit>($"Failed to delete {item.Name}");
         }
 
         return NewUnit.Default;

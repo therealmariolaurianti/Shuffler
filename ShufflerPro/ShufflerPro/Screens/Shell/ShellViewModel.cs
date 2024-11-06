@@ -858,9 +858,8 @@ public class ShellViewModel : ViewModelBase
 
     public void AddPlaylist()
     {
-        var playlist = new Playlist("New Playlist");
         RunAsync(async () => await _playlistController
-            .AddPlaylist(_library, playlist)
+            .AddPlaylist(_library, new Playlist("New Playlist"))
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
 
@@ -879,5 +878,11 @@ public class ShellViewModel : ViewModelBase
                 SelectedPlaylist!.IsInEditMode = false;
                 NotifyOfPropertyChange(nameof(Playlists));
             }));
+    }
+
+    public void RemovePlaylist()
+    {
+        RunAsync(async () => await _playlistController.Delete(_library, SelectedPlaylist!.Item)
+            .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
 }
