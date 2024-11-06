@@ -36,6 +36,8 @@ public class ShellViewModel : ViewModelBase
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
+
+    private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
 
     private readonly SongQueueFactory _songQueueFactory;
@@ -73,7 +75,8 @@ public class ShellViewModel : ViewModelBase
         LibraryController libraryController,
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
-        AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack)
+        AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack,
+        PlaylistController playlistController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -85,6 +88,7 @@ public class ShellViewModel : ViewModelBase
         _albumArtLoader = albumArtLoader;
         _randomSongQueueFactory = randomSongQueueFactory;
         _songStack = songStack;
+        _playlistController = playlistController;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -341,6 +345,8 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public ObservableCollection<Playlist> Playlists => _library.Playlists;
+
     private void OnPlayerDisposed()
     {
         if (CurrentSong is not null)
@@ -420,6 +426,7 @@ public class ShellViewModel : ViewModelBase
         ElapsedRunningTime.Reset();
         ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
         ProcessSourceFolders();
+        _playlistController.Initialize(_library);
     }
 
     private void InitializeApplicationVolume()

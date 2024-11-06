@@ -93,10 +93,10 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <Image
-                                        Height="15"
-                                        Width="15"
-                                        Source="{StaticResource PreviousImage}" />
+                                    <iconPacks:PackIconModern
+                                        Width="20"
+                                        Height="20"
+                                        Kind="ControlRewind" />
                                 </StackPanel>
                             </Button>
                             <Button
@@ -111,17 +111,17 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <Image
+                                    <iconPacks:PackIconModern
+                                        Width="25"
+                                        Height="25"
                                         Margin="5,0,0,0"
-                                        Height="25"
-                                        Width="25"
                                         Visibility="{calcBinding:Binding '!IsPlaying'}"
-                                        Source="{StaticResource PlayImage}" />
-                                    <Image
-                                        Height="25"
+                                        Kind="ControlPlay" />
+                                    <iconPacks:PackIconModern
                                         Width="25"
+                                        Height="25"
                                         Visibility="{calcBinding:Binding 'IsPlaying'}"
-                                        Source="{StaticResource PauseImage}" />
+                                        Kind="ControlPause" />
                                 </StackPanel>
                             </Button>
                             <Button
@@ -136,10 +136,10 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <Image
-                                        Height="15"
-                                        Width="15"
-                                        Source="{StaticResource NextImage}" />
+                                    <iconPacks:PackIconModern
+                                        Width="20"
+                                        Height="20"
+                                        Kind="ControlFastforward" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -259,10 +259,12 @@
                                     <ColumnDefinition />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Image
-                                    Height="15"
-                                    Width="15"
-                                    Source="{StaticResource VolumeSoftImage}" />
+                                <iconPacks:PackIconModern
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Kind="SoundMute" />
                                 <Slider
                                     Width="100"
                                     Grid.Column="1"
@@ -270,11 +272,13 @@
                                     Value="{Binding ApplicationVolumeLevel}"
                                     Maximum="10"
                                     Margin="10" />
-                                <Image
-                                    Height="15"
-                                    Width="15"
+                                <iconPacks:PackIconModern
                                     Grid.Column="2"
-                                    Source="{StaticResource VolumeLoudImage}" />
+                                    Width="20"
+                                    Height="20"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Kind="Sound3" />
                             </Grid>
                         </Grid>
                     </Border>
@@ -305,7 +309,7 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
-                                    <RowDefinition Height=".5*" />
+                                    <RowDefinition Height="*" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
@@ -316,7 +320,27 @@
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     Text="Playlists" />
                                 <ListBox
-                                    Grid.Row="1" />
+                                    Margin="2,0,2,2"
+                                    ItemsSource="{Binding Playlists}"
+                                    Grid.Row="1">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="30"/>
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+                                                <iconPacks:PackIconModern 
+                                                    Height="16"
+                                                    Width="16"
+                                                    Kind="Music" />
+                                                <TextBlock 
+                                                    Grid.Column="1"
+                                                    Text="{Binding Name, Mode=OneTime}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                                 <Separator
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     Grid.Row="2" />
@@ -516,11 +540,13 @@
                                     IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image
+                                            <iconPacks:PackIconModern
                                                 Visibility="{calcBinding:Binding 'IsPlaying'}"
-                                                Width="10"
-                                                Height="10"
-                                                Source="{StaticResource VolumeLoudImage}" />
+                                                Width="13"
+                                                Height="13"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Kind="Sound3" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -585,10 +611,10 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <Image
-                                    Height="23"
-                                    Width="23"
-                                    Source="{StaticResource ReplayImage}" />
+                                <iconPacks:PackIconModern
+                                    Width="20"
+                                    Height="20"
+                                    Kind="Repeat" />
                             </StackPanel>
                         </ToggleButton>
                         <ToggleButton
@@ -601,10 +627,10 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <Image
-                                    Height="23"
-                                    Width="23"
-                                    Source="{StaticResource ShuffleImage}" />
+                                <iconPacks:PackIconModern
+                                    Width="20"
+                                    Height="20"
+                                    Kind="Shuffle" />
                             </StackPanel>
                         </ToggleButton>
                     </StackPanel>
