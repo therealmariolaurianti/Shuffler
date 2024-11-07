@@ -1,6 +1,6 @@
 ﻿using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Client;
+namespace ShufflerPro.Client.Extensions;
 
 public static class SourceFolderExtensions
 {

@@ -11,8 +11,10 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Enums;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Client.Interfaces;
+using ShufflerPro.Client.States;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
@@ -629,8 +631,9 @@ public class ShellViewModel : ViewModelBase
 
     private void HandleFilterSongs(string? artist = null, string? album = null)
     {
-        var songs = SelectedPlaylist is not null && _playlistState is not null ? _playlistState.Songs : AllSongs;
-        Songs = _songFilterController.FilterSongs(songs, artist, album);
+        Songs = SelectedPlaylist is not null && _playlistState is not null
+            ? _songFilterController.FilterPlaylist(_playlistState, artist, album)
+            : _songFilterController.FilterSongs(AllSongs, artist, album);
     }
 
     public void AddSource()

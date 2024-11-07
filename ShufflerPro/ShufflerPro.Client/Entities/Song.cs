@@ -1,4 +1,5 @@
-﻿using File = TagLib.File;
+﻿using ShufflerPro.Client.Extensions;
+using File = TagLib.File;
 
 namespace ShufflerPro.Client.Entities;
 

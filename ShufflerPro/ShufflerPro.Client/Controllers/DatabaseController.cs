@@ -1,5 +1,7 @@
 ﻿using LiteDB;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
+using ShufflerPro.Client.States;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Interfaces;
 using ShufflerPro.Result;

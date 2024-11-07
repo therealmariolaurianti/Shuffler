@@ -1,10 +1,8 @@
 ﻿using System.Collections.ObjectModel;
-using LiteDB;
-using ShufflerPro.Database;
 
-namespace ShufflerPro.Client;
+namespace ShufflerPro.Client.Extensions;
 
-public static class Extensions
+public static class LinqExtensions
 {
     public static List<string> DefaultExtensions => ["mp3", "m4a"];
 

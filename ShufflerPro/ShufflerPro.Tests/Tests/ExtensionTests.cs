@@ -2,6 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 using ShufflerPro.Client;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Tests.Base;
 
 namespace ShufflerPro.Tests.Tests;

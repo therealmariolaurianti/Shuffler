@@ -1,31 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
+using ShufflerPro.Client.States;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
-
-public class PlaylistState(IReadOnlyCollection<Song> songs)
-{
-    public IReadOnlyCollection<Artist> Artists => Albums
-        .Select(s => s.Artist)
-        .Distinct()
-        .ToReadOnlyCollection();
-
-    public ObservableCollection<Album> Albums => Songs
-        .Where(s => s.CreatedAlbum != null)
-        .Select(s => s.CreatedAlbum!)
-        .Distinct()
-        .ToObservableCollection();
-
-    public ObservableCollection<Song> Songs { get; set; } = songs.ToObservableCollection();
-
-    public ObservableCollection<Album> FilterAlbums(Artist? selectedArtist)
-    {
-        return selectedArtist is null
-            ? Albums
-            : Albums.Where(a => a.Artist == selectedArtist).ToObservableCollection();
-    }
-}
 
 public class SongFilterController
 {
@@ -79,5 +58,22 @@ public class SongFilterController
                 s.Title != null && s.Title.Contains(song, StringComparison.OrdinalIgnoreCase));
 
         return filteredSongs.ToObservableCollection();
+    }
+
+    public ObservableCollection<Song> FilterPlaylist(PlaylistState playlistState, string? artist, string? album)
+    {
+        var playlistSongs = playlistState.Songs;
+        var filteredSongs = playlistSongs.AsEnumerable();
+
+        if (artist != null && album == null)
+            filteredSongs = playlistSongs.Where(s => s.Artist == artist);
+        if (artist == null && album != null)
+            filteredSongs = playlistSongs.Where(s => s.Album == album);
+        if (artist != null && album != null)
+            filteredSongs = playlistSongs.Where(s => s.Artist == artist && s.Album == album);
+
+        return filteredSongs
+            .OrderBy(s => s)
+            .ToObservableCollection();
     }
 }

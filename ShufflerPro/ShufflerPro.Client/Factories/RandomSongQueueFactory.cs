@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Interfaces;
 
 namespace ShufflerPro.Client.Factories;
 

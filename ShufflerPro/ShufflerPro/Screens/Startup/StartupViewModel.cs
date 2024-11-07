@@ -2,6 +2,7 @@
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 using ShufflerPro.Screens.Shell;

@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;

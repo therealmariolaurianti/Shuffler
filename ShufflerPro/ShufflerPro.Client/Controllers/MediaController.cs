@@ -1,4 +1,5 @@
 ﻿using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Result;
 
