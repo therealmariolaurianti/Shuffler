@@ -63,8 +63,10 @@ public class SongFilterController
     public ObservableCollection<Song> FilterPlaylist(PlaylistState playlistState, string? artist, string? album)
     {
         var playlistSongs = playlistState.Songs;
+        if (artist is null && album is null)
+            return playlistSongs;
+        
         var filteredSongs = playlistSongs.AsEnumerable();
-
         if (artist != null && album == null)
             filteredSongs = playlistSongs.Where(s => s.Artist == artist);
         if (artist == null && album != null)
@@ -72,8 +74,6 @@ public class SongFilterController
         if (artist != null && album != null)
             filteredSongs = playlistSongs.Where(s => s.Artist == artist && s.Album == album);
 
-        return filteredSongs
-            .OrderBy(s => s)
-            .ToObservableCollection();
+        return filteredSongs.ToObservableCollection();
     }
 }
