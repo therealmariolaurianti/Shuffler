@@ -80,8 +80,8 @@ public class ShellViewModel : ViewModelBase
         LibraryController libraryController,
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
-        AlbumArtLoader albumArtLoader, 
-        RandomSongQueueFactory randomSongQueueFactory, 
+        AlbumArtLoader albumArtLoader,
+        RandomSongQueueFactory randomSongQueueFactory,
         SongStack songStack,
         PlaylistController playlistController,
         SongFilterController songFilterController,
@@ -935,12 +935,12 @@ public class ShellViewModel : ViewModelBase
     {
         if (SelectedSong is null)
             return;
-        
+
         RunAsync(async () =>
         {
             var viewModel = _editSongViewModelFactory.Create(SelectedSong);
             var result = await _windowManager.ShowDialogAsync(viewModel);
-            if (result is true) 
+            if (result is true)
                 NotifyCollectionsChanged();
         });
     }

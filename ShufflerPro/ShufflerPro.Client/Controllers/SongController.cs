@@ -13,49 +13,58 @@ public class SongController
 
         var song = File.Create(itemTracker.Item.Path);
         foreach (var propertyDifference in itemTracker.PropertyDifferences)
-            UpdateProperty(song, propertyDifference);
+        {
+            var result = UpdateProperty(song, propertyDifference);
+            if (result.Fail)
+                return result;
+        }
 
         song.Save();
 
         return await NewUnit.DefaultAsync;
     }
 
-    private void UpdateProperty(File song, KeyValuePair<string, object?> propertyDifference)
+    private NewResult<NewUnit> UpdateProperty(File song, KeyValuePair<string, object?> propertyDifference)
     {
-        switch (propertyDifference.Key)
+        return NewResultExtensions.Try(() =>
         {
-            case "Genre":
+            switch (propertyDifference.Key)
             {
-                song.Tag.Genres = null;
-                song.Tag.Genres = [(string)propertyDifference.Value!];
-            }
-                break;
-            case "Title":
-            {
-                song.Tag.Title = null;
-                song.Tag.Title = propertyDifference.Value as string;
-            }
-                break;
-            case "Artist":
-            {
-                song.Tag.Performers = null;
-                song.Tag.AlbumArtists = null;
+                case "Genre":
+                {
+                    song.Tag.Genres = null;
+                    song.Tag.Genres = [(string)propertyDifference.Value!];
+                }
+                    break;
+                case "Title":
+                {
+                    song.Tag.Title = null;
+                    song.Tag.Title = propertyDifference.Value as string;
+                }
+                    break;
+                case "Artist":
+                {
+                    song.Tag.Performers = null;
+                    song.Tag.AlbumArtists = null;
 
-                song.Tag.AlbumArtists = [(string)propertyDifference.Value!];
-                song.Tag.Performers = [(string)propertyDifference.Value!];
+                    song.Tag.AlbumArtists = [(string)propertyDifference.Value!];
+                    song.Tag.Performers = [(string)propertyDifference.Value!];
+                }
+                    break;
+                case "Album":
+                {
+                    song.Tag.Album = null;
+                    song.Tag.Album = propertyDifference.Value as string;
+                }
+                    break;
+                case "Track":
+                {
+                    song.Tag.Track = Convert.ToUInt32(propertyDifference.Value);
+                }
+                    break;
             }
-                break;
-            case "Album":
-            {
-                song.Tag.Album = null;
-                song.Tag.Album = propertyDifference.Value as string;
-            }
-                break;
-            case "Track":
-            {
-                song.Tag.Track = Convert.ToUInt32(propertyDifference.Value);
-            }
-                break;
-        }
+
+            return NewUnit.Default;
+        });
     }
 }

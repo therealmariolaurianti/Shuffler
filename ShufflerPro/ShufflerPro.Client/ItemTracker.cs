@@ -28,7 +28,6 @@ public class ItemTracker<T>
     private void TakeSnapshot()
     {
         var props = GetPropertyInfos();
-
         foreach (var prop in props)
         {
             var propValue = prop.GetValue(Item, null);
@@ -39,14 +38,13 @@ public class ItemTracker<T>
     public void Revert()
     {
         var props = GetPropertyInfos();
-
-        foreach (var prop in props) prop.SetValue(Item, _snapshot[prop.Name]);
+        foreach (var prop in props)
+            prop.SetValue(Item, _snapshot[prop.Name]);
     }
 
     private List<PropertyInfo> GetPropertyInfos()
     {
         var propertyInfos = Item!.GetType().GetProperties().Where(d => d.CanWrite);
-        var props = new List<PropertyInfo>(propertyInfos);
-        return props;
+        return [..propertyInfos];
     }
 }
