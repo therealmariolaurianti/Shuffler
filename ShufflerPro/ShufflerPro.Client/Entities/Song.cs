@@ -22,11 +22,11 @@ public class Song : EntityBase
     }
 
     public Guid Id { get; }
-    public string? Genre { get; }
-    public string? Title { get; }
-    public int? Track { get; }
-    public string Artist { get; }
-    public string Album { get; }
+    public string? Genre { get; set; }
+    public string? Title { get; set; }
+    public int? Track { get; set; }
+    public string Artist { get; set; }
+    public string Album { get; set; }
     public string? Path { get; set; }
     public string? Time { get; }
     public TimeSpan? Duration { get; }

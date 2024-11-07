@@ -7,23 +7,22 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     mc:Ignorable="d"
-    Height="325"
+    Height="400"
     Width="500"
     wpf:ScreenName.Name="Edit Song"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
+    ShowCloseButton="False"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
     d:DesignHeight="300" d:DesignWidth="300">
-    <GroupBox
+    <Grid
         Margin="10">
-        <GroupBox.Header>
-            <TextBlock
-                Text="Song Information"
-                Margin="2"
-                FontWeight="SemiBold" />
-        </GroupBox.Header>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid
             VerticalAlignment="Center"
             Margin="2">
@@ -127,5 +126,25 @@
                 Grid.Column="1"
                 Margin="2" />
         </Grid>
-    </GroupBox>
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.Row="1"
+            Orientation="Horizontal">
+            <Button
+                Name="Save"
+                Cursor="Hand"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                Width="100"
+                Margin="10"
+                Content="Save" />
+            <Button
+                Name="Cancel"
+                Cursor="Hand"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                Width="100"
+                Margin="10"
+                Content="Cancel" />
+        </StackPanel>
+    </Grid>
 </mah:MetroWindow>
