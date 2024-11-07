@@ -2,9 +2,9 @@
 
 namespace ShufflerPro.Client.Entities;
 
-public class Playlist(string name)
+public class Playlist(ObjectId? id, string name)
 {
-    public ObjectId? Id { get; private set; }
+    public ObjectId? Id { get; private set; } = id;
     public string Name { get; set; } = name;
     public int SongCount => Indexes.Count;
 

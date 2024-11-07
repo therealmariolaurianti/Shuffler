@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using LiteDB;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -204,6 +205,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedSong)) return;
             _selectedSong = value;
             NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(IsDataGridContextMenuVisible));
         }
     }
 
@@ -374,6 +376,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(CanRenamePlaylist));
             NotifyOfPropertyChange(nameof(CanRemovePlaylist));
+            NotifyOfPropertyChange(nameof(IsDataGridContextMenuVisible));
             
             SelectedPlaylistChanged();
         }
@@ -395,6 +398,7 @@ public class ShellViewModel : ViewModelBase
 
     private void SelectedPlaylistChanged()
     {
+        SelectedSong = null;
         SelectedArtist = null;
         SelectedAlbum = null;
 
@@ -891,12 +895,13 @@ public class ShellViewModel : ViewModelBase
     public void AddPlaylist()
     {
         RunAsync(async () => await _playlistController
-            .AddPlaylist(_library, new Playlist("New Playlist"))
+            .AddPlaylist(_library, new Playlist(ObjectId.NewObjectId(), "New Playlist"))
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
 
     public bool CanRenamePlaylist => SelectedPlaylist != null;
     public bool CanRemovePlaylist => SelectedPlaylist != null;
+    public bool IsDataGridContextMenuVisible => SelectedPlaylist != null && SelectedSong != null;
 
     public void RenamePlaylist()
     {

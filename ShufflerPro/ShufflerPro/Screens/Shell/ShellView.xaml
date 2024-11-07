@@ -53,6 +53,11 @@
             <Separator />
             <MenuItem Header="Remove" cal:Message.Attach="RemovePlaylist" />
         </ContextMenu>
+        <ContextMenu 
+            Visibility="{calcBinding:Binding IsDataGridContextMenuVisible}"
+            x:Key="DataGridContextMenu">
+            <MenuItem Header="Remove" />
+        </ContextMenu>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -556,6 +561,7 @@
                             SelectedItemsList="{Binding SelectedSongs}"
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
+                            ContextMenu="{StaticResource DataGridContextMenu}"
                             IsReadOnly="True"
                             AlternationCount="2"
                             CanUserSortColumns="False">
