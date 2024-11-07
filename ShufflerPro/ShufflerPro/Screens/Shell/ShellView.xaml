@@ -341,6 +341,9 @@
                                         <KeyBinding
                                             Key="F2"
                                             Command="{Binding DataContext.EditPlaylistItemCommand, ElementName=KeyListBox}" />
+                                        <KeyBinding
+                                            Key="Enter"
+                                            Command="{Binding DataContext.EditLostFocusCommand, ElementName=KeyListBox}" />
                                     </ListBox.InputBindings>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>

@@ -76,8 +76,7 @@ public class ShellViewModel : ViewModelBase
     private Artist? _selectedArtist;
     private PlaylistGridItem? _selectedPlaylist;
     private Song? _selectedSong;
-    private IList _selectedSongs;
-    private IList _selectedSongs1;
+    private IList? _selectedSongs;
 
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
@@ -121,6 +120,7 @@ public class ShellViewModel : ViewModelBase
         _playerController.PlayerDisposed += OnPlayerDisposed;
 
         EditPlaylistItemCommand = new ActionCommand(RenamePlaylist);
+        EditLostFocusCommand = new ActionCommand(EditingItemLostFocus);
     }
 
     public Song? CurrentSong
@@ -379,18 +379,19 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public IList SelectedSongs
+    public IList? SelectedSongs
     {
-        get => _selectedSongs1;
+        get => _selectedSongs;
         set
         {
-            if (Equals(value, _selectedSongs1)) return;
-            _selectedSongs1 = value;
+            if (Equals(value, _selectedSongs)) return;
+            _selectedSongs = value;
             NotifyOfPropertyChange();
         }
     }
 
     public ICommand EditPlaylistItemCommand { get; }
+    public ICommand EditLostFocusCommand { get; }
 
     private void SelectedPlaylistChanged()
     {
@@ -846,6 +847,9 @@ public class ShellViewModel : ViewModelBase
 
     public void GridMouseLeftButtonDown(object source, MouseEventArgs mouseEventArgs)
     {
+        if (SelectedSongs is null || SelectedSongs.Count == 0)
+            return;
+        
         if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
             if (source is DependencyObject dp)
             {
