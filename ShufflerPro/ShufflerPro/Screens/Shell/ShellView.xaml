@@ -490,7 +490,7 @@
                                     <ListBox.Resources>
                                         <Style TargetType="{x:Type ListBoxItem}"
                                                BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
-                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                                             <Style.Triggers>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="FocusManager.FocusedElement"
@@ -540,7 +540,7 @@
                                     <ListBox.Resources>
                                         <Style TargetType="{x:Type ListBoxItem}"
                                                BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
-                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
                                             <Style.Triggers>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="FocusManager.FocusedElement"
@@ -613,7 +613,7 @@
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
                                 <DataGridTextColumn
-                                    Binding="{Binding Track, Mode=OneTime, FallbackValue=null}"
+                                    Binding="{Binding Track, Mode=TwoWay}"
                                     Width="40">
                                     <DataGridTextColumn.ElementStyle>
                                         <Style TargetType="TextBlock">
@@ -623,19 +623,19 @@
                                 </DataGridTextColumn>
                                 <DataGridTextColumn
                                     Header="Song"
-                                    Binding="{Binding Title, Mode=OneTime, FallbackValue=null}" />
+                                    Binding="{Binding Title, Mode=TwoWay}" />
                                 <DataGridTextColumn
                                     Header="Time"
-                                    Binding="{Binding Time, Mode=OneTime, FallbackValue=null}" />
+                                    Binding="{Binding Time, Mode=OneTime}" />
                                 <DataGridTextColumn
                                     Header="Artist"
-                                    Binding="{Binding Artist, Mode=OneTime, FallbackValue=null}" />
+                                    Binding="{Binding Artist, Mode=TwoWay}" />
                                 <DataGridTextColumn
                                     Header="Album"
-                                    Binding="{Binding Album, Mode=OneTime, FallbackValue=null}" />
+                                    Binding="{Binding Album, Mode=TwoWay}" />
                                 <DataGridTextColumn
                                     Header="Genre"
-                                    Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
+                                    Binding="{Binding Genre, Mode=TwoWay}" />
                             </DataGrid.Columns>
                         </controls:ShufflerDataGrid>
                     </Border>

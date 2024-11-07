@@ -5,7 +5,12 @@ namespace ShufflerPro.Client.Entities;
 
 public class Song : EntityBase
 {
+    private string _album;
+    private string _artist;
+    private string? _genre;
     private bool _isPlaying;
+    private string? _title;
+    private int? _track;
 
     public Song(File? songFile, string path)
     {
@@ -22,11 +27,62 @@ public class Song : EntityBase
     }
 
     public Guid Id { get; }
-    public string? Genre { get; set; }
-    public string? Title { get; set; }
-    public int? Track { get; set; }
-    public string Artist { get; set; }
-    public string Album { get; set; }
+
+    public string? Genre
+    {
+        get => _genre;
+        set
+        {
+            if (value == _genre) return;
+            _genre = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string? Title
+    {
+        get => _title;
+        set
+        {
+            if (value == _title) return;
+            _title = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public int? Track
+    {
+        get => _track;
+        set
+        {
+            if (value == _track) return;
+            _track = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string Artist
+    {
+        get => _artist;
+        set
+        {
+            if (value == _artist) return;
+            _artist = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string Album
+    {
+        get => _album;
+        set
+        {
+            if (value == _album) return;
+            _album = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string? Path { get; set; }
     public string? Time { get; }
     public TimeSpan? Duration { get; }

@@ -89,6 +89,13 @@ public static class NewResultExtensions
         item.IfSuccess(f);
         return item;
     }
+    
+    public static async Task<NewResult<T>> IfSuccessAsync<T>(this Task<NewResult<T>> task, Func<T, Task> f)
+    {
+        var item = await task;
+        await item.IfSuccessAsync(async x => await f(x));
+        return item;
+    }
 
     public static async Task<NewResult<NewUnit>> ToSuccessAsync<T>(this Task<NewResult<T>> item)
     {

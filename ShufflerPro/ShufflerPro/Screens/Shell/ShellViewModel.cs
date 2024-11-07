@@ -939,7 +939,9 @@ public class ShellViewModel : ViewModelBase
         RunAsync(async () =>
         {
             var viewModel = _editSongViewModelFactory.Create(SelectedSong);
-            await _windowManager.ShowDialogAsync(viewModel);
+            var result = await _windowManager.ShowDialogAsync(viewModel);
+            if (result is true) 
+                NotifyCollectionsChanged();
         });
     }
 }

@@ -103,11 +103,13 @@ public class EditSongViewModel : ViewModelBase
     {
         RunAsync(async () => await _songController
             .Update(_itemTracker)
-            .IfFail(_ => MessageBox.Show("Failed to update song.")));
+            .IfFail(_ => MessageBox.Show("Failed to update song."))
+            .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
 
     public void Cancel()
     {
+        _itemTracker.Revert();
         TryCloseAsync(false);
     }
 }

@@ -53,7 +53,7 @@ public class SongController
                 break;
             case "Track":
             {
-                song.Tag.Track = (uint)(propertyDifference.Value ?? 0);
+                song.Tag.Track = Convert.ToUInt32(propertyDifference.Value);
             }
                 break;
         }

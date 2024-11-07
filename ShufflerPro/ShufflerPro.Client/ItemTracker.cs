@@ -22,17 +22,31 @@ public class ItemTracker<T>
     public void Attach(T item)
     {
         Item = item;
-        TakeSnapshot(item);
+        TakeSnapshot();
     }
 
-    private void TakeSnapshot(T item)
+    private void TakeSnapshot()
     {
-        var props = new List<PropertyInfo>(item!.GetType().GetProperties());
+        var props = GetPropertyInfos();
 
         foreach (var prop in props)
         {
             var propValue = prop.GetValue(Item, null);
             _snapshot[prop.Name] = propValue;
         }
+    }
+
+    public void Revert()
+    {
+        var props = GetPropertyInfos();
+
+        foreach (var prop in props) prop.SetValue(Item, _snapshot[prop.Name]);
+    }
+
+    private List<PropertyInfo> GetPropertyInfos()
+    {
+        var propertyInfos = Item!.GetType().GetProperties().Where(d => d.CanWrite);
+        var props = new List<PropertyInfo>(propertyInfos);
+        return props;
     }
 }
