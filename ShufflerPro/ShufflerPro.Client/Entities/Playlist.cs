@@ -10,6 +10,8 @@ public class Playlist(ObjectId? id, string name)
 
     public List<PlaylistIndex> Indexes { get; set; } = [];
 
+    public static Playlist Default => new(ObjectId.NewObjectId(), "New Playlist");
+    
     public void SetId(ObjectId localDatabaseKey)
     {
         Id = localDatabaseKey;
