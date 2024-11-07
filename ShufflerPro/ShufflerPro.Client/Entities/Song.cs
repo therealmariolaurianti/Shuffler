@@ -9,15 +9,16 @@ public class Song : EntityBase
 
     public Song(File? songFile, string path)
     {
-        Genre = songFile?.Tag.FirstGenre;
+        Id = this.Hash(path);
+        Path = path;
+
+        Genre = songFile?.Tag.Genres?.ToFormattedString(",");
+        Artist = songFile?.Tag.FirstAlbumArtist ?? songFile?.Tag.Performers?.ToFormattedString(",") ?? "Unknown Artist";
         Title = songFile?.Tag.Title;
         Track = (int?)songFile?.Tag.Track;
-        Artist = songFile?.Tag.FirstAlbumArtist ?? "Unknown Artist";
         Album = songFile?.Tag.Album ?? "Unknown Album";
-        Path = path;
         Time = songFile?.Properties.Duration.ToString("mm':'ss");
         Duration = songFile?.Properties.Duration;
-        Id = this.Hash(path);
     }
 
     public Guid Id { get; }

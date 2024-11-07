@@ -43,12 +43,9 @@ public static class LinqExtensions
 
     public static void AddRange<T>(this ICollection<T> items, IEnumerable<T> collection)
     {
-        foreach (var item in collection)
-        {
-            items.Add(item);
-        }
+        foreach (var item in collection) items.Add(item);
     }
-    
+
     public static T PickRandom<T>(this IEnumerable<T> source)
     {
         return source.PickRandom(1).Single();
@@ -62,5 +59,10 @@ public static class LinqExtensions
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
     {
         return source.OrderBy(x => Guid.NewGuid());
+    }
+
+    public static string? ToFormattedString(this string[]? items, string separator)
+    {
+        return items is null ? null : string.Join(separator, items);
     }
 }
