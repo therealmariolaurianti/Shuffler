@@ -372,6 +372,9 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedPlaylist)) return;
             _selectedPlaylist = value;
             NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(CanRenamePlaylist));
+            NotifyOfPropertyChange(nameof(CanRemovePlaylist));
+            
             SelectedPlaylistChanged();
         }
     }
@@ -887,6 +890,9 @@ public class ShellViewModel : ViewModelBase
             .AddPlaylist(_library, new Playlist("New Playlist"))
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
+
+    public bool CanRenamePlaylist => SelectedPlaylist != null;
+    public bool CanRemovePlaylist => SelectedPlaylist != null;
 
     public void RenamePlaylist()
     {
