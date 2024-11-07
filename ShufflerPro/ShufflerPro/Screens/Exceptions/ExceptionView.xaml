@@ -5,10 +5,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     mc:Ignorable="d"
     Height="300"
     Width="500"
-    WindowStartupLocation="CenterScreen"
+    wpf:ScreenName.Name="Error"
+    WindowStartupLocation="CenterOwner"
+    TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">
     <Grid>

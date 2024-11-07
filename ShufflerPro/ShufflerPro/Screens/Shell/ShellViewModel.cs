@@ -20,6 +20,7 @@ using ShufflerPro.Client.States;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.EditSong;
 using ShufflerPro.Screens.Settings;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
@@ -29,42 +30,29 @@ using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace ShufflerPro.Screens.Shell;
 
-public interface IShellViewModelFactory : IFactory
-{
-    ShellViewModel Create(Library library);
-}
-
 public class ShellViewModel : ViewModelBase
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly BinaryHelper _binaryHelper;
-
     private readonly ContextMenuBuilder _contextMenuBuilder;
-    private readonly Library _library;
 
+    private readonly IEditSongViewModelFactory _editSongViewModelFactory;
+    private readonly Library _library;
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
-
     private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
-
     private readonly ISettingsViewModelFactory _settingsViewModelFactory;
-
     private readonly SongFilterController _songFilterController;
-
     private readonly SongQueueFactory _songQueueFactory;
-
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
-
     private readonly IWindowManager _windowManager;
     private double _applicationVolumeLevel;
-
     private Song? _currentSong;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
-
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
@@ -77,12 +65,10 @@ public class ShellViewModel : ViewModelBase
     private PlaylistGridItem? _selectedPlaylist;
     private Song? _selectedSong;
     private IList? _selectedSongs;
-
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
-
     private CountDownTimer? _timer;
 
     public ShellViewModel(
@@ -94,9 +80,14 @@ public class ShellViewModel : ViewModelBase
         LibraryController libraryController,
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
-        AlbumArtLoader albumArtLoader, RandomSongQueueFactory randomSongQueueFactory, SongStack songStack,
-        PlaylistController playlistController, SongFilterController songFilterController,
-        ISettingsViewModelFactory settingsViewModelFactory, IWindowManager windowManager)
+        AlbumArtLoader albumArtLoader, 
+        RandomSongQueueFactory randomSongQueueFactory, 
+        SongStack songStack,
+        PlaylistController playlistController,
+        SongFilterController songFilterController,
+        ISettingsViewModelFactory settingsViewModelFactory,
+        IWindowManager windowManager,
+        IEditSongViewModelFactory editSongViewModelFactory)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -112,6 +103,7 @@ public class ShellViewModel : ViewModelBase
         _songFilterController = songFilterController;
         _settingsViewModelFactory = settingsViewModelFactory;
         _windowManager = windowManager;
+        _editSongViewModelFactory = editSongViewModelFactory;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -204,7 +196,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedSong)) return;
             _selectedSong = value;
             NotifyOfPropertyChange();
-            NotifyOfPropertyChange(nameof(IsDataGridContextMenuVisible));
+            NotifyOfPropertyChange(nameof(IsRemoveSongVisible));
         }
     }
 
@@ -375,7 +367,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(CanRenamePlaylist));
             NotifyOfPropertyChange(nameof(CanRemovePlaylist));
-            NotifyOfPropertyChange(nameof(IsDataGridContextMenuVisible));
+            NotifyOfPropertyChange(nameof(IsRemoveSongVisible));
 
             SelectedPlaylistChanged();
         }
@@ -397,7 +389,7 @@ public class ShellViewModel : ViewModelBase
 
     public bool CanRenamePlaylist => SelectedPlaylist != null;
     public bool CanRemovePlaylist => SelectedPlaylist != null;
-    public bool IsDataGridContextMenuVisible => SelectedPlaylist != null && SelectedSong != null;
+    public bool IsRemoveSongVisible => SelectedPlaylist != null && SelectedSong != null;
 
     private void SelectedPlaylistChanged()
     {
@@ -495,7 +487,6 @@ public class ShellViewModel : ViewModelBase
 
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
-        DisplayName = "Shuffler";
         SourceTreeItems = [];
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
@@ -937,6 +928,18 @@ public class ShellViewModel : ViewModelBase
                     NotifyOfPropertyChange(nameof(Artists));
                     NotifyOfPropertyChange(nameof(Albums));
                 });
+        });
+    }
+
+    public void EditSong()
+    {
+        if (SelectedSong is null)
+            return;
+        
+        RunAsync(async () =>
+        {
+            var viewModel = _editSongViewModelFactory.Create(SelectedSong);
+            await _windowManager.ShowDialogAsync(viewModel); 
         });
     }
 }

@@ -32,13 +32,7 @@ public class ExceptionViewModel : ViewModelBase
             NotifyOfPropertyChange();
         }
     }
-
-    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
-    {
-        DisplayName = "Error";
-        return base.OnInitializeAsync(cancellationToken);
-    }
-
+    
     public void OpenLogFile()
     {
         RootFinder.FindRoot()

@@ -6,10 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
+    xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     mc:Ignorable="d"
     Height="300"
     Width="300"
-    WindowStartupLocation="CenterScreen"
+    wpf:ScreenName.Name="Settings"
+    WindowStartupLocation="CenterOwner"
+    TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">
     <Grid>

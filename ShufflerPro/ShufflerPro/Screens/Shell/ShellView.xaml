@@ -15,6 +15,8 @@
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
+    TitleCharacterCasing="Normal"
+    wpf:ScreenName.Name="Shuffler Pro"
     Width="1200"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
@@ -53,10 +55,15 @@
             <Separator />
             <MenuItem Header="Remove" cal:Message.Attach="RemovePlaylist" />
         </ContextMenu>
-        <ContextMenu 
-            Visibility="{calcBinding:Binding IsDataGridContextMenuVisible}"
+        <ContextMenu
             x:Key="DataGridContextMenu">
-            <MenuItem Header="Remove From Playlist" cal:Message.Attach="RemoveSongFromPlaylist"/>
+            <MenuItem Header="Edit" cal:Message.Attach="EditSong" />
+            <Separator
+                Visibility="{calcBinding:Binding IsRemoveSongVisible}" />
+            <MenuItem
+                Visibility="{calcBinding:Binding IsRemoveSongVisible}"
+                Header="Remove From Playlist"
+                cal:Message.Attach="RemoveSongFromPlaylist" />
         </ContextMenu>
     </Window.Resources>
     <Grid>
@@ -409,13 +416,7 @@
                                     Margin="2,0,2,2"
                                     Grid.Row="1"
                                     cal:Message.Attach="[Event SelectedItemChanged] = [Action SelectedTreeViewItemChanged($source, $eventArgs)]"
-                                    ItemsSource="{Binding SourceTreeItems}">
-                                    <TreeView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type TreeViewItem}">
-                                            <Setter Property="IsExpanded" Value="True" />
-                                        </Style>
-                                    </TreeView.ItemContainerStyle>
-                                </TreeView>
+                                    ItemsSource="{Binding SourceTreeItems}" />
                                 <Separator
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
@@ -632,6 +633,7 @@
                             Cursor="Hand"
                             ToolTip="Replay Album"
                             Margin="2"
+                            IsEnabled="False"
                             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             IsChecked="{Binding IsRepeatChecked}"
                             Width="50">

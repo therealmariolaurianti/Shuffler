@@ -18,8 +18,6 @@ public class SettingsViewModel : ViewModelBase
     {
         SelectedTheme = Themes.Default;
         IsDarkModeEnabled = true;
-
-        DisplayName = "Settings";
     }
 
     public Theme SelectedTheme
