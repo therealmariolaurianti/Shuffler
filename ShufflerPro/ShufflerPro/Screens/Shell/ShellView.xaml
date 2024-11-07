@@ -490,6 +490,7 @@
                                     <ListBox.Resources>
                                         <Style TargetType="{x:Type ListBoxItem}"
                                                BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="FocusManager.FocusedElement"
@@ -539,6 +540,7 @@
                                     <ListBox.Resources>
                                         <Style TargetType="{x:Type ListBoxItem}"
                                                BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
                                             <Style.Triggers>
                                                 <Trigger Property="IsSelected" Value="True">
                                                     <Setter Property="FocusManager.FocusedElement"
