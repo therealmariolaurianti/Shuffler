@@ -7,13 +7,125 @@
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     mc:Ignorable="d"
-    Height="300"
+    Height="325"
     Width="500"
     wpf:ScreenName.Name="Edit Song"
+    Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
     d:DesignHeight="300" d:DesignWidth="300">
-    <Grid />
+    <GroupBox
+        Margin="10">
+        <GroupBox.Header>
+            <TextBlock
+                Text="Song Information"
+                Margin="2"
+                FontWeight="SemiBold" />
+        </GroupBox.Header>
+        <Grid
+            VerticalAlignment="Center"
+            Margin="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Label
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Title" />
+            <TextBox
+                Name="Title"
+                Grid.Row="0"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="1"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Artist" />
+            <TextBox
+                Name="Artist"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="2"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Album" />
+            <TextBox
+                Name="Album"
+                Grid.Row="2"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Track" />
+            <TextBox
+                Name="Track"
+                Width="50"
+                HorizontalAlignment="Left"
+                Grid.Row="3"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="4"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Genre" />
+            <TextBox
+                Name="Genre"
+                Width="125"
+                HorizontalAlignment="Left"
+                Grid.Row="4"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="5"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Duration" />
+            <TextBox
+                Name="Duration"
+                Width="75"
+                HorizontalAlignment="Left"
+                IsEnabled="False"
+                Grid.Row="5"
+                Grid.Column="1"
+                Margin="2" />
+            <Label
+                Grid.Row="6"
+                Grid.Column="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Content="Path" />
+            <TextBox
+                Name="Path"
+                IsReadOnly="True"
+                Grid.Row="6"
+                TextWrapping="Wrap"
+                Grid.Column="1"
+                Margin="2" />
+        </Grid>
+    </GroupBox>
 </mah:MetroWindow>
