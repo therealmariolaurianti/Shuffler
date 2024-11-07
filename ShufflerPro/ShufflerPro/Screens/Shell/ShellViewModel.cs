@@ -149,8 +149,8 @@ public class ShellViewModel : ViewModelBase
             if (_playlistState is not null)
                 return _playlistState.FilterAlbums(SelectedArtist);
 
-            return SelectedArtist?.Albums.OrderBy(a => a.Name).ToObservableCollection() ??
-                   AllAlbums.OrderBy(a => a.Name).ToObservableCollection();
+            return SelectedArtist?.Albums.Distinct().OrderBy(a => a.Name).ToObservableCollection() ??
+                   AllAlbums.Distinct().OrderBy(a => a.Name).ToObservableCollection();
         }
     }
 

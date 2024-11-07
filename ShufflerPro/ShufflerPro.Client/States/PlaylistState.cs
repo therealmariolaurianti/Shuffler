@@ -22,7 +22,7 @@ public class PlaylistState(IReadOnlyCollection<Song> songs)
     public ObservableCollection<Album> FilterAlbums(Artist? selectedArtist)
     {
         return selectedArtist is null
-            ? Albums
+            ? Albums.Distinct().ToObservableCollection()
             : Albums.Where(a => a.Artist == selectedArtist).ToObservableCollection();
     }
 }
