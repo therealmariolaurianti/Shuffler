@@ -24,6 +24,18 @@ public class PlaylistController(DatabaseController databaseController)
         return orderedSongs;
     }
 
+    public async Task<NewResult<NewUnit>> AddSongs(Playlist playlist, List<Song> songs)
+    {
+        foreach (var song in songs)
+        {
+            var result = await AddSong(playlist, song);
+            if (result.Fail)
+                return result;
+        }
+
+        return await NewUnit.DefaultAsync;
+    }
+
     public async Task<NewResult<NewUnit>> AddSong(Playlist playlist, Song song)
     {
         if (playlist.Indexes.Any(i => i.SongId == song.Id))

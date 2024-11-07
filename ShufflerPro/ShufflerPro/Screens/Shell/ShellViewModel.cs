@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
@@ -74,6 +75,8 @@ public class ShellViewModel : ViewModelBase
     private Artist? _selectedArtist;
     private PlaylistGridItem? _selectedPlaylist;
     private Song? _selectedSong;
+    private IList _selectedSongs;
+    private IList _selectedSongs1;
 
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
@@ -367,6 +370,17 @@ public class ShellViewModel : ViewModelBase
             _selectedPlaylist = value;
             NotifyOfPropertyChange();
             SelectedPlaylistChanged();
+        }
+    }
+
+    public IList SelectedSongs
+    {
+        get => _selectedSongs1;
+        set
+        {
+            if (Equals(value, _selectedSongs1)) return;
+            _selectedSongs1 = value;
+            NotifyOfPropertyChange();
         }
     }
 
@@ -826,7 +840,10 @@ public class ShellViewModel : ViewModelBase
     {
         if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
             if (source is DependencyObject dp)
-                DragDrop.DoDragDrop(dp, SelectedSong!, DragDropEffects.Move);
+            {
+                var selectedSongs = SelectedSongs.Cast<Song>().ToList();
+                DragDrop.DoDragDrop(dp, selectedSongs, DragDropEffects.Move);
+            }
     }
 
     public void PlaylistDrop(object source, DragEventArgs dragEventArgs)
@@ -851,10 +868,10 @@ public class ShellViewModel : ViewModelBase
 
             if (data != DependencyProperty.UnsetValue)
             {
-                var eventData = dragEventArgs.Data.GetData(typeof(Song));
-
-                if (data is PlaylistGridItem playlist && eventData is Song song)
-                    RunAsync(async () => await _playlistController.AddSong(playlist.Item, song));
+                var eventData = dragEventArgs.Data.GetData(typeof(List<Song>));
+                
+                if (data is PlaylistGridItem playlist && eventData is List<Song> songs)
+                    RunAsync(async () => await _playlistController.AddSongs(playlist.Item, songs));
             }
         }
     }

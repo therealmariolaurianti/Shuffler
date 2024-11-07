@@ -539,11 +539,12 @@
                         BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                         BorderThickness="1"
                         Grid.Row="2">
-                        <DataGrid
+                        <controls:ShufflerDataGrid
                             RowHeight="23"
                             cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)]; [Event MouseMove]= [Action GridMouseLeftButtonDown($source, $eventArgs)]"
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
+                            SelectedItemsList="{Binding SelectedSongs}"
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
                             IsReadOnly="True"
@@ -596,7 +597,7 @@
                                     Header="Genre"
                                     Binding="{Binding Genre, Mode=OneTime, FallbackValue=null}" />
                             </DataGrid.Columns>
-                        </DataGrid>
+                        </controls:ShufflerDataGrid>
                     </Border>
                 </Grid>
             </Grid>
