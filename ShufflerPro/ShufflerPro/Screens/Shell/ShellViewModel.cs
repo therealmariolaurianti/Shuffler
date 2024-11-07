@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -118,6 +119,8 @@ public class ShellViewModel : ViewModelBase
 
         _playerController.SongChanged += OnSongChanged;
         _playerController.PlayerDisposed += OnPlayerDisposed;
+
+        EditPlaylistItemCommand = new ActionCommand(RenamePlaylist);
     }
 
     public Song? CurrentSong
@@ -383,6 +386,8 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
         }
     }
+
+    public ICommand EditPlaylistItemCommand { get; }
 
     private void SelectedPlaylistChanged()
     {

@@ -51,7 +51,7 @@
             <MenuItem Header="Add" cal:Message.Attach="AddPlaylist" />
             <MenuItem Header="Rename" cal:Message.Attach="RenamePlaylist" />
             <Separator />
-            <MenuItem Header="Remove" cal:Message.Attach="RemovePlaylist"/>
+            <MenuItem Header="Remove" cal:Message.Attach="RemovePlaylist" />
         </ContextMenu>
     </Window.Resources>
     <Grid>
@@ -334,8 +334,14 @@
                                     ContextMenu="{StaticResource PlaylistContextMenu}"
                                     ItemsSource="{Binding Playlists}"
                                     SelectedItem="{Binding SelectedPlaylist}"
+                                    x:Name="KeyListBox"
                                     cal:Message.Attach="[Event Drop] = [Action PlaylistDrop($source, $eventArgs)]"
                                     Grid.Row="1">
+                                    <ListBox.InputBindings>
+                                        <KeyBinding
+                                            Key="F2"
+                                            Command="{Binding DataContext.EditPlaylistItemCommand, ElementName=KeyListBox}" />
+                                    </ListBox.InputBindings>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid
