@@ -19,9 +19,4 @@ public partial class ShellView
             textBox.SelectAll();
         }
     }
-
-    private void UIElement_OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-    {
-        throw new NotImplementedException();
-    }
 }

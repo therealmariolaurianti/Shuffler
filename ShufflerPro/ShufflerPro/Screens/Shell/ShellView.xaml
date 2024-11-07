@@ -487,6 +487,17 @@
                                     cal:Message.Attach="[Event MouseDoubleClick] = [Action PlayArtist()]"
                                     SelectedItem="{Binding SelectedArtist}"
                                     ItemsSource="{Binding Artists}">
+                                    <ListBox.Resources>
+                                        <Style TargetType="{x:Type ListBoxItem}"
+                                               BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="FocusManager.FocusedElement"
+                                                            Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.Resources>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
@@ -525,6 +536,17 @@
                                     cal:Message.Attach="[Event MouseDoubleClick] = [Action PlayAlbum()]"
                                     SelectedItem="{Binding SelectedAlbum}"
                                     ItemsSource="{Binding Albums}">
+                                    <ListBox.Resources>
+                                        <Style TargetType="{x:Type ListBoxItem}"
+                                               BasedOn="{StaticResource MahApps.Styles.ListBoxItem}">
+                                            <Style.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter Property="FocusManager.FocusedElement"
+                                                            Value="{Binding RelativeSource={RelativeSource Self}}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListBox.Resources>
                                     <ListBox.ItemTemplate>
                                         <DataTemplate>
                                             <Grid>
