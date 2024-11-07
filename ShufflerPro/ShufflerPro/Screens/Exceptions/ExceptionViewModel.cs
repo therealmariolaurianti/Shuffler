@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Database;
 using ShufflerPro.Framework;

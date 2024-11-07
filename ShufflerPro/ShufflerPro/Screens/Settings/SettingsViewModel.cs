@@ -30,7 +30,7 @@ public class SettingsViewModel : ViewModelBase
             if (Equals(value, _selectedTheme)) return;
             _selectedTheme = value;
             NotifyOfPropertyChange();
-            ThemeController.ChangeTheme(value, IsDarkModeEnabled);
+            ThemeManager.ChangeTheme(value, IsDarkModeEnabled);
         }
     }
 
@@ -42,7 +42,7 @@ public class SettingsViewModel : ViewModelBase
             if (value == _isDarkModeEnabled) return;
             _isDarkModeEnabled = value;
             NotifyOfPropertyChange();
-            ThemeController.ChangeTheme(SelectedTheme, value);
+            ThemeManager.ChangeTheme(SelectedTheme, value);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace ShufflerPro.Framework;
+namespace ShufflerPro.Framework.WPF;
 
 public class ContextMenuBuilder
 {

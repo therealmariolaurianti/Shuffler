@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Framework;
+﻿namespace ShufflerPro.Client.Extensions;
 
 public static class ExceptionExtensions
 {
