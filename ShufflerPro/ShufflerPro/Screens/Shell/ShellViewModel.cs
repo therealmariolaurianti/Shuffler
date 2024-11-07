@@ -8,7 +8,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using LiteDB;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -377,7 +376,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange(nameof(CanRenamePlaylist));
             NotifyOfPropertyChange(nameof(CanRemovePlaylist));
             NotifyOfPropertyChange(nameof(IsDataGridContextMenuVisible));
-            
+
             SelectedPlaylistChanged();
         }
     }
@@ -395,6 +394,10 @@ public class ShellViewModel : ViewModelBase
 
     public ICommand EditPlaylistItemCommand { get; }
     public ICommand EditLostFocusCommand { get; }
+
+    public bool CanRenamePlaylist => SelectedPlaylist != null;
+    public bool CanRemovePlaylist => SelectedPlaylist != null;
+    public bool IsDataGridContextMenuVisible => SelectedPlaylist != null && SelectedSong != null;
 
     private void SelectedPlaylistChanged()
     {
@@ -853,7 +856,7 @@ public class ShellViewModel : ViewModelBase
     {
         if (SelectedSongs is null || SelectedSongs.Count == 0)
             return;
-        
+
         if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
             if (source is DependencyObject dp)
             {
@@ -885,7 +888,7 @@ public class ShellViewModel : ViewModelBase
             if (data != DependencyProperty.UnsetValue)
             {
                 var eventData = dragEventArgs.Data.GetData(typeof(List<Song>));
-                
+
                 if (data is PlaylistGridItem playlist && eventData is List<Song> songs)
                     RunAsync(async () => await _playlistController.AddSongs(playlist.Item, songs));
             }
@@ -898,10 +901,6 @@ public class ShellViewModel : ViewModelBase
             .AddPlaylist(_library, Playlist.Default)
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
-
-    public bool CanRenamePlaylist => SelectedPlaylist != null;
-    public bool CanRemovePlaylist => SelectedPlaylist != null;
-    public bool IsDataGridContextMenuVisible => SelectedPlaylist != null && SelectedSong != null;
 
     public void RenamePlaylist()
     {
@@ -924,5 +923,20 @@ public class ShellViewModel : ViewModelBase
     {
         RunAsync(async () => await _playlistController.Delete(_library, SelectedPlaylist!.Item)
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
+    }
+
+    public void RemoveSongFromPlaylist()
+    {
+        RunAsync(async () =>
+        {
+            await _playlistController
+                .RemoveSong(SelectedPlaylist!.Item, _playlistState!, SelectedSong!)
+                .Do(_ =>
+                {
+                    NotifyOfPropertyChange(nameof(Songs));
+                    NotifyOfPropertyChange(nameof(Artists));
+                    NotifyOfPropertyChange(nameof(Albums));
+                });
+        });
     }
 }

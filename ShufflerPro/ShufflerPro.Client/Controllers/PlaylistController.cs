@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using LiteDB;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.States;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
@@ -66,5 +67,16 @@ public class PlaylistController(DatabaseController databaseController)
     {
         library.Playlists.Remove(item);
         return await databaseController.DeletePlaylist(item);
+    }
+
+    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState playlistState,
+        Song selectedSong)
+    {
+        playlistState.Songs.Remove(selectedSong);
+
+        var playlistIndex = playlist.Indexes.Single(i => i.SongId == selectedSong.Id);
+        playlist.Indexes.Remove(playlistIndex);
+
+        return await databaseController.RemovePlaylistIndex(playlistIndex);
     }
 }

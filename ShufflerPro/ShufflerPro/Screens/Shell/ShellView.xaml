@@ -56,7 +56,7 @@
         <ContextMenu 
             Visibility="{calcBinding:Binding IsDataGridContextMenuVisible}"
             x:Key="DataGridContextMenu">
-            <MenuItem Header="Remove" />
+            <MenuItem Header="Remove From Playlist" cal:Message.Attach="RemoveSongFromPlaylist"/>
         </ContextMenu>
     </Window.Resources>
     <Grid>

@@ -140,4 +140,17 @@ public class DatabaseController
 
         return NewUnit.Default;
     }
+
+    public async Task<NewResult<NewUnit>> RemovePlaylistIndex(PlaylistIndex playlistIndex)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var playlistCollection = connection.GetCollection<PlaylistIndex>();
+            var result = await playlistCollection.Delete(new LocalDatabaseKey(playlistIndex.Id));
+            if (!result)
+                return NewResultExtensions.CreateFail<NewUnit>($"Failed to delete {playlistIndex}");
+        }
+
+        return await NewUnit.DefaultAsync;
+    }
 }
