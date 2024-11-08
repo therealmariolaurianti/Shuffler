@@ -6,9 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
+    xmlns:editSong="clr-namespace:ShufflerPro.Screens.EditSong"
     mc:Ignorable="d"
-    Height="400"
-    Width="500"
+    Height="350"
+    Width="650"
     wpf:ScreenName.Name="Edit Song"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
@@ -16,135 +17,163 @@
     ShowCloseButton="False"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
-    d:DesignHeight="300" d:DesignWidth="300">
-    <Grid
-        Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    d:DataContext="{d:DesignInstance editSong:EditSongViewModel }">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
         <Grid
-            VerticalAlignment="Center"
-            Margin="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+            Margin="10">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Label
-                Grid.Row="0"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
+            <Grid
+                VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Title" />
+                <TextBox
+                    Name="Title"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Artist" />
+                <TextBox
+                    Name="Artist"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Album" />
+                <TextBox
+                    Name="Album"
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="3"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Track" />
+                <TextBox
+                    Name="Track"
+                    Width="50"
+                    HorizontalAlignment="Left"
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="4"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Genre" />
+                <TextBox
+                    Name="Genre"
+                    Width="125"
+                    HorizontalAlignment="Left"
+                    Grid.Row="4"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="5"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Duration" />
+                <TextBox
+                    Name="Duration"
+                    Width="75"
+                    HorizontalAlignment="Left"
+                    IsEnabled="False"
+                    Grid.Row="5"
+                    Grid.Column="1"
+                    Margin="2" />
+                <Label
+                    Grid.Row="6"
+                    Grid.Column="0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Content="Path" />
+                <TextBox
+                    Name="Path"
+                    IsReadOnly="True"
+                    Grid.Row="6"
+                    TextWrapping="Wrap"
+                    Grid.Column="1"
+                    Margin="2" />
+            </Grid>
+            <StackPanel
+                HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Content="Title" />
-            <TextBox
-                Name="Title"
-                Grid.Row="0"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
                 Grid.Row="1"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Artist" />
-            <TextBox
-                Name="Artist"
-                Grid.Row="1"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
-                Grid.Row="2"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Album" />
-            <TextBox
-                Name="Album"
-                Grid.Row="2"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
-                Grid.Row="3"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Track" />
-            <TextBox
-                Name="Track"
-                Width="50"
-                HorizontalAlignment="Left"
-                Grid.Row="3"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
-                Grid.Row="4"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Genre" />
-            <TextBox
-                Name="Genre"
-                Width="125"
-                HorizontalAlignment="Left"
-                Grid.Row="4"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
-                Grid.Row="5"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Duration" />
-            <TextBox
-                Name="Duration"
-                Width="75"
-                HorizontalAlignment="Left"
-                IsEnabled="False"
-                Grid.Row="5"
-                Grid.Column="1"
-                Margin="2" />
-            <Label
-                Grid.Row="6"
-                Grid.Column="0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Content="Path" />
-            <TextBox
-                Name="Path"
-                IsReadOnly="True"
-                Grid.Row="6"
-                TextWrapping="Wrap"
-                Grid.Column="1"
-                Margin="2" />
+                Orientation="Horizontal">
+                <Button
+                    Name="Save"
+                    Cursor="Hand"
+                    BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                    Width="100"
+                    Margin="10"
+                    Content="Save" />
+                <Button
+                    Name="Cancel"
+                    Cursor="Hand"
+                    BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                    Width="100"
+                    Margin="10"
+                    Content="Cancel" />
+            </StackPanel>
         </Grid>
-        <StackPanel
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            Grid.Row="1"
-            Orientation="Horizontal">
+        <Grid
+            Margin="10"
+            Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border
+                HorizontalAlignment="Center"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                BorderThickness="1">
+                <Image
+                    Source="{Binding AlbumArt}" />
+            </Border>
             <Button
-                Name="Save"
+                Name="ChangeAlbumArt"
+                Grid.Row="1"
                 Cursor="Hand"
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 Width="100"
                 Margin="10"
-                Content="Save" />
-            <Button
-                Name="Cancel"
-                Cursor="Hand"
-                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                Width="100"
-                Margin="10"
-                Content="Cancel" />
-        </StackPanel>
+                Content="Change"/>
+        </Grid>
     </Grid>
 </mah:MetroWindow>

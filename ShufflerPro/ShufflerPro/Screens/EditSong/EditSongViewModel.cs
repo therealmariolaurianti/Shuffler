@@ -1,8 +1,10 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
@@ -10,16 +12,23 @@ namespace ShufflerPro.Screens.EditSong;
 
 public class EditSongViewModel : ViewModelBase
 {
+    private readonly BinaryHelper _binaryHelper;
     private readonly ItemTracker<Song> _itemTracker;
     private readonly Song _song;
     private readonly SongController _songController;
     private bool _canSave;
 
-    public EditSongViewModel(Song song, ItemTracker<Song> itemTracker, SongController songController)
+    public EditSongViewModel(
+        Song song,
+        BitmapImage? albumArt,
+        ItemTracker<Song> itemTracker,
+        SongController songController, BinaryHelper binaryHelper)
     {
         _song = song;
+        AlbumArt = albumArt;
         _itemTracker = itemTracker;
         _songController = songController;
+        _binaryHelper = binaryHelper;
 
         itemTracker.Attach(song);
     }
@@ -71,6 +80,8 @@ public class EditSongViewModel : ViewModelBase
         }
     }
 
+    public BitmapImage? AlbumArt { get; }
+
     public string? Title
     {
         get => _song.Title;
@@ -111,5 +122,15 @@ public class EditSongViewModel : ViewModelBase
     {
         _itemTracker.Revert();
         TryCloseAsync(false);
+    }
+
+    public void ChangeAlbumArt()
+    {
+        _binaryHelper
+            .Add()
+            .IfSuccess(_ =>
+            {
+                
+            });
     }
 }

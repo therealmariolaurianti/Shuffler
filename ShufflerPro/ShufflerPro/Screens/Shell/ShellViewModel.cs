@@ -125,7 +125,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(MaxRunTime));
             NotifyOfPropertyChange(nameof(CurrentSongTime));
-            NotifyOfPropertyChange(nameof(CurrentSongPicture));
+            NotifyOfPropertyChange(nameof(AlbumArt));
             NotifyOfPropertyChange(nameof(HasAlbumArt));
         }
     }
@@ -268,14 +268,7 @@ public class ShellViewModel : ViewModelBase
 
     public bool IsPlaying => _playerController.Playing;
 
-    public BitmapImage? CurrentSongPicture
-    {
-        get
-        {
-            var albumArt = _albumArtLoader.Load(CurrentSong?.Path);
-            return _binaryHelper.ToImage(albumArt);
-        }
-    }
+    public BitmapImage? AlbumArt => _albumArtLoader.Load(CurrentSong?.Path);
 
     public double ApplicationVolumeLevel
     {
@@ -323,7 +316,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public bool HasAlbumArt => CurrentSongPicture != null;
+    public bool HasAlbumArt => AlbumArt != null;
 
     public bool IsShuffleChecked
     {
@@ -632,7 +625,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(IsPlaying));
         NotifyOfPropertyChange(nameof(ElapsedRunningTimeDisplay));
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
-        NotifyOfPropertyChange(nameof(CurrentSongPicture));
+        NotifyOfPropertyChange(nameof(AlbumArt));
         NotifyOfPropertyChange(nameof(HasAlbumArt));
     }
 
@@ -938,10 +931,13 @@ public class ShellViewModel : ViewModelBase
 
         RunAsync(async () =>
         {
-            var viewModel = _editSongViewModelFactory.Create(SelectedSong);
+            var viewModel = _editSongViewModelFactory.Create(SelectedSong, _albumArtLoader.Load(SelectedSong.Path));
             var result = await _windowManager.ShowDialogAsync(viewModel);
             if (result is true)
+            {
+                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                 NotifyCollectionsChanged();
+            }
         });
     }
 }

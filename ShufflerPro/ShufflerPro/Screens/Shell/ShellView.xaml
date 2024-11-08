@@ -430,7 +430,7 @@
                                         BorderThickness="0">
                                         <Image
                                             MaxHeight="250"
-                                            Source="{Binding CurrentSongPicture}" />
+                                            Source="{Binding AlbumArt}" />
                                     </Border>
                                 </Expander>
                             </Grid>

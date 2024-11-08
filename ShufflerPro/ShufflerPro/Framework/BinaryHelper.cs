@@ -1,6 +1,9 @@
 ﻿using System.IO;
 using System.Windows.Media.Imaging;
+using Microsoft.Win32;
+using ShufflerPro.Result;
 using TagLib;
+using File = System.IO.File;
 
 namespace ShufflerPro.Framework;
 
@@ -30,5 +33,21 @@ public class BinaryHelper
         {
             return null;
         }
+    }
+
+    public NewResult<byte[]?> Add()
+    {
+        var fileDialog = new OpenFileDialog();
+        return fileDialog.ShowDialog() == true
+            ? CreateBinaryImage(fileDialog)
+            : NewResultExtensions.CreateFail<byte[]?>("");
+    }
+
+    private static byte[] CreateBinaryImage(OpenFileDialog fileDialog)
+    {
+        Stream stream = File.OpenRead(fileDialog.FileName);
+        var binaryImage = new byte[stream.Length];
+        _ = stream.Read(binaryImage, 0, (int)stream.Length);
+        return binaryImage;
     }
 }
