@@ -15,6 +15,12 @@
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{x:Static wpf:CloseWindowCommand.Instance}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
