@@ -14,7 +14,6 @@
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
-    ShowCloseButton="False"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
     d:DataContext="{d:DesignInstance editSong:EditSongViewModel }">
@@ -165,14 +164,10 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Border
-                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                BorderThickness="1">
-                <Image
-                    Height="225"
-                    Width="225"
-                    Source="{Binding AlbumArt}" />
-            </Border>
+            <Image
+                Height="225"
+                Width="225"
+                Source="{Binding AlbumArt}" />
             <Button
                 Name="ChangeAlbumArt"
                 Grid.Row="1"
