@@ -9,7 +9,7 @@
     xmlns:editSong="clr-namespace:ShufflerPro.Screens.EditSong"
     mc:Ignorable="d"
     Height="350"
-    Width="650"
+    Width="700"
     wpf:ScreenName.Name="Edit Song"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
@@ -18,6 +18,12 @@
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
     d:DataContext="{d:DesignInstance editSong:EditSongViewModel }">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{x:Static wpf:CloseWindowCommand.Instance}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
@@ -157,13 +163,14 @@
             Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Border
-                HorizontalAlignment="Center"
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 BorderThickness="1">
                 <Image
+                    Height="225"
+                    Width="225"
                     Source="{Binding AlbumArt}" />
             </Border>
             <Button
@@ -173,7 +180,7 @@
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 Width="100"
                 Margin="10"
-                Content="Change"/>
+                Content="Change" />
         </Grid>
     </Grid>
 </mah:MetroWindow>

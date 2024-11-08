@@ -16,19 +16,22 @@ public class EditSongViewModel : ViewModelBase
     private readonly ItemTracker<Song> _itemTracker;
     private readonly Song _song;
     private readonly SongController _songController;
+    private BitmapImage? _albumArt;
+    private bool _albumArtChanged;
     private bool _canSave;
 
     public EditSongViewModel(
         Song song,
         BitmapImage? albumArt,
         ItemTracker<Song> itemTracker,
-        SongController songController, BinaryHelper binaryHelper)
+        SongController songController,
+        BinaryHelper binaryHelper)
     {
         _song = song;
-        AlbumArt = albumArt;
         _itemTracker = itemTracker;
         _songController = songController;
         _binaryHelper = binaryHelper;
+        AlbumArt = albumArt;
 
         itemTracker.Attach(song);
     }
@@ -80,7 +83,16 @@ public class EditSongViewModel : ViewModelBase
         }
     }
 
-    public BitmapImage? AlbumArt { get; }
+    public BitmapImage? AlbumArt
+    {
+        get => _albumArt;
+        set
+        {
+            if (Equals(value, _albumArt)) return;
+            _albumArt = value;
+            NotifyOfPropertyChange();
+        }
+    }
 
     public string? Title
     {
@@ -104,16 +116,16 @@ public class EditSongViewModel : ViewModelBase
         }
     }
 
-    public override void NotifyOfPropertyChange([CallerMemberName] string propertyName = null)
+    public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
     {
-        CanSave = _itemTracker.IsDirty;
+        CanSave = _itemTracker.IsDirty || _albumArtChanged;
         base.NotifyOfPropertyChange(propertyName);
     }
 
     public void Save()
     {
         RunAsync(async () => await _songController
-            .Update(_itemTracker)
+            .Update(_itemTracker, new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged))
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
@@ -124,13 +136,21 @@ public class EditSongViewModel : ViewModelBase
         TryCloseAsync(false);
     }
 
+    public override Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())
+    {
+        if (_itemTracker.IsDirty)
+            _itemTracker.Revert();
+        return base.CanCloseAsync(cancellationToken);
+    }
+
     public void ChangeAlbumArt()
     {
         _binaryHelper
             .Add()
-            .IfSuccess(_ =>
+            .IfSuccess(bytes =>
             {
-                
+                _albumArtChanged = true;
+                AlbumArt = _binaryHelper.ToImage(bytes);
             });
     }
 }

@@ -17,6 +17,6 @@ public class AlbumArtLoader
         if (currentSongPath is null)
             return null;
         var albumArt = File.Create(currentSongPath).Tag.Pictures.FirstOrDefault();
-        return _binaryHelper.ToImage(albumArt);
+        return _binaryHelper.ToImage(albumArt?.Data.Data);
     }
 }

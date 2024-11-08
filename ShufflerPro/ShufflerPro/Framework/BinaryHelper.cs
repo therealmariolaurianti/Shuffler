@@ -9,15 +9,14 @@ namespace ShufflerPro.Framework;
 
 public class BinaryHelper
 {
-    public BitmapImage? ToImage(IPicture? picture)
+    public BitmapImage? ToImage(byte[]? data)
     {
         try
         {
-            var array = picture?.Data.Data;
-            if (array is null || array.Length == 0)
+            if (data is null || data.Length == 0)
                 return null;
-
-            using var ms = new MemoryStream(array);
+            
+            using var ms = new MemoryStream(data);
             var image = new BitmapImage();
 
             image.BeginInit();
@@ -49,5 +48,22 @@ public class BinaryHelper
         var binaryImage = new byte[stream.Length];
         _ = stream.Read(binaryImage, 0, (int)stream.Length);
         return binaryImage;
+    }
+
+    public byte[]? ToBytes(BitmapImage? bitmapImage)
+    {
+        if (bitmapImage is null)
+            return null;
+
+        byte[] data;
+        var encoder = new JpegBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(bitmapImage));
+        using (var ms = new MemoryStream())
+        {
+            encoder.Save(ms);
+            data = ms.ToArray();
+        }
+
+        return data;
     }
 }

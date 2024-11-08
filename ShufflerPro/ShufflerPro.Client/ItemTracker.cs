@@ -45,6 +45,7 @@ public class ItemTracker<T>
     private List<PropertyInfo> GetPropertyInfos()
     {
         var propertyInfos = Item!.GetType().GetProperties().Where(d => d.CanWrite);
+        
         return [..propertyInfos];
     }
 }
