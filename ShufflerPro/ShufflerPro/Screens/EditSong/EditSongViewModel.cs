@@ -19,6 +19,7 @@ public class EditSongViewModel : ViewModelBase
     private BitmapImage? _albumArt;
     private bool _albumArtChanged;
     private bool _canSave;
+    private bool _saving;
 
     public EditSongViewModel(
         Song song,
@@ -124,6 +125,7 @@ public class EditSongViewModel : ViewModelBase
 
     public void Save()
     {
+        _saving = true;
         RunAsync(async () => await _songController
             .Update(_itemTracker, new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged))
             .IfFail(_ => MessageBox.Show("Failed to update song."))
@@ -138,7 +140,7 @@ public class EditSongViewModel : ViewModelBase
 
     public override Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())
     {
-        if (_itemTracker.IsDirty)
+        if (_itemTracker.IsDirty && !_saving)
             _itemTracker.Revert();
         return base.CanCloseAsync(cancellationToken);
     }
