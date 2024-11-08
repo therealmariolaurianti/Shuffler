@@ -35,23 +35,39 @@ public class SongController
         }
 
         if (albumArtState.AlbumArtChanged)
-            UpdateAlbumArt(song, albumArtState.AlbumArt);
+        {
+            var result = UpdateAlbumArt(song, albumArtState.AlbumArt);
+            if (result.Fail)
+                return result;
+        }
 
         song.Save();
 
         return await NewUnit.DefaultAsync;
     }
 
-    private void UpdateAlbumArt(File song, byte[]? albumArt)
+    private NewResult<NewUnit> UpdateAlbumArt(File song, byte[]? albumArt)
     {
-        var cover = new AttachmentFrame
+        return NewResultExtensions.Try(() =>
         {
-            Type = PictureType.FrontCover,
-            Data = albumArt,
-            TextEncoding = StringType.UTF16
-        };
+            try
+            {
+                var cover = new AttachmentFrame
+                {
+                    Type = PictureType.FrontCover,
+                    Data = albumArt,
+                    TextEncoding = StringType.UTF16
+                };
 
-        song.Tag.Pictures = [cover];
+                song.Tag.Pictures = [cover];
+
+                return NewUnit.Default;
+            }
+            catch (Exception e)
+            {
+                return NewResultExtensions.CreateFail<NewUnit>(e);
+            }
+        });
     }
 
     private NewResult<NewUnit> UpdateProperty(File song, KeyValuePair<string, object?> propertyDifference)

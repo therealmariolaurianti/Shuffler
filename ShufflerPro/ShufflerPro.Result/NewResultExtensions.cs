@@ -28,6 +28,19 @@ public static class NewResultExtensions
             return e;
         }
     }
+    
+    public static NewResult<T1> Try<T1>(Func<NewResult<T1>> func)
+    {
+        try
+        {
+            var newResult = func();
+            return newResult;
+        }
+        catch (Exception e)
+        {
+            return e;
+        }
+    }
 
     public static async Task<NewResult<T1>> Try<T1>(Func<Task<T1>> func)
     {
