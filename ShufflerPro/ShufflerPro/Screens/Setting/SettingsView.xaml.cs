@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Screens.Settings;
+﻿namespace ShufflerPro.Screens.Setting;
 
 public partial class SettingsView
 {

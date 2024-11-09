@@ -51,7 +51,9 @@ public class AppBootstrapper : BootstrapperBase
     {
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
+        
         _kernel.BindLogging();
+        _kernel.BindSettings();
 
         Bootstrap.Bootstrapper
             .Including.ShufflerProDatabase()

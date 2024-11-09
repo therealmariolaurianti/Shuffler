@@ -21,7 +21,7 @@ using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 using ShufflerPro.Screens.EditSong;
-using ShufflerPro.Screens.Settings;
+using ShufflerPro.Screens.Setting;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
 using ListBox = System.Windows.Controls.ListBox;
@@ -832,7 +832,11 @@ public class ShellViewModel : ViewModelBase
         RunAsync(async () =>
         {
             var viewModel = _settingsViewModelFactory.Create();
-            await _windowManager.ShowDialogAsync(viewModel);
+            var result = await _windowManager.ShowDialogAsync(viewModel);
+            if (result == true)
+            {
+                
+            }
         });
     }
 

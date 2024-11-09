@@ -23,7 +23,7 @@ public class SongController
     public async Task<NewResult<NewUnit>> Update(ItemTracker<Song> itemTracker,
         AlbumArtState albumArtState)
     {
-        if (!itemTracker.PropertyDifferences.Any() && !albumArtState.AlbumArtChanged)
+        if (itemTracker.PropertyDifferences.Count == 0 && !albumArtState.AlbumArtChanged)
             return NewUnit.Default;
 
         var song = File.Create(itemTracker.Item.Path);

@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Extensions;
+using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Client.States;
 using ShufflerPro.Database;
 using ShufflerPro.Database.Interfaces;
@@ -152,5 +153,41 @@ public class DatabaseController
         }
 
         return await NewUnit.DefaultAsync;
+    }
+
+    public ISettings LoadSettings()
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var settingsCollection = connection.GetCollection<Settings>();
+            var settings = Task.Run(async () => await settingsCollection.FindAll()).Result.ToList();
+            if (!settings.Any())
+            {
+                var createdSettings = new Settings
+                {
+                    IsDarkModeEnabled = true
+                };
+
+                var id = Task.Run(async () => await settingsCollection.Insert(createdSettings)).Result;
+                createdSettings.Id = id.AsBsonValue();
+
+                return createdSettings;
+            }
+
+            return settings.First();
+        }
+    }
+
+    public async Task<NewResult<NewUnit>> UpdateSettings(Settings settings)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var settingsCollection = connection.GetCollection<Settings>();
+            var result = await settingsCollection.Update(settings);
+            if (!result)
+                return NewResultExtensions.CreateFail<NewUnit>("Failed to update settings.");
+        }
+
+        return NewUnit.Default;
     }
 }

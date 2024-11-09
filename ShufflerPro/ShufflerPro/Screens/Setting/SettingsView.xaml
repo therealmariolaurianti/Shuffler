@@ -1,0 +1,67 @@
+﻿<mah:MetroWindow
+    x:Class="ShufflerPro.Screens.Setting.SettingsView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+    xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
+    xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
+    mc:Ignorable="d"
+    Height="300"
+    Width="300"
+    wpf:ScreenName.Name="Settings"
+    WindowStartupLocation="CenterOwner"
+    TitleCharacterCasing="Normal"
+    WindowStyle="ToolWindow"
+    ResizeMode="NoResize" d:DataContext="{d:DesignInstance settings:SettingsViewModel }">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{x:Static wpf:CloseWindowCommand.Instance}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <mah:ToggleSwitch
+                IsOn="{Binding IsDarkModeEnabled}"
+                OffContent="Light"
+                Margin="2"
+                OnContent="Dark" />
+            <controls:ThemeComboBox
+                ThemeId="{Binding ThemeId}"
+                Grid.Row="1"
+                Width="85"
+                Margin="2"
+                HorizontalAlignment="Left" />
+        </Grid>
+        <StackPanel
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.Row="1"
+            Orientation="Horizontal">
+            <Button
+                Name="Save"
+                Cursor="Hand"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                Width="100"
+                Margin="10"
+                Content="Save" />
+            <Button
+                Name="Cancel"
+                Cursor="Hand"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                Width="100"
+                Margin="10"
+                Content="Cancel" />
+        </StackPanel>
+    </Grid>
+</mah:MetroWindow>
