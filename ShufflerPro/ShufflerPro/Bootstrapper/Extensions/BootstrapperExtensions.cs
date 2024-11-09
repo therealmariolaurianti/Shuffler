@@ -1,10 +1,7 @@
 ﻿using Ninject;
 using NLog;
-using ShufflerPro.Client.Controllers;
-using ShufflerPro.Client.Entities;
-using ShufflerPro.Client.Interfaces;
 
-namespace ShufflerPro.Bootstrapper;
+namespace ShufflerPro.Bootstrapper.Extensions;
 
 public static class BootstrapperExtensions
 {
@@ -16,10 +13,5 @@ public static class BootstrapperExtensions
                 .GetLogger(p.Request.Target?.Member.DeclaringType?.FullName ?? typeof(App).FullName);
             return logger;
         });
-    }
-
-    public static void BindSettings(this IKernel container)
-    {
-        container.Bind<ISettings>().ToMethod(_ => container.Get<DatabaseController>().LoadSettings());
     }
 }

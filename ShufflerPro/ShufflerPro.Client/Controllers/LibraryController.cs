@@ -39,7 +39,7 @@ public class LibraryController
                         .Map(_ => library);
                 }));
     }
-    
+
     public async Task<NewResult<NewUnit>> LoadPlaylists(Library library)
     {
         return await _databaseController

@@ -155,27 +155,30 @@ public class DatabaseController
         return await NewUnit.DefaultAsync;
     }
 
-    public ISettings LoadSettings()
+    public async Task<NewResult<ISettings>> LoadSettings()
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
             var settingsCollection = connection.GetCollection<Settings>();
-            var settings = Task.Run(async () => await settingsCollection.FindAll()).Result.ToList();
-            if (!settings.Any())
-            {
-                var createdSettings = new Settings
-                {
-                    IsDarkModeEnabled = true
-                };
-
-                var id = Task.Run(async () => await settingsCollection.Insert(createdSettings)).Result;
-                createdSettings.Id = id.AsBsonValue();
-
-                return createdSettings;
-            }
+            var settings = (await settingsCollection.FindAll()).ToList();
+            if (settings.Count == 0)
+                return await AddDefaultSettings(settingsCollection);
 
             return settings.First();
         }
+    }
+
+    private static async Task<NewResult<ISettings>> AddDefaultSettings(LocalDatabaseCollection<Settings> settingsCollection)
+    {
+        var createdSettings = new Settings
+        {
+            IsDarkModeEnabled = true
+        };
+
+        var id = await settingsCollection.Insert(createdSettings);
+        createdSettings.Id = id.AsBsonValue();
+
+        return createdSettings;
     }
 
     public async Task<NewResult<NewUnit>> UpdateSettings(Settings settings)

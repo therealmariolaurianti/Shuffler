@@ -2,22 +2,8 @@
 using NLog;
 using NLog.Config;
 using NLog.Targets;
-using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Bootstrapper.StartupTasks;
-
-public class ThemeStartupTask : IStartupTask
-{
-    public void Run()
-    {
-        //ThemeManager.ChangeTheme(value, IsDarkModeEnabled);
-    }
-
-    public void Reset()
-    {
-        throw new NotImplementedException();
-    }
-}
 
 public class LoggingStartupTask : IStartupTask
 {

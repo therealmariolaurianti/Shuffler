@@ -28,7 +28,7 @@ public static class NewResultExtensions
             return e;
         }
     }
-    
+
     public static NewResult<T1> Try<T1>(Func<NewResult<T1>> func)
     {
         try
@@ -102,7 +102,7 @@ public static class NewResultExtensions
         item.IfSuccess(f);
         return item;
     }
-    
+
     public static async Task<NewResult<T>> IfSuccessAsync<T>(this Task<NewResult<T>> task, Func<T, Task> f)
     {
         var item = await task;

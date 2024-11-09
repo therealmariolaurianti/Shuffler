@@ -45,7 +45,7 @@ public class MediaController(
             var songsPaths = Path.GetFullPath(mediaLibraryPath)
                 .GetFilesByExtension()
                 .ToHashSet();
-            
+
             return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
         }
         catch (Exception)

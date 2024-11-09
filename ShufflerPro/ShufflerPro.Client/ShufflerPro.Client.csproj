@@ -7,15 +7,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bootstrapper.Ninject" Version="2.0.3.13" />
-      <PackageReference Include="NAudio" Version="2.2.1" />
-      <PackageReference Include="NAudio.WinMM" Version="2.2.1" />
-      <PackageReference Include="TagLibSharp" Version="2.3.0" />
+        <PackageReference Include="Bootstrapper.Ninject" Version="2.0.3.13"/>
+        <PackageReference Include="NAudio" Version="2.2.1"/>
+        <PackageReference Include="NAudio.WinMM" Version="2.2.1"/>
+        <PackageReference Include="TagLibSharp" Version="2.3.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ShufflerPro.Database\ShufflerPro.Database.csproj" />
-      <ProjectReference Include="..\ShufflerPro.Result\ShufflerPro.Result.csproj" />
+        <ProjectReference Include="..\ShufflerPro.Database\ShufflerPro.Database.csproj"/>
+        <ProjectReference Include="..\ShufflerPro.Result\ShufflerPro.Result.csproj"/>
     </ItemGroup>
 
 </Project>
