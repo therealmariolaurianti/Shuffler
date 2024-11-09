@@ -28,6 +28,19 @@ public static class NewResultExtensions
             return e;
         }
     }
+    
+    public static async Task<NewResult<T1>> Map<T, T1>(this Task<NewResult<T>> ma, Func<T, T1> func)
+    {
+        try
+        {
+            var item = await ma;
+            return item.Map(func);
+        }
+        catch (Exception ex)
+        {
+            return CreateFail<T1>(ex);
+        }
+    }
 
     public static NewResult<T1> Try<T1>(Func<NewResult<T1>> func)
     {

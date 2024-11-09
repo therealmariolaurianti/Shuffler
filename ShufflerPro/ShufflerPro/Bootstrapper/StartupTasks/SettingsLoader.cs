@@ -1,5 +1,6 @@
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
+using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Bootstrapper.StartupTasks;
@@ -17,9 +18,13 @@ public class SettingsLoader
 
     public async Task<NewResult<NewUnit>> Load()
     {
-        return (await _databaseController
-                .LoadSettings()
-                .Do(settings => _settings.Update(settings)))
-            .Convert<NewUnit>();
+        return await _databaseController
+            .LoadSettings()
+            .Do(settings =>
+            {
+                _settings.Update(settings);
+                ThemeManager.ChangeTheme(settings.ThemeId, settings.IsDarkModeEnabled);
+            })
+            .Map(_ => NewUnit.Default);
     }
 }

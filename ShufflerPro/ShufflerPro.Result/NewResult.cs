@@ -67,11 +67,6 @@ public class NewResult<T>
         return Exceptions.First();
     }
 
-    public NewResult<T1> Convert<T1>()
-    {
-        return new NewResult<T1>();
-    }
-
     public NewResult<T> IfSuccess(Action<T> action)
     {
         if (Success)
