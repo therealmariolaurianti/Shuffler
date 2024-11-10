@@ -1,9 +1,9 @@
-using ShufflerPro.Client;
+﻿using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
-namespace ShufflerPro.Bootstrapper.StartupTasks;
+namespace ShufflerPro.Framework;
 
 public class SettingsLoader
 {

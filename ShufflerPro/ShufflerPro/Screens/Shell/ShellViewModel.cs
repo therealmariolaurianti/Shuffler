@@ -33,9 +33,7 @@ namespace ShufflerPro.Screens.Shell;
 public class ShellViewModel : ViewModelBase
 {
     private readonly AlbumArtLoader _albumArtLoader;
-    private readonly BinaryHelper _binaryHelper;
     private readonly ContextMenuBuilder _contextMenuBuilder;
-
     private readonly IEditSongViewModelFactory _editSongViewModelFactory;
     private readonly Library _library;
     private readonly LibraryController _libraryController;
@@ -65,10 +63,12 @@ public class ShellViewModel : ViewModelBase
     private PlaylistGridItem? _selectedPlaylist;
     private Song? _selectedSong;
     private IList? _selectedSongs;
+    private double _selectedSongTime;
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song> _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
+    private double _startingSongTime;
     private CountDownTimer? _timer;
 
     public ShellViewModel(
@@ -76,7 +76,6 @@ public class ShellViewModel : ViewModelBase
         PlayerController playerController,
         SourceFolderController sourceFolderController,
         MediaController mediaController,
-        BinaryHelper binaryHelper,
         LibraryController libraryController,
         ContextMenuBuilder contextMenuBuilder,
         SongQueueFactory songQueueFactory,
@@ -92,7 +91,6 @@ public class ShellViewModel : ViewModelBase
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
         _mediaController = mediaController;
-        _binaryHelper = binaryHelper;
         _libraryController = libraryController;
         _contextMenuBuilder = contextMenuBuilder;
         _songQueueFactory = songQueueFactory;
@@ -377,12 +375,48 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    public double StartingSongTime
+    {
+        get => _startingSongTime;
+        set
+        {
+            if (value.Equals(_startingSongTime)) return;
+            _startingSongTime = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public double SelectedSongTime
+    {
+        get => _selectedSongTime;
+        set
+        {
+            if (value.Equals(_selectedSongTime)) return;
+            _selectedSongTime = value;
+            NotifyOfPropertyChange();
+            HandleSelectedTime();
+        }
+    }
+
     public ICommand EditPlaylistItemCommand { get; }
     public ICommand EditLostFocusCommand { get; }
 
     public bool CanRenamePlaylist => SelectedPlaylist != null;
     public bool CanRemovePlaylist => SelectedPlaylist != null;
     public bool IsRemoveSongVisible => SelectedPlaylist != null && SelectedSong != null;
+
+    private void HandleSelectedTime()
+    {
+        var timeSpan = TimeSpan.FromSeconds(SelectedSongTime);
+
+        if (SelectedSongTime > StartingSongTime)
+            _playerController.AddTime(timeSpan);
+        else
+            _playerController.SubtractTime(timeSpan);
+
+        _timer
+        //WireTimer(timeSpan);
+    }
 
     private void SelectedPlaylistChanged()
     {
@@ -444,6 +478,9 @@ public class ShellViewModel : ViewModelBase
     {
         return NewResultExtensions.Try(() =>
         {
+            if (_timer?.IsRunning ?? false)
+                _timer.Stop();
+
             _timer = new CountDownTimer();
 
             _timer.SetTime(CurrentSong!.Duration!.Value);
@@ -500,8 +537,11 @@ public class ShellViewModel : ViewModelBase
 
     private void ResetCurrentElapsed()
     {
-        ElapsedRunningTime = 0;
-        ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
+        Task.Run(() =>
+        {
+            ElapsedRunningTime = 0;
+            ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
+        });
     }
 
     private void InitializeApplicationVolume()
@@ -639,6 +679,8 @@ public class ShellViewModel : ViewModelBase
 
             SelectedSong = firstSong;
         }
+        
+        ResetCurrentElapsed();
 
         return NewUnit.Default;
     }
@@ -798,7 +840,10 @@ public class ShellViewModel : ViewModelBase
         if (CurrentSong is null || _songQueue is null)
             return;
 
-        if (ElapsedRunningTime >= 5)
+        var elapsedTime = ElapsedRunningTime;
+        ResetCurrentElapsed();
+
+        if (elapsedTime >= 5)
             OnSongChanged(CurrentSong);
 
         _playingPrevious = true;
@@ -809,6 +854,8 @@ public class ShellViewModel : ViewModelBase
     {
         if (CurrentSong is null || _songQueue is null)
             return;
+
+        ResetCurrentElapsed();
 
         _playerController
             .Skip(_songQueue)
@@ -832,11 +879,7 @@ public class ShellViewModel : ViewModelBase
         RunAsync(async () =>
         {
             var viewModel = _settingsViewModelFactory.Create();
-            var result = await _windowManager.ShowDialogAsync(viewModel);
-            if (result == true)
-            {
-                
-            }
+            await _windowManager.ShowDialogAsync(viewModel);
         });
     }
 

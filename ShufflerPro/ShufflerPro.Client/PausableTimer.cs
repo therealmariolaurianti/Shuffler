@@ -14,6 +14,7 @@ public class PausableTimer : Timer
     public PausableTimer(double interval) : base(interval)
     {
         _initialInterval = interval;
+        
         Elapsed += OnElapsed;
         _stopwatch = new Stopwatch();
     }

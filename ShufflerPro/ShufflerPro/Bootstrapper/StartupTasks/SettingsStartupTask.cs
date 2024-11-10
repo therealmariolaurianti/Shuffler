@@ -1,4 +1,5 @@
 using Bootstrap.Extensions.StartupTasks;
+using ShufflerPro.Framework;
 
 namespace ShufflerPro.Bootstrapper.StartupTasks;
 

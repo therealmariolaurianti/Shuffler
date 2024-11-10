@@ -197,7 +197,7 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Right"
                                     Text="{Binding ElapsedRunningTimeDisplay}" />
-                                <Slider
+                                <controls:ShufflerSlider
                                     Margin="5"
                                     Grid.Column="1"
                                     Minimum="0"
@@ -205,6 +205,8 @@
                                     VerticalAlignment="Center"
                                     Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                                     Interval="1000"
+                                    SelectedValue="{Binding SelectedSongTime}"
+                                    StartingValue="{Binding StartingSongTime, Mode=OneWay}"
                                     Maximum="{Binding MaxRunTime}"
                                     Value="{Binding ElapsedRunningTime}" />
                                 <TextBlock
@@ -326,7 +328,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height=".5*" />
                                 <RowDefinition Height="5" />
-                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -396,7 +398,7 @@
                             <Grid
                                 Grid.Row="2">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height=".5*" />
                                     <RowDefinition Height="Auto" />
@@ -426,13 +428,9 @@
                                     IsExpanded="True"
                                     Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
                                     Grid.Row="4">
-                                    <Border
-                                        Margin="2,2,2,2"
-                                        BorderThickness="0">
-                                        <Image
-                                            MaxHeight="250"
-                                            Source="{Binding AlbumArt}" />
-                                    </Border>
+                                    <Image
+                                        MaxHeight="250"
+                                        Source="{Binding AlbumArt}" />
                                 </Expander>
                             </Grid>
                         </Grid>

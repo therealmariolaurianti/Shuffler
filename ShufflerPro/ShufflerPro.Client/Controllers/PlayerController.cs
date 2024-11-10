@@ -1,7 +1,6 @@
 ﻿using NAudio.Wave;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
-using ShufflerPro.Client.States;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
@@ -10,6 +9,7 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
     private WaveOutEvent? _outEvent = outEvent;
+    private ISongQueue _songQueue;
     private PausableTimer? _timer;
 
     public required Action PlayerDisposed;
@@ -74,17 +74,17 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         if (songQueue?.CurrentSong is null)
             return;
 
+        _songQueue = songQueue;
+
         try
         {
-            using (_audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path))
-            {
-                _outEvent ??= new WaveOutEvent();
+            _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
+            _outEvent ??= new WaveOutEvent();
 
-                _outEvent.Init(_audioFileReader);
-                _outEvent.Play();
+            _outEvent.Init(_audioFileReader);
+            _outEvent.Play();
 
-                DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds, () => StartNextSong(songQueue));
-            }
+            DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
         }
         catch (Exception)
         {
@@ -92,17 +92,41 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         }
     }
 
-    public void DelayAction(double millisecond, Action action)
+    public void AddTime(TimeSpan time)
+    {
+        if (_audioFileReader is null)
+            return;
+
+        _audioFileReader.CurrentTime = _audioFileReader.CurrentTime.Add(time);
+        StopStart(time);
+    }
+
+    public void SubtractTime(TimeSpan time)
+    {
+        if (_audioFileReader is null)
+            return;
+
+        _audioFileReader.CurrentTime = _audioFileReader.CurrentTime.Subtract(time);
+        StopStart(time);
+    }
+
+    public void DelayAction(double millisecond)
     {
         _timer = new PausableTimer(millisecond);
 
         _timer.Elapsed += delegate
         {
             _timer.Stop();
-            action.Invoke();
+            StartNextSong(_songQueue);
         };
 
         _timer.Start();
+    }
+
+    public void StopStart(TimeSpan time)
+    {
+        _timer?.Stop();
+        DelayAction(time.TotalMilliseconds);
     }
 
     public void Pause()
