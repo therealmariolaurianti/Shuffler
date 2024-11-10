@@ -413,8 +413,7 @@ public class ShellViewModel : ViewModelBase
             _playerController.AddTime(timeSpan);
         else
             _playerController.SubtractTime(timeSpan);
-
-        _timer
+        
         //WireTimer(timeSpan);
     }
 
