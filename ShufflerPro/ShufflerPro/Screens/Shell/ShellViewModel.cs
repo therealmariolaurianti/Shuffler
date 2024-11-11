@@ -7,7 +7,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using Caliburn.Micro;
 using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
@@ -21,8 +20,6 @@ using ShufflerPro.Client.States;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
-using ShufflerPro.Screens.EditSong;
-using ShufflerPro.Screens.Setting;
 using DragDropEffects = System.Windows.DragDropEffects;
 using DragEventArgs = System.Windows.DragEventArgs;
 using ListBox = System.Windows.Controls.ListBox;
@@ -35,19 +32,18 @@ public class ShellViewModel : ViewModelBase
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
-    private readonly IEditSongViewModelFactory _editSongViewModelFactory;
+
     private readonly Library _library;
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
     private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
-    private readonly ISettingsViewModelFactory _settingsViewModelFactory;
     private readonly SongFilterController _songFilterController;
     private readonly SongQueueFactory _songQueueFactory;
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
-    private readonly IWindowManager _windowManager;
+    private readonly ShufflerWindowManager _windowManager;
     private double _applicationVolumeLevel;
     private Song? _currentSong;
     private TimeSpan _currentSongTime;
@@ -88,9 +84,7 @@ public class ShellViewModel : ViewModelBase
         SongStack songStack,
         PlaylistController playlistController,
         SongFilterController songFilterController,
-        ISettingsViewModelFactory settingsViewModelFactory,
-        IWindowManager windowManager,
-        IEditSongViewModelFactory editSongViewModelFactory)
+        ShufflerWindowManager windowManager)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -103,9 +97,7 @@ public class ShellViewModel : ViewModelBase
         _songStack = songStack;
         _playlistController = playlistController;
         _songFilterController = songFilterController;
-        _settingsViewModelFactory = settingsViewModelFactory;
         _windowManager = windowManager;
-        _editSongViewModelFactory = editSongViewModelFactory;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -671,7 +663,7 @@ public class ShellViewModel : ViewModelBase
         {
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
-            
+
             if (IsRepeatChecked)
                 return Repeat(currentSong);
 
@@ -937,14 +929,11 @@ public class ShellViewModel : ViewModelBase
         WebsiteLauncher.OpenWebsite("https://github.com/therealmariolaurianti/Shuffler");
     }
 
+
     [UsedImplicitly]
     public void LaunchSettings()
     {
-        RunAsync(async () =>
-        {
-            var viewModel = _settingsViewModelFactory.Create();
-            await _windowManager.ShowDialogAsync(viewModel);
-        });
+        RunAsync(async () => { await _windowManager.LaunchSettings(); });
     }
 
     [UsedImplicitly]
@@ -1043,18 +1032,38 @@ public class ShellViewModel : ViewModelBase
     [UsedImplicitly]
     public void EditSong()
     {
-        if (SelectedSong is null)
+        if (SelectedSong is null || SelectedSongs?.Count == 0)
             return;
 
         RunAsync(async () =>
         {
-            var viewModel = _editSongViewModelFactory.Create(SelectedSong, _albumArtLoader.Load(SelectedSong.Path));
-            var result = await _windowManager.ShowDialogAsync(viewModel);
-            if (result is true)
+            if (SelectedSongs!.Count == 1)
+                await ShowEditSong();
+            else
+                await ShowEditSongs();
+        });
+    }
+
+    private async Task ShowEditSongs()
+    {
+        var songs = SelectedSongs!.Cast<Song>().ToList();
+        await _windowManager
+            .ShowEditSongs(songs)
+            .IfSuccess(_ =>
             {
                 HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                 NotifyCollectionsChanged();
-            }
-        });
+            });
+    }
+
+    private async Task ShowEditSong()
+    {
+        await _windowManager
+            .ShowEditSong(SelectedSong!, _albumArtLoader.Load(SelectedSong!.Path))
+            .IfSuccess(_ =>
+            {
+                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                NotifyCollectionsChanged();
+            });
     }
 }

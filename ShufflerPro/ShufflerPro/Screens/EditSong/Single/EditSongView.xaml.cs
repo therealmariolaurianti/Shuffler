@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Screens.EditSong;
+﻿namespace ShufflerPro.Screens.EditSong.Single;
 
 public partial class EditSongView
 {

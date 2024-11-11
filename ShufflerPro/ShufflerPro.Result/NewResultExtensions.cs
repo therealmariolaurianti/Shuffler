@@ -28,7 +28,7 @@ public static class NewResultExtensions
             return e;
         }
     }
-    
+
     public static async Task<NewResult<T1>> Map<T, T1>(this Task<NewResult<T>> ma, Func<T, T1> func)
     {
         try
@@ -126,5 +126,17 @@ public static class NewResultExtensions
     public static async Task<NewResult<NewUnit>> ToSuccessAsync<T>(this Task<NewResult<T>> item)
     {
         return await NewUnit.DefaultAsync;
+    }
+
+    public static NewResult<T> CreateFail<T>()
+    {
+        return new NewResult<T>(new Exception());
+    }
+
+    public static NewResult<NewUnit> CreateFromDialogResult(this bool? showDialog)
+    {
+        if (showDialog is null || !showDialog.Value)
+            return CreateFail<NewUnit>();
+        return NewUnit.Default;
     }
 }

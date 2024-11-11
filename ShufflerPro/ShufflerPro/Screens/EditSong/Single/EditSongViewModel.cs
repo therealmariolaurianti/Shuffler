@@ -8,7 +8,7 @@ using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
-namespace ShufflerPro.Screens.EditSong;
+namespace ShufflerPro.Screens.EditSong.Single;
 
 public class EditSongViewModel : ViewModelBase
 {
