@@ -6,5 +6,5 @@ namespace ShufflerPro.Screens.EditSong.Single;
 
 public interface IEditSongViewModelFactory : IFactory
 {
-    EditSongViewModel Create(Song song, BitmapImage? albumArt);
+    EditSongViewModel Create(Song song, BitmapImage? albumArt, Library library);
 }

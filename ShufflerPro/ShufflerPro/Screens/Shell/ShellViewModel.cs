@@ -1047,7 +1047,7 @@ public class ShellViewModel : ViewModelBase
     {
         var songs = SelectedSongs!.Cast<Song>().ToList();
         await _windowManager
-            .ShowEditSongs(songs)
+            .ShowEditSongs(songs, _library)
             .IfSuccess(_ =>
             {
                 HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
@@ -1058,7 +1058,7 @@ public class ShellViewModel : ViewModelBase
     private async Task ShowEditSong()
     {
         await _windowManager
-            .ShowEditSong(SelectedSong!, _albumArtLoader.Load(SelectedSong!.Path))
+            .ShowEditSong(SelectedSong!, _albumArtLoader.Load(SelectedSong!.Path), _library)
             .IfSuccess(_ =>
             {
                 HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);

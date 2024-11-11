@@ -16,6 +16,7 @@ public class EditSongViewModel : ViewModelBase
     private readonly BinaryHelper _binaryHelper;
     private readonly ItemTracker<Song> _itemTracker;
     private readonly Song _song;
+    private readonly Library _library;
     private readonly SongController _songController;
     private BitmapImage? _albumArt;
     private bool _albumArtChanged;
@@ -25,11 +26,13 @@ public class EditSongViewModel : ViewModelBase
     public EditSongViewModel(
         Song song,
         BitmapImage? albumArt,
+        Library library,
         ItemTracker<Song> itemTracker,
         SongController songController,
         BinaryHelper binaryHelper)
     {
         _song = song;
+        _library = library;
         _itemTracker = itemTracker;
         _songController = songController;
         _binaryHelper = binaryHelper;
@@ -129,7 +132,7 @@ public class EditSongViewModel : ViewModelBase
         _saving = true;
         RunAsync(async () => await _songController
             .Update(new UpdateSongsState([_song], _itemTracker.PropertyDifferences,
-                new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged)))
+                new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged), _library))
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }

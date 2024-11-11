@@ -31,17 +31,17 @@ public class ShufflerWindowManager : WindowManager
         await ShowDialogAsync(viewModel);
     }
 
-    public async Task<NewResult<NewUnit>> ShowEditSongs(List<Song> songs)
+    public async Task<NewResult<NewUnit>> ShowEditSongs(List<Song> songs, Library library)
     {
-        var viewModel = _editSongsViewModelFactory.Create(songs);
+        var viewModel = _editSongsViewModelFactory.Create(songs, library);
         
         var dialogAsync = await ShowDialogAsync(viewModel);
         return dialogAsync.CreateFromDialogResult();
     }
     
-    public async Task<NewResult<NewUnit>> ShowEditSong(Song selectedSong, BitmapImage? albumArt)
+    public async Task<NewResult<NewUnit>> ShowEditSong(Song selectedSong, BitmapImage? albumArt, Library library)
     {
-        var viewModel = _editSongViewModelFactory.Create(selectedSong, albumArt);
+        var viewModel = _editSongViewModelFactory.Create(selectedSong, albumArt, library);
         
         var dialogAsync = await ShowDialogAsync(viewModel);
         return dialogAsync.CreateFromDialogResult();
