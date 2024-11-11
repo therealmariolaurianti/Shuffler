@@ -12,13 +12,13 @@ public class SongQueueFactory
     {
         return new SongQueue
         {
-            CurrentSong = currentSong ?? songs.FirstOrDefault(),
+            CurrentSong = currentSong ?? songs?.FirstOrDefault(),
             PreviousSong = GetPreviousSong(currentSong, songs),
             NextSong = GetNextSong(currentSong, songs, repeatState)
         };
     }
 
-    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song>? createdAlbumSongs,
+    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song>? songs,
         RepeatState repeatState)
     {
         if (currentSong is null)
@@ -27,23 +27,25 @@ public class SongQueueFactory
         if (repeatState is { IsRepeatChecked: true, RepeatType: RepeatType.Song })
             return currentSong;
 
-        var index = createdAlbumSongs.IndexOf(currentSong) + 1;
-        var nextSong = createdAlbumSongs.Skip(index).FirstOrDefault();
+        var index = songs?.IndexOf(currentSong) + 1;
+        if (index is null)
+            return null;
 
-        if (nextSong is null)
+        var nextSong = songs?.Skip(index.Value).FirstOrDefault();
+        if (nextSong?.Artist != currentSong.Artist)
         {
-            if (!repeatState.IsRepeatChecked)
+            if (!repeatState.IsRepeatChecked) 
                 return nextSong;
 
             if (repeatState.RepeatType == RepeatType.Album)
-                return createdAlbumSongs.First();
+                return currentSong.CreatedAlbum?.Songs.FirstOrDefault();
 
             if (repeatState.RepeatType == RepeatType.Artist)
             {
                 var nextAlbumIndex = currentSong.CreatedAlbum!.Artist.Albums.IndexOf(currentSong.CreatedAlbum);
                 var nextAlbum = currentSong.CreatedAlbum.Artist.Albums.ElementAtOrDefault(nextAlbumIndex + 1);
-                return nextAlbum is null 
-                    ? currentSong.CreatedAlbum.Artist.Albums.FirstOrDefault()?.Songs.FirstOrDefault() 
+                return nextAlbum is null
+                    ? currentSong.CreatedAlbum.Artist.Albums.FirstOrDefault()?.Songs.FirstOrDefault()
                     : nextAlbum.Songs.FirstOrDefault();
             }
         }
@@ -51,12 +53,14 @@ public class SongQueueFactory
         return nextSong;
     }
 
-    private static Song? GetPreviousSong(Song? currentSong, ObservableCollection<Song>? createdAlbumSongs)
+    private static Song? GetPreviousSong(Song? currentSong, ObservableCollection<Song>? songs)
     {
         if (currentSong is null)
             return null;
 
-        var index = createdAlbumSongs.IndexOf(currentSong) - 1;
-        return index == -1 ? null : createdAlbumSongs.Skip(index).FirstOrDefault();
+        var index = songs?.IndexOf(currentSong) - 1;
+        if (index is null)
+            return null;
+        return index == -1 ? null : songs?.Skip(index.Value).FirstOrDefault();
     }
 }

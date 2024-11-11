@@ -671,7 +671,7 @@ public class ShellViewModel : ViewModelBase
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 
-            return _songQueueFactory.Create(currentSong, Songs,
+            return _songQueueFactory.Create(currentSong, _songFilterController.FilterSongs(AllSongs, null, null),
                 new RepeatState(IsRepeatChecked, RepeatType));
         });
     }
