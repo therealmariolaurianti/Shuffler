@@ -14,7 +14,7 @@ public class SongController
     {
         foreach (var stateSong in state.Songs)
         {
-            var result = await Update(stateSong.Path!, state.PropertyDifferences, new AlbumArtState(null, false));
+            var result = await Update(stateSong.Path!, state.PropertyDifferences, state.AlbumArtState);
             if (result.Fail)
                 return result;
         }
@@ -22,7 +22,7 @@ public class SongController
         return await NewUnit.DefaultAsync;
     }
     
-    public async Task<NewResult<NewUnit>> Update(string songPath, Dictionary<string, object?> propertyDifferences,
+    private async Task<NewResult<NewUnit>> Update(string songPath, Dictionary<string, object?> propertyDifferences,
         AlbumArtState albumArtState)
     {
         if (propertyDifferences.Count == 0 && !albumArtState.AlbumArtChanged)

@@ -192,7 +192,7 @@ public class EditSongsViewModel : ViewModelBase
     {
         _saving = true;
         RunAsync(async () => await _songController
-            .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences))
+            .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences, new AlbumArtState(null, false)))
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
