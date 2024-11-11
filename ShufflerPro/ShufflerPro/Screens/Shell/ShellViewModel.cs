@@ -589,7 +589,12 @@ public class ShellViewModel : ViewModelBase
 
     public void PlayArtist()
     {
-        SelectedSong = SelectedArtist?.Albums.FirstOrDefault()?.Songs.FirstOrDefault();
+        var firstSong = SelectedArtist?.Songs.OrderBy(s => s.Artist)
+            .ThenBy(s => s.Album)
+            .ThenBy(s => s.Track)
+            .FirstOrDefault();
+
+        SelectedSong = firstSong;
         PlaySong();
     }
 
@@ -660,16 +665,27 @@ public class ShellViewModel : ViewModelBase
         return NewResultExtensions.Try(() =>
         {
             if (IsShuffleChecked)
-            {
-                var songQueue = _randomSongQueueFactory
-                    .Create(new RandomSongQueueState(currentSong, Songs,
-                        _songStack, _playingPrevious, isSourceGrid));
-                _playingPrevious = false;
-                return songQueue;
-            }
+                return ShuffleSongs(currentSong, isSourceGrid);
+            
+            if (IsRepeatChecked)
+                return Repeat(currentSong);
 
             return _songQueueFactory.Create(currentSong, Songs);
         });
+    }
+
+    private ISongQueue Repeat(Song currentSong)
+    {
+        throw new NotImplementedException();
+    }
+
+    private ISongQueue ShuffleSongs(Song currentSong, bool isSourceGrid)
+    {
+        var songQueue = _randomSongQueueFactory
+            .Create(new RandomSongQueueState(currentSong, Songs,
+                _songStack, _playingPrevious, isSourceGrid));
+        _playingPrevious = false;
+        return songQueue;
     }
 
     public void GridDoubleClicked(object sender, MouseButtonEventArgs e)
