@@ -26,10 +26,13 @@
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
-            FontSize="20"
-            Text="Shuffler Pro"
             VerticalAlignment="Center"
-            HorizontalAlignment="Center" />
+            HorizontalAlignment="Center">
+            <Run Text="Shuffler" FontSize="20" />
+            <Run Text="Pro" FontSize="14"
+                 BaselineAlignment="Top"
+                 Foreground="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" />
+        </TextBlock>
         <Image
             Grid.Row="1"
             Height="100"
