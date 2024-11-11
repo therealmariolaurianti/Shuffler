@@ -1,41 +1,47 @@
 ﻿using System.Diagnostics;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using ShufflerPro.Database;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Installer;
 
 public partial class Runner
 {
+    private const string _defaultInstallPath = @"C:\Program Files\";
+    
     public void Run()
     {
         CheckForDotNetRuntimes()
             .IfFail(Console.WriteLine)
-            .IfSuccess(_ => CheckForRootFile()
+            .IfSuccess(_ => CreateFolders()
                 .IfFail(Console.WriteLine)
-                .IfSuccess(_ => Console.WriteLine("Ready to install")));
+                .IfSuccess(_ =>
+                {
+                    Console.Write("Installing...");
+                    Console.Write("Done");
+                }));
     }
 
-    private NewResult<NewUnit> CheckForRootFile()
+    private NewResult<NewUnit> CreateFolders()
     {
-        return RootFinder.FindRoot()
-            .IfFail(_ =>
-            {
-                var appPath = Assembly.GetExecutingAssembly().Location;
-                var appDirectory = Path.GetDirectoryName(appPath);
-                if(appDirectory is null)
-                    return NewResultExtensions.CreateFail<string>("Could not find app directory");
+        return NewResultExtensions.Try(() =>
+        {
+            Console.Write($@"Enter Installation Path: [default: {_defaultInstallPath}ShufflerPro] ");
+            var installationPath = Console.ReadLine();
+            if (string.IsNullOrEmpty(installationPath))
+                installationPath = _defaultInstallPath;
+            
+            if (!Directory.Exists(installationPath))
+                return NewResultExtensions.CreateFail<NewUnit>("Installation path doesn't exist");
 
-                var rootPath = Path.Combine(appDirectory, ".root");
-                File.Create(rootPath);
-                
-                Console.WriteLine(rootPath);
-                Console.Read();
+            var directoryPath = Path.Combine(installationPath, "ShufflerPro");
+            Directory.CreateDirectory(directoryPath);
+            
+            var actualPath = Path.Combine(directoryPath, ".root");
+            
+            File.Create(actualPath);
 
-                return rootPath;
-            })
-            .Map(_ => NewUnit.Default);
+            return NewUnit.Default;
+        });
     }
 
     private NewResult<NewUnit> CheckForDotNetRuntimes()
@@ -69,9 +75,10 @@ public partial class Runner
         }
 
         if (runtimes.Count != 0)
-            return NewResultExtensions.CreateFail<NewUnit>("Missing runtimes: " + 
+            return NewResultExtensions.CreateFail<NewUnit>("Missing runtimes: " +
                                                            Environment.NewLine +
-                                                           string.Join($",{Environment.NewLine}", runtimes.Select(r => $"'{r}'")));
+                                                           string.Join($",{Environment.NewLine}",
+                                                               runtimes.Select(r => $"'{r}'")));
 
         return NewUnit.Default;
     }
