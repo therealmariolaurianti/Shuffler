@@ -1,23 +1,22 @@
 ﻿<mah:MetroWindow
-    x:Class="ShufflerPro.Screens.EditSong.Single.EditSongView"
+    x:Class="ShufflerPro.Screens.EditSong.Multiple.EditSongsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
-    xmlns:editSong="clr-namespace:ShufflerPro.Screens.EditSong"
-    xmlns:single="clr-namespace:ShufflerPro.Screens.EditSong.Single"
+    xmlns:multiple="clr-namespace:ShufflerPro.Screens.EditSong.Multiple"
     mc:Ignorable="d"
     Height="350"
     Width="700"
-    wpf:ScreenName.Name="Edit Song"
+    wpf:ScreenName.Name="Edit Multiple Songs"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     WindowStartupLocation="CenterOwner"
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize"
-    d:DataContext="{d:DesignInstance single:EditSongViewModel }">
+    d:DataContext="{d:DesignInstance multiple:EditSongsViewModel }">
     <Window.InputBindings>
         <KeyBinding
             Key="Escape"
@@ -131,7 +130,7 @@
                     Content="Path" />
                 <TextBox
                     Name="Path"
-                    IsReadOnly="True"
+                    IsEnabled="False"
                     Grid.Row="6"
                     TextWrapping="Wrap"
                     Grid.Column="1"

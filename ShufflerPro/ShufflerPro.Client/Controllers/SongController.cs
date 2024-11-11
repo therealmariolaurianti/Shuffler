@@ -1,4 +1,6 @@
-﻿using ShufflerPro.Client.Entities;
+﻿using System.Reflection;
+using System.Xml.XPath;
+using ShufflerPro.Client.States;
 using ShufflerPro.Result;
 using TagLib;
 using TagLib.Id3v2;
@@ -6,28 +8,28 @@ using File = TagLib.File;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class AlbumArtState
-{
-    public AlbumArtState(byte[]? albumArt, bool albumArtChanged)
-    {
-        AlbumArt = albumArt;
-        AlbumArtChanged = albumArtChanged;
-    }
-
-    public byte[]? AlbumArt { get; }
-    public bool AlbumArtChanged { get; }
-}
-
 public class SongController
 {
-    public async Task<NewResult<NewUnit>> Update(ItemTracker<Song> itemTracker,
+    public async Task<NewResult<NewUnit>> Update(UpdateSongsState state)
+    {
+        foreach (var stateSong in state.Songs)
+        {
+            var result = await Update(stateSong.Path!, state.PropertyDifferences, new AlbumArtState(null, false));
+            if (result.Fail)
+                return result;
+        }
+
+        return await NewUnit.DefaultAsync;
+    }
+    
+    public async Task<NewResult<NewUnit>> Update(string songPath, Dictionary<string, object?> propertyDifferences,
         AlbumArtState albumArtState)
     {
-        if (itemTracker.PropertyDifferences.Count == 0 && !albumArtState.AlbumArtChanged)
+        if (propertyDifferences.Count == 0 && !albumArtState.AlbumArtChanged)
             return NewUnit.Default;
 
-        var song = File.Create(itemTracker.Item.Path);
-        foreach (var propertyDifference in itemTracker.PropertyDifferences)
+        var song = File.Create(songPath);
+        foreach (var propertyDifference in propertyDifferences)
         {
             var result = UpdateProperty(song, propertyDifference);
             if (result.Fail)

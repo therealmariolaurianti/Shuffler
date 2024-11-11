@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Caliburn.Micro;
+using ShufflerPro.Client.Attributes;
 using Action = System.Action;
 
 namespace ShufflerPro.Framework.WPF;
@@ -18,9 +19,13 @@ public abstract class ViewModelBase : Screen
         if (view is not FrameworkElement d)
             return;
 
-        if (ScreenName.GetName(d) != null)
-            DisplayName = ScreenName.GetName(d);
+        var displayName = ScreenName.GetName(d);
+        if (displayName != null)
+            DisplayName = displayName;
 
         base.OnViewAttached(view, context);
     }
+
+    [IgnoreTracking]
+    public override string? DisplayName { get; set; }
 }

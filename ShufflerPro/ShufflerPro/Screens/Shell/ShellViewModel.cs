@@ -32,7 +32,6 @@ public class ShellViewModel : ViewModelBase
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
-
     private readonly Library _library;
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;

@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using Ninject.Infrastructure.Language;
+using ShufflerPro.Client.Attributes;
 
 namespace ShufflerPro.Client;
 
@@ -44,7 +46,9 @@ public class ItemTracker<T>
 
     private List<PropertyInfo> GetPropertyInfos()
     {
-        var propertyInfos = Item!.GetType().GetProperties().Where(d => d.CanWrite);
+        var propertyInfos = Item!.GetType()
+            .GetProperties()
+            .Where(d => d.CanWrite && !d.HasAttribute(typeof(IgnoreTrackingAttribute)));
         
         return [..propertyInfos];
     }

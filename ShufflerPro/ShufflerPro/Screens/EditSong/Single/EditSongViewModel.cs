@@ -4,6 +4,7 @@ using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.States;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
@@ -127,7 +128,8 @@ public class EditSongViewModel : ViewModelBase
     {
         _saving = true;
         RunAsync(async () => await _songController
-            .Update(_itemTracker, new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged))
+            .Update(_song.Path!, _itemTracker.PropertyDifferences,
+                new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged))
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }

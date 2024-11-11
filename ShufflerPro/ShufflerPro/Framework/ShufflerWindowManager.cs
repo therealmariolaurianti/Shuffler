@@ -2,6 +2,7 @@
 using Caliburn.Micro;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.EditSong;
 using ShufflerPro.Screens.EditSong.Multiple;
 using ShufflerPro.Screens.EditSong.Single;
 using ShufflerPro.Screens.Setting;
@@ -12,7 +13,7 @@ public class ShufflerWindowManager : WindowManager
 {
     private readonly IEditSongViewModelFactory _editSongViewModelFactory;
     private readonly ISettingsViewModelFactory _settingsViewModelFactory;
-    private IEditSongsViewModelFactory _editSongsViewModelFactory;
+    private readonly IEditSongsViewModelFactory _editSongsViewModelFactory;
 
     public ShufflerWindowManager(
         IEditSongViewModelFactory editSongViewModelFactory,
