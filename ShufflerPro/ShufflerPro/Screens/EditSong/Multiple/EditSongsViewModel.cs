@@ -193,8 +193,22 @@ public class EditSongsViewModel : ViewModelBase
         _saving = true;
         RunAsync(async () => await _songController
             .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences, new AlbumArtState(null, false)))
+            .Do(_ => SetCollectionProperties())
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
+    }
+
+    private void SetCollectionProperties()
+    {
+        var changedProperties = _itemTracker.PropertyDifferences.Select(p => p.Key).ToList();
+
+        foreach (var song in _songs)
+        foreach (var changedProperty in changedProperties)
+        {
+            var prop = song.GetType().GetProperty(changedProperty);
+            var value = _itemTracker.PropertyDifferences[changedProperty];
+            prop?.SetValue(song, value);
+        }
     }
 
     public override Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())
