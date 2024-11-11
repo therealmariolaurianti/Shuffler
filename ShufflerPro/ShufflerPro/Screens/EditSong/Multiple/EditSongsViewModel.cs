@@ -6,6 +6,7 @@ using ShufflerPro.Client.Attributes;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.States;
+using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
@@ -13,12 +14,14 @@ namespace ShufflerPro.Screens.EditSong.Multiple;
 
 public class EditSongsViewModel : ViewModelBase
 {
+    private readonly BinaryHelper _binaryHelper;
     private readonly ItemTracker<EditSongsViewModel> _itemTracker;
+    private readonly Library _library;
     private readonly SongController _songController;
     private readonly List<Song> _songs;
-    private readonly Library _library;
     private string _album;
     private BitmapImage? _albumArt;
+    private bool _albumArtChanged;
     private string _artist;
     private bool _canSave;
     private string _duration;
@@ -31,12 +34,13 @@ public class EditSongsViewModel : ViewModelBase
         List<Song> songs,
         Library library,
         SongController songController,
-        ItemTracker<EditSongsViewModel> itemTracker)
+        ItemTracker<EditSongsViewModel> itemTracker, BinaryHelper binaryHelper)
     {
         _songs = songs;
         _library = library;
         _songController = songController;
         _itemTracker = itemTracker;
+        _binaryHelper = binaryHelper;
 
         Start();
         itemTracker.Attach(this);
@@ -187,7 +191,7 @@ public class EditSongsViewModel : ViewModelBase
 
     public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
     {
-        CanSave = _itemTracker.IsDirty; //|| _albumArtChanged;
+        CanSave = _itemTracker.IsDirty || _albumArtChanged;
         base.NotifyOfPropertyChange(propertyName);
     }
 
@@ -195,8 +199,8 @@ public class EditSongsViewModel : ViewModelBase
     {
         _saving = true;
         RunAsync(async () => await _songController
-            .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences, new AlbumArtState(null, false),
-                _library))
+            .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences,
+                new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged), _library))
             .Do(_ => SetCollectionProperties())
             .IfFail(_ => MessageBox.Show("Failed to update song."))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
@@ -213,6 +217,17 @@ public class EditSongsViewModel : ViewModelBase
             var value = _itemTracker.PropertyDifferences[changedProperty];
             prop?.SetValue(song, value);
         }
+    }
+
+    public void ChangeAlbumArt()
+    {
+        _binaryHelper
+            .Add()
+            .IfSuccess(bytes =>
+            {
+                _albumArtChanged = true;
+                AlbumArt = _binaryHelper.ToImage(bytes);
+            });
     }
 
     public override Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())

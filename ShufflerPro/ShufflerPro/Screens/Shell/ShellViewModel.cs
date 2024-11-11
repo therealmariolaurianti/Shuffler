@@ -120,6 +120,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange(nameof(CurrentSongTime));
             NotifyOfPropertyChange(nameof(AlbumArt));
             NotifyOfPropertyChange(nameof(HasAlbumArt));
+            NotifyOfPropertyChange(nameof(CanEditSong));
         }
     }
 
@@ -190,6 +191,7 @@ public class ShellViewModel : ViewModelBase
             _selectedSong = value;
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(IsRemoveSongVisible));
+            NotifyOfPropertyChange(nameof(CanEditSong));
         }
     }
 
@@ -425,6 +427,8 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
         }
     }
+
+    public bool CanEditSong => SelectedSong?.Id != CurrentSong?.Id;
 
     private void HandleSelectedTime()
     {

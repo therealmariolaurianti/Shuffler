@@ -57,7 +57,9 @@
         </ContextMenu>
         <ContextMenu
             x:Key="DataGridContextMenu">
-            <MenuItem Header="Edit" cal:Message.Attach="EditSong" />
+            <MenuItem 
+                IsEnabled="{Binding CanEditSong}"
+                Header="Edit" cal:Message.Attach="EditSong" />
             <Separator
                 Visibility="{calcBinding:Binding IsRemoveSongVisible}" />
             <MenuItem
