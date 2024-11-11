@@ -653,14 +653,9 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Left">
-                        <ToggleButton
-                            Cursor="Hand"
-                            ToolTip="Replay Album"
-                            Margin="2"
-                            IsEnabled="False"
-                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                        <controls:RepeatToggleButton 
                             IsChecked="{Binding IsRepeatChecked}"
-                            Width="50">
+                            RepeatType="{Binding RepeatType}">
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
@@ -669,7 +664,7 @@
                                     Height="20"
                                     Kind="Repeat" />
                             </StackPanel>
-                        </ToggleButton>
+                        </controls:RepeatToggleButton>
                         <ToggleButton
                             Cursor="Hand"
                             ToolTip="Shuffle"

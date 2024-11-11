@@ -59,6 +59,7 @@ public class ShellViewModel : ViewModelBase
     private LibrarySearchType _librarySearchType;
     private bool _playingPrevious;
     private PlaylistState? _playlistState;
+    private RepeatType _repeatType;
     private string _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
@@ -400,9 +401,7 @@ public class ShellViewModel : ViewModelBase
             if (!IsSliderBeingDragged)
                 HandleSelectedTime();
             else
-            {
                 ElapsedRunningTimeDisplay = TimeSpan.FromSeconds(value).ToString("mm':'ss");
-            }
         }
     }
 
@@ -420,6 +419,17 @@ public class ShellViewModel : ViewModelBase
         {
             if (value == _isSliderBeingDragged) return;
             _isSliderBeingDragged = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public RepeatType RepeatType
+    {
+        get => _repeatType;
+        set
+        {
+            if (value == _repeatType) return;
+            _repeatType = value;
             NotifyOfPropertyChange();
         }
     }
