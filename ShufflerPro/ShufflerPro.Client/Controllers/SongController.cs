@@ -110,41 +110,17 @@ public class SongController
                     song.Tag.AlbumArtists = [value];
                     song.Tag.Performers = [value];
 
-                    stateSong.CreatedAlbum!.Songs.Remove(stateSong);
-                    if (stateSong.CreatedAlbum.Songs.Count == 0)
-                    {
-                        var createdAlbumArtist = stateSong.CreatedAlbum.Artist;
-                        createdAlbumArtist.Albums.Remove(stateSong.CreatedAlbum);
-                        if (createdAlbumArtist.Albums.Count == 0)
-                            library.Artists.Remove(createdAlbumArtist);
-                    }
-
-                    var existingArtist = library.Artists.SingleOrDefault(a => a.Name == value);
-                    if (existingArtist != null)
-                    {
-                        var existingAlbum = existingArtist.Albums.SingleOrDefault(a => a.Name == stateSong.Album);
-                        if(existingAlbum != null)
-                            existingAlbum.Songs.Add(stateSong);
-                        else
-                        {
-                            var album = new Album(existingArtist, stateSong.Album, [stateSong]);
-                            existingArtist.Albums.Add(album);
-                        }
-                    }
-                    else
-                    {
-                        var newArtist = _artistFactory.Create(value, []);
-                        var album = new Album(newArtist, stateSong.Album, [stateSong]);
-
-                        newArtist.Albums.Add(album);
-                        library.Artists.Add(newArtist);
-                    }
+                    HandleUpdateArtist(stateSong, library, value, stateSong.Album);
                 }
                     break;
                 case "Album":
                 {
+                    var value = (string)propertyDifference.Value!;
+
                     song.Tag.Album = null;
-                    song.Tag.Album = (string)propertyDifference.Value!;
+                    song.Tag.Album = value;
+
+                    HandleUpdateArtist(stateSong, library, stateSong.Artist, value);
                 }
                     break;
                 case "Track":
@@ -156,5 +132,48 @@ public class SongController
 
             return NewUnit.Default;
         });
+    }
+
+    private void HandleUpdateArtist(Song stateSong, Library library, string artistValue, string albumValue)
+    {
+        if(stateSong.CreatedAlbum?.Name != albumValue)
+            UpdateExistingSongCollections(stateSong, library);
+
+        var existingArtist = library.Artists.SingleOrDefault(a => a.Name == artistValue);
+        if (existingArtist != null)
+        {
+            var existingAlbum = existingArtist.Albums.SingleOrDefault(a => a.Name == albumValue);
+            if (existingAlbum != null)
+            {
+                if(existingAlbum.Songs.All(s => s.Id != stateSong.Id))
+                    existingAlbum.Songs.Add(stateSong);
+            }
+            else
+            {
+                var album = new Album(existingArtist, stateSong.Album, [stateSong]);
+                existingArtist.Albums.Add(album);
+            }
+        }
+        else
+        {
+            var newArtist = _artistFactory.Create(artistValue, []);
+            var album = new Album(newArtist, stateSong.Album, [stateSong]);
+
+            newArtist.Albums.Add(album);
+            stateSong.CreatedAlbum = album;
+            library.Artists.Add(newArtist);
+        }
+    }
+
+    private static void UpdateExistingSongCollections(Song stateSong, Library library)
+    {
+        stateSong.CreatedAlbum!.Songs.Remove(stateSong);
+        if (stateSong.CreatedAlbum.Songs.Count == 0)
+        {
+            var createdAlbumArtist = stateSong.CreatedAlbum.Artist;
+            createdAlbumArtist.Albums.Remove(stateSong.CreatedAlbum);
+            if (createdAlbumArtist.Albums.Count == 0)
+                library.Artists.Remove(createdAlbumArtist);
+        }
     }
 }
