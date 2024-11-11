@@ -28,7 +28,7 @@ public class StartupViewModel : ViewModelBase
 
     protected override void OnViewLoaded(object view)
     {
-        //RunAsync(async () => await Load());
+        RunAsync(async () => await Load());
     }
 
     private async Task Load()
