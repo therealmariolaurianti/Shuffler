@@ -399,6 +399,10 @@ public class ShellViewModel : ViewModelBase
 
             if (!IsSliderBeingDragged)
                 HandleSelectedTime();
+            else
+            {
+                ElapsedRunningTimeDisplay = TimeSpan.FromSeconds(value).ToString("mm':'ss");
+            }
         }
     }
 
@@ -521,10 +525,6 @@ public class ShellViewModel : ViewModelBase
         {
             ElapsedRunningTime = timeSpan.TotalSeconds;
             ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
-        }
-        else
-        {
-            
         }
     }
 

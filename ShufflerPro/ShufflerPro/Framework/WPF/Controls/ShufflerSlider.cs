@@ -51,13 +51,14 @@ public class ShufflerSlider : Slider
     protected override void OnThumbDragDelta(DragDeltaEventArgs e)
     {
         IsDragging = true;
+        SelectedValue = Value;
         base.OnThumbDragDelta(e);
     }
 
     protected override void OnThumbDragCompleted(DragCompletedEventArgs e)
     {
         base.OnThumbDragCompleted(e);
-
+        
         IsDragging = false;
         SelectedValue = Value;
         StartingValue = _startingValue;
