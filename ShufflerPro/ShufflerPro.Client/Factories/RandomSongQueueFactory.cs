@@ -6,7 +6,7 @@ namespace ShufflerPro.Client.Factories;
 
 public class RandomSongQueueState
 {
-    public RandomSongQueueState(Song? currentSong, ObservableCollection<Song> songs, SongStack songStack,
+    public RandomSongQueueState(Song? currentSong, ObservableCollection<Song>? songs, SongStack songStack,
         bool playingPrevious, bool isSourceGrid)
     {
         CurrentSong = currentSong;
@@ -17,7 +17,7 @@ public class RandomSongQueueState
     }
 
     public Song? CurrentSong { get; }
-    public ObservableCollection<Song> Songs { get; }
+    public ObservableCollection<Song>? Songs { get; }
     public SongStack SongStack { get; }
     public bool PlayingPrevious { get; set; }
     public bool IsSourceGrid { get; }

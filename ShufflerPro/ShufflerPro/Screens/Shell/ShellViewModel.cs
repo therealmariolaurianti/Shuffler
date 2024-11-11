@@ -48,7 +48,7 @@ public class ShellViewModel : ViewModelBase
     private Song? _currentSong;
     private TimeSpan _currentSongTime;
     private double _elapsedRunningTime;
-    private string _elapsedRunningTimeDisplay;
+    private string? _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
@@ -57,7 +57,7 @@ public class ShellViewModel : ViewModelBase
     private bool _playingPrevious;
     private PlaylistState? _playlistState;
     private RepeatType _repeatType;
-    private string _searchText;
+    private string? _searchText;
     private Album? _selectedAlbum;
     private Artist? _selectedArtist;
     private PlaylistGridItem? _selectedPlaylist;
@@ -66,8 +66,8 @@ public class ShellViewModel : ViewModelBase
     private double _selectedSongTime;
     private SourceTreeViewItem? _selectedTreeViewItem;
     private ISongQueue? _songQueue;
-    private ObservableCollection<Song> _songs;
-    private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
+    private ObservableCollection<Song>? _songs;
+    private ObservableCollection<SourceTreeViewItem>? _sourceTreeItems;
     private double _startingSongTime;
     private CountDownTimer? _timer;
 
@@ -125,7 +125,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Song> Songs
+    public ObservableCollection<Song>? Songs
     {
         get => _songs;
         set
@@ -200,15 +200,18 @@ public class ShellViewModel : ViewModelBase
     {
         get
         {
-            var totalSongs = Songs.Count;
-            var totalSpan = Songs
+            var totalSongs = Songs?.Count;
+            var totalSpan = Songs?
                 .Aggregate(TimeSpan.Zero, (sumSoFar, nextMyObject) =>
                 {
                     if (nextMyObject.Duration.HasValue)
                         return sumSoFar + nextMyObject.Duration.Value;
                     return sumSoFar;
                 });
-            return $"{totalSongs} songs, {totalSpan.Duration().StripMilliseconds()} total time";
+            if (totalSpan is null)
+                return "Library is Empty";
+
+            return $"{totalSongs} songs, {totalSpan.Value.Duration().StripMilliseconds()} total time";
         }
     }
 
@@ -225,7 +228,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string ElapsedRunningTimeDisplay
+    public string? ElapsedRunningTimeDisplay
     {
         get => _elapsedRunningTimeDisplay;
         set
@@ -240,7 +243,7 @@ public class ShellViewModel : ViewModelBase
 
     private TimeSpan TimeSpan { get; }
 
-    public ObservableCollection<SourceTreeViewItem> SourceTreeItems
+    public ObservableCollection<SourceTreeViewItem>? SourceTreeItems
     {
         get => _sourceTreeItems;
         set
@@ -289,7 +292,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
-    public string SearchText
+    public string? SearchText
     {
         get => _searchText;
         set
@@ -668,7 +671,7 @@ public class ShellViewModel : ViewModelBase
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 
-            return _songQueueFactory.Create(currentSong, Songs, 
+            return _songQueueFactory.Create(currentSong, Songs,
                 new RepeatState(IsRepeatChecked, RepeatType));
         });
     }
@@ -719,7 +722,7 @@ public class ShellViewModel : ViewModelBase
     {
         if (SelectedSong is null)
         {
-            var firstSong = Songs.FirstOrDefault();
+            var firstSong = Songs?.FirstOrDefault();
             if (firstSong is null)
                 return NewResultExtensions.CreateFail<NewUnit>(new Exception("No song to plays"));
 
@@ -795,11 +798,11 @@ public class ShellViewModel : ViewModelBase
 
     private void ProcessSourceFolders()
     {
-        SourceTreeItems.Clear();
+        SourceTreeItems?.Clear();
 
         var buildContextMenu = _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath, RemoveSourceFolder);
         foreach (var sourceFolder in SourceFolders)
-            SourceTreeItems.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
+            SourceTreeItems?.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
         HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
         NotifyCollectionsChanged();
@@ -828,7 +831,7 @@ public class ShellViewModel : ViewModelBase
                     }
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                     {
-                        SourceTreeItems.Remove(_selectedTreeViewItem);
+                        SourceTreeItems?.Remove(_selectedTreeViewItem);
                     }
 
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
@@ -848,7 +851,7 @@ public class ShellViewModel : ViewModelBase
                         parent = parentItem;
                         continue;
                     case null:
-                        SourceTreeItems.Remove(parent);
+                        SourceTreeItems?.Remove(parent);
                         break;
                 }
 
@@ -944,7 +947,7 @@ public class ShellViewModel : ViewModelBase
             {
                 if (mouseEventArgs.OriginalSource.GetType() == typeof(MetroThumb))
                     return;
-                
+
                 var selectedSongs = SelectedSongs.Cast<Song>().ToList();
                 DragDrop.DoDragDrop(dp, selectedSongs, DragDropEffects.Move);
             }

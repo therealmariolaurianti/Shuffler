@@ -17,7 +17,7 @@ public class PlaylistState(IReadOnlyCollection<Song> songs)
         .Distinct()
         .ToObservableCollection();
 
-    public ObservableCollection<Song> Songs { get; set; } = songs.ToObservableCollection();
+    public ObservableCollection<Song>? Songs { get; set; } = songs.ToObservableCollection();
 
     public ObservableCollection<Album> FilterAlbums(Artist? selectedArtist)
     {

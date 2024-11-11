@@ -8,7 +8,7 @@ namespace ShufflerPro.Client.Factories;
 
 public class SongQueueFactory
 {
-    public ISongQueue Create(Song? currentSong, ObservableCollection<Song> songs, RepeatState repeatState)
+    public ISongQueue Create(Song? currentSong, ObservableCollection<Song>? songs, RepeatState repeatState)
     {
         return new SongQueue
         {
@@ -18,7 +18,7 @@ public class SongQueueFactory
         };
     }
 
-    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song> createdAlbumSongs,
+    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song>? createdAlbumSongs,
         RepeatState repeatState)
     {
         if (currentSong is null)
@@ -49,7 +49,7 @@ public class SongQueueFactory
         return nextSong;
     }
 
-    private static Song? GetPreviousSong(Song? currentSong, ObservableCollection<Song> createdAlbumSongs)
+    private static Song? GetPreviousSong(Song? currentSong, ObservableCollection<Song>? createdAlbumSongs)
     {
         if (currentSong is null)
             return null;
