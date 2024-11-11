@@ -41,8 +41,10 @@ public class SongQueueFactory
             if (repeatState.RepeatType == RepeatType.Artist)
             {
                 var nextAlbumIndex = currentSong.CreatedAlbum!.Artist.Albums.IndexOf(currentSong.CreatedAlbum);
-                var nextAlbum = currentSong.CreatedAlbum.Artist.Albums.ElementAtOrDefault(nextAlbumIndex);
-                return nextAlbum?.Songs.FirstOrDefault();
+                var nextAlbum = currentSong.CreatedAlbum.Artist.Albums.ElementAtOrDefault(nextAlbumIndex + 1);
+                return nextAlbum is null 
+                    ? currentSong.CreatedAlbum.Artist.Albums.FirstOrDefault()?.Songs.FirstOrDefault() 
+                    : nextAlbum.Songs.FirstOrDefault();
             }
         }
 

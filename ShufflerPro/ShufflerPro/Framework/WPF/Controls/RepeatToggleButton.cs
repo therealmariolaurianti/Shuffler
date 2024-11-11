@@ -9,7 +9,8 @@ namespace ShufflerPro.Framework.WPF.Controls;
 public class RepeatToggleButton : ToggleButton
 {
     public static readonly DependencyProperty RepeatTypeProperty = DependencyProperty.Register(
-        nameof(RepeatType), typeof(RepeatType), typeof(RepeatToggleButton), new PropertyMetadata(default(RepeatType)));
+        nameof(RepeatType), typeof(RepeatType), typeof(RepeatToggleButton), 
+        new FrameworkPropertyMetadata(default(RepeatType), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
     public RepeatToggleButton()
     {
@@ -45,8 +46,8 @@ public class RepeatToggleButton : ToggleButton
         album.Checked += MenuItemChecked;
 
         contextMenu.Items.Add(song);
-        contextMenu.Items.Add(artist);
         contextMenu.Items.Add(album);
+        contextMenu.Items.Add(artist);
 
         ContextMenu = contextMenu;
     }
