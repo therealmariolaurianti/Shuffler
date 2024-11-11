@@ -58,7 +58,7 @@ public static class LinqExtensions
 
     public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source)
     {
-        return source.OrderBy(x => Guid.NewGuid());
+        return source.OrderBy(_ => Guid.NewGuid());
     }
 
     public static string? ToFormattedString(this string[]? items, string separator)

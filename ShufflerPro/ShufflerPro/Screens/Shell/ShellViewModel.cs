@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -587,6 +588,7 @@ public class ShellViewModel : ViewModelBase
         ApplicationVolumeLevel = calculatedVolume / (ushort.MaxValue / 10d);
     }
 
+    [UsedImplicitly]
     public void PlayArtist()
     {
         var firstSong = SelectedArtist?.Songs.OrderBy(s => s.Artist)
@@ -598,6 +600,7 @@ public class ShellViewModel : ViewModelBase
         PlaySong();
     }
 
+    [UsedImplicitly]
     public void PlayAlbum()
     {
         SelectedSong = SelectedAlbum?.Songs.FirstOrDefault();
@@ -610,6 +613,7 @@ public class ShellViewModel : ViewModelBase
         PlaySong();
     }
 
+    [UsedImplicitly]
     public void PlayPause()
     {
         if (_songQueue?.CurrentSong is null)
@@ -632,6 +636,7 @@ public class ShellViewModel : ViewModelBase
         NotifyOfPropertyChange(nameof(IsPlaying));
     }
 
+    [UsedImplicitly]
     public void AdjustApplicationVolume()
     {
         var newVolume = ushort.MaxValue / 10d * ApplicationVolumeLevel;
@@ -688,6 +693,7 @@ public class ShellViewModel : ViewModelBase
         return songQueue;
     }
 
+    [UsedImplicitly]
     public void GridDoubleClicked(object sender, MouseButtonEventArgs e)
     {
         PlaySong(true);
@@ -744,6 +750,7 @@ public class ShellViewModel : ViewModelBase
             : _songFilterController.FilterSongs(AllSongs, artist, album);
     }
 
+    [UsedImplicitly]
     public void AddSource()
     {
         using (var fbd = new FolderBrowserDialog())
@@ -790,6 +797,7 @@ public class ShellViewModel : ViewModelBase
         Process.Start("explorer.exe", _selectedTreeViewItem.SourceFolder.FullPath);
     }
 
+    [UsedImplicitly]
     public void SelectedTreeViewItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
     {
         if (e.NewValue is SourceTreeViewItem treeViewItem)
@@ -887,6 +895,7 @@ public class ShellViewModel : ViewModelBase
         return treeItem;
     }
 
+    [UsedImplicitly]
     public void PreviousSong()
     {
         if (CurrentSong is null || _songQueue is null)
@@ -902,6 +911,7 @@ public class ShellViewModel : ViewModelBase
         _playerController.Previous(_songQueue);
     }
 
+    [UsedImplicitly]
     public void NextSong()
     {
         if (CurrentSong is null || _songQueue is null)
@@ -921,11 +931,13 @@ public class ShellViewModel : ViewModelBase
         NotifyInterfaceChanged();
     }
 
+    [UsedImplicitly]
     public void LaunchGitHubSite()
     {
         WebsiteLauncher.OpenWebsite("https://github.com/therealmariolaurianti/Shuffler");
     }
 
+    [UsedImplicitly]
     public void LaunchSettings()
     {
         RunAsync(async () =>
@@ -935,6 +947,7 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
+    [UsedImplicitly]
     public void GridMouseLeftButtonDown(object source, MouseEventArgs mouseEventArgs)
     {
         if (SelectedSongs is null || SelectedSongs.Count == 0)
@@ -948,6 +961,7 @@ public class ShellViewModel : ViewModelBase
             }
     }
 
+    [UsedImplicitly]
     public void PlaylistDrop(object source, DragEventArgs dragEventArgs)
     {
         var inputElement = (ListBox)source;
@@ -978,6 +992,7 @@ public class ShellViewModel : ViewModelBase
         }
     }
 
+    [UsedImplicitly]
     public void AddPlaylist()
     {
         RunAsync(async () => await _playlistController
@@ -1002,12 +1017,14 @@ public class ShellViewModel : ViewModelBase
             }));
     }
 
+    [UsedImplicitly]
     public void RemovePlaylist()
     {
         RunAsync(async () => await _playlistController.Delete(_library, SelectedPlaylist!.Item)
             .Do(_ => NotifyOfPropertyChange(nameof(Playlists))));
     }
 
+    [UsedImplicitly]
     public void RemoveSongFromPlaylist()
     {
         RunAsync(async () =>
@@ -1023,6 +1040,7 @@ public class ShellViewModel : ViewModelBase
         });
     }
 
+    [UsedImplicitly]
     public void EditSong()
     {
         if (SelectedSong is null)

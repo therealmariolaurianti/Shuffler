@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using JetBrains.Annotations;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Extensions;
@@ -24,6 +25,7 @@ public class StartupViewModel : ViewModelBase
         _windowManager = windowManager;
     }
 
+    [UsedImplicitly]
     public string FunFact => FunFacts.Items.PickRandom();
 
     protected override void OnViewLoaded(object view)
