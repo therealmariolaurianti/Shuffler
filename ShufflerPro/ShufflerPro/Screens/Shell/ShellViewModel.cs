@@ -668,16 +668,9 @@ public class ShellViewModel : ViewModelBase
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 
-            if (IsRepeatChecked)
-                return Repeat(currentSong);
-
-            return _songQueueFactory.Create(currentSong, Songs);
+            return _songQueueFactory.Create(currentSong, Songs, 
+                new RepeatState(IsRepeatChecked, RepeatType));
         });
-    }
-
-    private ISongQueue Repeat(Song currentSong)
-    {
-        throw new NotImplementedException();
     }
 
     private ISongQueue ShuffleSongs(Song currentSong, bool isSourceGrid)
@@ -937,7 +930,7 @@ public class ShellViewModel : ViewModelBase
     [UsedImplicitly]
     public void LaunchSettings()
     {
-        RunAsync(async () => { await _windowManager.LaunchSettings(); });
+        RunAsync(async () => await _windowManager.LaunchSettings());
     }
 
     [UsedImplicitly]

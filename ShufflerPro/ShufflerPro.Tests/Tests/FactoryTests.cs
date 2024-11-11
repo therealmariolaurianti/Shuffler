@@ -3,7 +3,9 @@ using FluentAssertions;
 using NUnit.Framework;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Enums;
 using ShufflerPro.Client.Factories;
+using ShufflerPro.Client.States;
 using ShufflerPro.Tests.Base;
 
 namespace ShufflerPro.Tests.Tests;
@@ -58,7 +60,7 @@ public class FactoryTests : UnitTestBase
         var collection = new ObservableCollection<Song> { previousSong, currentSong, nextSong };
 
         var songQueueFactory = new SongQueueFactory();
-        var songQueue = songQueueFactory.Create(currentSong, collection);
+        var songQueue = songQueueFactory.Create(currentSong, collection, new RepeatState(false, RepeatType.Song));
 
         songQueue.PreviousSong.Should().Be(previousSong);
         songQueue.CurrentSong.Should().Be(currentSong);
@@ -74,7 +76,7 @@ public class FactoryTests : UnitTestBase
         var collection = new ObservableCollection<Song> { currentSong, nextSong };
 
         var songQueueFactory = new SongQueueFactory();
-        var songQueue = songQueueFactory.Create(currentSong, collection);
+        var songQueue = songQueueFactory.Create(currentSong, collection, new RepeatState(false, RepeatType.Song));
 
         songQueue.PreviousSong.Should().Be(null);
         songQueue.CurrentSong.Should().Be(currentSong);
@@ -90,7 +92,7 @@ public class FactoryTests : UnitTestBase
         var collection = new ObservableCollection<Song> { previousSong, currentSong };
 
         var songQueueFactory = new SongQueueFactory();
-        var songQueue = songQueueFactory.Create(currentSong, collection);
+        var songQueue = songQueueFactory.Create(currentSong, collection, new RepeatState(false, RepeatType.Song));
 
         songQueue.PreviousSong.Should().Be(previousSong);
         songQueue.CurrentSong.Should().Be(currentSong);

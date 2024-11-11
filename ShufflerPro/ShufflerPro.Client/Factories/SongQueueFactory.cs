@@ -1,28 +1,50 @@
 ﻿using System.Collections.ObjectModel;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Enums;
 using ShufflerPro.Client.Interfaces;
+using ShufflerPro.Client.States;
 
 namespace ShufflerPro.Client.Factories;
 
 public class SongQueueFactory
 {
-    public ISongQueue Create(Song? currentSong, ObservableCollection<Song> songs)
+    public ISongQueue Create(Song? currentSong, ObservableCollection<Song> songs, RepeatState repeatState)
     {
         return new SongQueue
         {
             CurrentSong = currentSong ?? songs.FirstOrDefault(),
             PreviousSong = GetPreviousSong(currentSong, songs),
-            NextSong = GetNextSong(currentSong, songs)
+            NextSong = GetNextSong(currentSong, songs, repeatState)
         };
     }
 
-    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song> createdAlbumSongs)
+    private static Song? GetNextSong(Song? currentSong, ObservableCollection<Song> createdAlbumSongs,
+        RepeatState repeatState)
     {
         if (currentSong is null)
             return null;
 
+        if (repeatState is { IsRepeatChecked: true, RepeatType: RepeatType.Song })
+            return currentSong;
+
         var index = createdAlbumSongs.IndexOf(currentSong) + 1;
         var nextSong = createdAlbumSongs.Skip(index).FirstOrDefault();
+
+        if (nextSong is null)
+        {
+            if (!repeatState.IsRepeatChecked)
+                return nextSong;
+
+            if (repeatState.RepeatType == RepeatType.Album)
+                return createdAlbumSongs.First();
+
+            if (repeatState.RepeatType == RepeatType.Artist)
+            {
+                var nextAlbumIndex = currentSong.CreatedAlbum!.Artist.Albums.IndexOf(currentSong.CreatedAlbum);
+                var nextAlbum = currentSong.CreatedAlbum.Artist.Albums.ElementAtOrDefault(nextAlbumIndex);
+                return nextAlbum?.Songs.FirstOrDefault();
+            }
+        }
 
         return nextSong;
     }

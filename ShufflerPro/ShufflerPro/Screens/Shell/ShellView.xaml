@@ -15,6 +15,7 @@
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
+    ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
     wpf:ScreenName.Name="Shuffler Pro"
     Width="1200"
@@ -26,7 +27,7 @@
             <Button
                 cal:Message.Attach="LaunchGitHubSite"
                 Cursor="Hand"
-                ToolTip="Open up the GitHub site">
+                ToolTip="Open up the GitHub page">
                 <iconPacks:PackIconModern
                     Width="22"
                     Height="22"
