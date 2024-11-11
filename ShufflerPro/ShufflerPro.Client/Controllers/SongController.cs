@@ -136,7 +136,7 @@ public class SongController
 
     private void HandleUpdateArtist(Song stateSong, Library library, string artistValue, string albumValue)
     {
-        if(stateSong.CreatedAlbum?.Name != albumValue)
+        if (stateSong.CreatedAlbum?.Name != albumValue)
             UpdateExistingSongCollections(stateSong, library);
 
         var existingArtist = library.Artists.SingleOrDefault(a => a.Name == artistValue);
@@ -145,23 +145,28 @@ public class SongController
             var existingAlbum = existingArtist.Albums.SingleOrDefault(a => a.Name == albumValue);
             if (existingAlbum != null)
             {
-                if(existingAlbum.Songs.All(s => s.Id != stateSong.Id))
+                if (existingAlbum.Songs.All(s => s.Id != stateSong.Id))
+                {
                     existingAlbum.Songs.Add(stateSong);
+                    stateSong.CreatedAlbum = existingAlbum;
+                }
             }
             else
             {
-                var album = new Album(existingArtist, stateSong.Album, [stateSong]);
+                var album = new Album(existingArtist, albumValue, [stateSong]);
                 existingArtist.Albums.Add(album);
+                stateSong.CreatedAlbum = album;
             }
         }
         else
         {
             var newArtist = _artistFactory.Create(artistValue, []);
-            var album = new Album(newArtist, stateSong.Album, [stateSong]);
+            var album = new Album(newArtist, albumValue, [stateSong]);
 
             newArtist.Albums.Add(album);
-            stateSong.CreatedAlbum = album;
             library.Artists.Add(newArtist);
+            
+            stateSong.CreatedAlbum = album;
         }
     }
 
