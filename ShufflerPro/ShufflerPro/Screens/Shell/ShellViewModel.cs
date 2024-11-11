@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using JetBrains.Annotations;
+using MahApps.Metro.Controls;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -946,8 +947,11 @@ public class ShellViewModel : ViewModelBase
             return;
 
         if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
-            if (source is DependencyObject dp)
+            if (source is DataGrid dp)
             {
+                if (mouseEventArgs.OriginalSource.GetType() == typeof(MetroThumb))
+                    return;
+                
                 var selectedSongs = SelectedSongs.Cast<Song>().ToList();
                 DragDrop.DoDragDrop(dp, selectedSongs, DragDropEffects.Move);
             }

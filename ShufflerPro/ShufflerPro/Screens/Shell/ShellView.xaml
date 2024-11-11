@@ -57,7 +57,7 @@
         </ContextMenu>
         <ContextMenu
             x:Key="DataGridContextMenu">
-            <MenuItem 
+            <MenuItem
                 IsEnabled="{Binding CanEditSong}"
                 Header="Edit" cal:Message.Attach="EditSong" />
             <Separator
@@ -655,7 +655,7 @@
                         Orientation="Horizontal"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Left">
-                        <controls:RepeatToggleButton 
+                        <controls:RepeatToggleButton
                             IsChecked="{Binding IsRepeatChecked}"
                             RepeatType="{Binding RepeatType}">
                             <StackPanel
