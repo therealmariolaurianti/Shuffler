@@ -17,7 +17,17 @@ public class ShufflerSlider : Slider
         nameof(StartingValue), typeof(double), typeof(ShufflerSlider),
         new PropertyMetadata(default(double)));
 
+    public static readonly DependencyProperty IsDraggingProperty = DependencyProperty.Register(
+        nameof(IsDragging), typeof(bool), typeof(ShufflerSlider),
+        new PropertyMetadata(default(bool)));
+
     private double _startingValue;
+
+    public bool IsDragging
+    {
+        get => (bool)GetValue(IsDraggingProperty);
+        set => SetValue(IsDraggingProperty, value);
+    }
 
     public double StartingValue
     {
@@ -34,14 +44,21 @@ public class ShufflerSlider : Slider
     protected override void OnThumbDragStarted(DragStartedEventArgs e)
     {
         _startingValue = Value;
-        
+
         base.OnThumbDragStarted(e);
+    }
+
+    protected override void OnThumbDragDelta(DragDeltaEventArgs e)
+    {
+        IsDragging = true;
+        base.OnThumbDragDelta(e);
     }
 
     protected override void OnThumbDragCompleted(DragCompletedEventArgs e)
     {
         base.OnThumbDragCompleted(e);
-        
+
+        IsDragging = false;
         SelectedValue = Value;
         StartingValue = _startingValue;
     }

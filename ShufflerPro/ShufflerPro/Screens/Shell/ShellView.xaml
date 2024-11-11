@@ -203,10 +203,11 @@
                                     Minimum="0"
                                     Height="13"
                                     VerticalAlignment="Center"
-                                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                                     Interval="1000"
+                                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                                     SelectedValue="{Binding SelectedSongTime}"
                                     StartingValue="{Binding StartingSongTime, Mode=OneWay}"
+                                    IsDragging="{Binding IsSliderBeingDragged, Mode=TwoWay}"
                                     Maximum="{Binding MaxRunTime}"
                                     Value="{Binding ElapsedRunningTime}" />
                                 <TextBlock

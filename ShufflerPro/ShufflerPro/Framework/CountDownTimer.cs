@@ -23,7 +23,7 @@ public class CountDownTimer : IDisposable
         Init();
     }
 
-    public double StepMs
+    public double Interval
     {
         get => _timer.Interval;
         set => _timer.Interval = value;
@@ -56,7 +56,7 @@ public class CountDownTimer : IDisposable
 
     private void Init()
     {
-        StepMs = 1000;
+        Interval = 1000;
         _timer.Elapsed += TimerTick;
     }
 

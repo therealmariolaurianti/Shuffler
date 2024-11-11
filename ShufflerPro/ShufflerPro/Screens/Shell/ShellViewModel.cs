@@ -49,11 +49,13 @@ public class ShellViewModel : ViewModelBase
     private readonly IWindowManager _windowManager;
     private double _applicationVolumeLevel;
     private Song? _currentSong;
+    private TimeSpan _currentSongTime;
     private double _elapsedRunningTime;
     private string _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
+    private bool _isSliderBeingDragged;
     private LibrarySearchType _librarySearchType;
     private bool _playingPrevious;
     private PlaylistState? _playlistState;
@@ -394,7 +396,9 @@ public class ShellViewModel : ViewModelBase
             if (value.Equals(_selectedSongTime)) return;
             _selectedSongTime = value;
             NotifyOfPropertyChange();
-            HandleSelectedTime();
+
+            if (!IsSliderBeingDragged)
+                HandleSelectedTime();
         }
     }
 
@@ -405,16 +409,27 @@ public class ShellViewModel : ViewModelBase
     public bool CanRemovePlaylist => SelectedPlaylist != null;
     public bool IsRemoveSongVisible => SelectedPlaylist != null && SelectedSong != null;
 
+    public bool IsSliderBeingDragged
+    {
+        get => _isSliderBeingDragged;
+        set
+        {
+            if (value == _isSliderBeingDragged) return;
+            _isSliderBeingDragged = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     private void HandleSelectedTime()
     {
         var timeSpan = TimeSpan.FromSeconds(SelectedSongTime);
 
-        if (SelectedSongTime > StartingSongTime)
-            _playerController.AddTime(timeSpan);
-        else
-            _playerController.SubtractTime(timeSpan);
-        
-        //WireTimer(timeSpan);
+        _playerController.SetCurrentTime(timeSpan);
+
+        _timer!.Pause();
+        SetElapsedRunTimeDisplay(timeSpan);
+        _currentSongTime = timeSpan;
+        _timer.Start();
     }
 
     private void SelectedPlaylistChanged()
@@ -496,10 +511,21 @@ public class ShellViewModel : ViewModelBase
         if (CurrentSong is null || _timer is null)
             return;
 
-        var timeSpan = CurrentSong.Duration!.Value.Subtract(_timer.TimeLeft);
+        _currentSongTime = _currentSongTime.Add(new TimeSpan(0, 0, 1));
+        SetElapsedRunTimeDisplay(_currentSongTime);
+    }
 
-        ElapsedRunningTime = timeSpan.TotalSeconds;
-        ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+    private void SetElapsedRunTimeDisplay(TimeSpan timeSpan)
+    {
+        if (!IsSliderBeingDragged)
+        {
+            ElapsedRunningTime = timeSpan.TotalSeconds;
+            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+        }
+        else
+        {
+            
+        }
     }
 
     private void NotifyCollectionsChanged()
@@ -678,8 +704,9 @@ public class ShellViewModel : ViewModelBase
 
             SelectedSong = firstSong;
         }
-        
+
         ResetCurrentElapsed();
+        _currentSongTime = TimeSpan.Zero;
 
         return NewUnit.Default;
     }

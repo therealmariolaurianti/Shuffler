@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using System.Timers;
+using NAudio.Wave;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
@@ -92,35 +93,38 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
         }
     }
 
-    public void AddTime(TimeSpan time)
+    public void SetCurrentTime(TimeSpan time)
     {
         if (_audioFileReader is null)
             return;
 
-        _audioFileReader.CurrentTime = _audioFileReader.CurrentTime.Add(time);
-        StopStart(time);
-    }
+        _audioFileReader.CurrentTime = time;
 
-    public void SubtractTime(TimeSpan time)
-    {
-        if (_audioFileReader is null)
-            return;
+        var actual = (TimeSpan)(_songQueue.CurrentSong!.Duration! - time);
 
-        _audioFileReader.CurrentTime = _audioFileReader.CurrentTime.Subtract(time);
-        StopStart(time);
+        StopStart(actual);
     }
 
     public void DelayAction(double millisecond)
     {
-        _timer = new PausableTimer(millisecond);
-
-        _timer.Elapsed += delegate
+        if (_timer != null)
         {
-            _timer.Stop();
-            StartNextSong(_songQueue);
-        };
+            if (_timer.Enabled)
+                _timer.Stop();
+
+            _timer.Elapsed -= OnTimerElapsed;
+        }
+
+        _timer = new PausableTimer(millisecond);
+        _timer.Elapsed += OnTimerElapsed;
 
         _timer.Start();
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        _timer?.Stop();
+        StartNextSong(_songQueue);
     }
 
     public void StopStart(TimeSpan time)

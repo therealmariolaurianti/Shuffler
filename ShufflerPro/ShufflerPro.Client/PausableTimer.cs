@@ -27,7 +27,7 @@ public class PausableTimer : Timer
         base.Start();
     }
 
-    private void OnElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
+    private void OnElapsed(object? sender, ElapsedEventArgs elapsedEventArgs)
     {
         if (_resumed)
         {
