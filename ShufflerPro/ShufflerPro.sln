@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Tests", "Shuffl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Database", "ShufflerPro.Database\ShufflerPro.Database.csproj", "{79DF2810-FE35-4964-857F-40166FB1A1F8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Installer", "ShufflerPro.Installer\ShufflerPro.Installer.csproj", "{EBA8CAB7-C026-4036-9247-EA3A7A7D8C56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBA8CAB7-C026-4036-9247-EA3A7A7D8C56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBA8CAB7-C026-4036-9247-EA3A7A7D8C56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBA8CAB7-C026-4036-9247-EA3A7A7D8C56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBA8CAB7-C026-4036-9247-EA3A7A7D8C56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

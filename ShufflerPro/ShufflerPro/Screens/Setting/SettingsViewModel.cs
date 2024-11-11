@@ -1,4 +1,5 @@
-﻿using ShufflerPro.Client;
+﻿using System.Runtime.CompilerServices;
+using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
@@ -17,6 +18,7 @@ public class SettingsViewModel : ViewModelBase
     private readonly ItemTracker<Settings> _itemTracker;
     private readonly ISettings _settings;
     private readonly SettingsController _settingsController;
+    private bool _canSave;
     private bool _saving;
 
     public SettingsViewModel(ISettings settings, ItemTracker<Settings> itemTracker,
@@ -51,6 +53,23 @@ public class SettingsViewModel : ViewModelBase
             NotifyOfPropertyChange();
             ThemeManager.ChangeTheme(value, IsDarkModeEnabled);
         }
+    }
+
+    public bool CanSave
+    {
+        get => _canSave;
+        set
+        {
+            if (value == _canSave) return;
+            _canSave = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
+    {
+        CanSave = _itemTracker.IsDirty;
+        base.NotifyOfPropertyChange(propertyName);
     }
 
     public void Save()

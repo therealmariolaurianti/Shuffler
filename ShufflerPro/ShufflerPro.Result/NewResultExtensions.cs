@@ -106,7 +106,13 @@ public static class NewResultExtensions
     public static async Task<NewResult<T>> IfFail<T>(this Task<NewResult<T>> ma, Action<Exception> f)
     {
         var item = await ma;
-        return item.IfFail(ex => f(ex));
+        return item.IfFail(f);
+    }
+    
+    public static NewResult<T> IfFail<T>(this NewResult<T> ma, Func<Exception, NewResult<T>> func)
+    {
+        var item = ma;
+        return item.BindFail(func);
     }
 
     public static async Task<NewResult<T>> IfSuccess<T>(this Task<NewResult<T>> task, Action<T> f)
