@@ -1,67 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>ShufflerPro - Your Ultimate Music Library</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
     <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Hero Section -->
     <header class="hero">
-        <div class="container">
-            <h1>ShufflerPro</h1>
-            <p>Your Ultimate Music Library – Seamless Playback, No Ads, and Fully Open-Source!</p>
-            <a href="#download" class="btn-primary">Download Now</a>
-        </div>
+      <div class="container">
+        <h1>ShufflerPro</h1>
+        <p>
+          Your Ultimate Music Library – Seamless Playback, No Ads, and Fully
+          Open-Source!
+        </p>
+        <a href="#download" class="btn-primary">Download Now</a>
+      </div>
     </header>
 
     <!-- Features Section -->
     <section class="features">
-        <div class="container">
-            <h2>Features</h2>
-            <div class="feature-items">
-                <div class="feature-item">
-                    <i class="fa fa-play-circle"></i>
-                    <h3>Seamless Playback</h3>
-                    <p>Enjoy uninterrupted music with ShufflerPro's smooth playback and intuitive UI.</p>
-                </div>
-                <div class="feature-item">
-                    <i class="fa fa-file-audio"></i>
-                    <h3>Supports All Audio File Types</h3>
-                    <p>From MP3 to FLAC, ShufflerPro handles all your favorite audio formats with ease.</p>
-                </div>
-                <div class="feature-item">
-                    <i class="fa fa-ban"></i>
-                    <h3>No Ads</h3>
-                    <p>Enjoy your music without interruptions. No ads, no distractions, just pure music.</p>
-                </div>
-                <div class="feature-item">
-                    <i class="fa fa-user-slash"></i>
-                    <h3>No Account Required</h3>
-                    <p>Just download, install, and start listening. No sign-ups, no logins, just music.</p>
-                </div>
-                <div class="feature-item">
-                    <i class="fa fa-github"></i>
-                    <h3>100% Open Source</h3>
-                    <p>ShufflerPro is open-source and available on GitHub. Contribute to the project!</p>
-                </div>
-            </div>
+      <h2>Key Features</h2>
+      <div class="feature-items">
+        <div class="feature-item">
+          <i class="fas fa-play-circle"></i>
+          <h3>Seamless Playback</h3>
+          <p>
+            Enjoy uninterrupted music with gapless and smooth transitions
+            between tracks.
+          </p>
         </div>
+        <div class="feature-item">
+          <i class="fas fa-file-audio"></i>
+          <h3>All Major File Types</h3>
+          <p>
+            Supports MP3, FLAC, WAV, and all popular audio formats for a
+            complete experience.
+          </p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-ban"></i>
+          <h3>No Ads</h3>
+          <p>No annoying ads interrupting your music experience.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-user-secret"></i>
+          <h3>No Account</h3>
+          <p>No need to sign up. Just download and enjoy instantly.</p>
+        </div>
+        <div class="feature-item">
+          <i class="fab fa-github"></i>
+          <h3>100% Open Source</h3>
+          <p>
+            ShufflerPro is completely open-source on GitHub. Contribute and
+            improve it together!
+          </p>
+        </div>
+      </div>
     </section>
+
+  <!-- GitHub Repository Preview Section -->
+  <section class="github-preview">
+    <h2>ShufflerPro on GitHub</h2>
+    <div class="github-info">
+        <div class="repo-details">
+            <p id="repo-description">Loading description...</p>
+            <p>Stars: <span id="repo-stars">Loading...</span></p>
+            <p>Forks: <span id="repo-forks">Loading...</span></p>
+            <p>Commits: <span id="repo-commits">Loading...</span></p>
+            <div id="repo-last-commit"></div> <!-- Last commit message -->
+            <div id="repo-last-commit-details"></div> <!-- Author and Date of last commit -->
+            <a id="repo-link" href="https://github.com/therealmariolaurianti/Shuffler" target="_blank" class="btn-primary">Visit GitHub Repository</a>
+        </div>
+        <div class="repo-stats">
+            <img id="repo-avatar" src="" alt="GitHub Repo Avatar" />
+        </div>
+    </div>
+</section>
 
     <!-- Footer -->
     <footer>
-        <div class="container">
-            <p>&copy; 2024 ShufflerPro. All rights reserved.</p>
-            <div class="social-links">
-                <a href="https://github.com/yourusername/shufflerpro" class="social-icon" title="GitHub"><i class="fa fa-github"></i></a>
-                <a href="https://twitter.com/yourusername" class="social-icon" title="Twitter"><i class="fa fa-twitter"></i></a>
-                <a href="https://facebook.com/yourusername" class="social-icon" title="Facebook"><i class="fa fa-facebook"></i></a>
-            </div>
-        </div>
+      <p>&copy; 2024</p>
     </footer>
-</body>
+
+    <!-- Link to external JavaScript file -->
+    <script src="script.js"></script>
+  </body>
 </html>

@@ -8,122 +8,145 @@
 
 html, body {
   height: 100%;
-  font-size: 16px;
+  font-size: 15px;
   color: #333;
-  background-color: #f4f4f9;
+  background-color: #f9f9f9;
 }
 
-/* Hero Section - Smaller and Gray Background */
+/* Hero Section - Music Themed Background */
 .hero {
-  background-color: #f0f0f0; /* Gray background */
-  height: 40vh; /* Reduced height */
+  background: url('https://images.unsplash.com/photo-1521747116042-5b7e9d2194e2') no-repeat center center/cover; /* Replace with your own image URL */
+  background-color: rgba(0, 0, 0, 0.6); /* Fallback color with slight transparency for text readability */
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #333; /* Dark text for readability */
   text-align: center;
-  padding: 20px; /* Padding to make it less cramped */
+  color: white;
+  padding: 20px;
+  height: 50vh;
+  min-height: 300px;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
 }
 
 .hero h1 {
-  font-size: 2.5rem; /* Reduced font size */
+  font-size: 3rem;
   margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .hero p {
-  font-size: 1rem; /* Adjusted font size */
+  font-size: 1.25rem;
   margin-bottom: 20px;
+  line-height: 1.5;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.btn-primary {
+.hero .btn-primary {
   background-color: #ff7f50;
   color: white;
   padding: 15px 30px;
   text-decoration: none;
   border-radius: 30px;
   font-size: 1rem;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
+  margin-top: auto;
+  box-shadow: 0 10px 30px rgba(255, 127, 80, 0.3);
 }
 
-.btn-primary:hover {
+.hero .btn-primary:hover {
   background-color: #e06c3b;
+  transform: scale(1.05);
+}
+
+.hero .btn-primary:focus {
+  outline: 3px solid #ff7f50;
+  outline-offset: 5px;
 }
 
 /* Features Section */
 .features {
-  padding: 100px 20px; /* Reduced padding to bring content closer */
-  background-color: #fff; /* White background for contrast */
+  padding: 100px 20px;
+  background-color: #fff;
   text-align: center;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column; /* Stack content vertically */
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1); /* Subtle box shadow for depth */
-  border-radius: 8px; /* Rounded corners */
-  margin-top: -50px; /* Lift section up to create spacing between the hero section and the features */
+  flex-direction: column;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-top: -50px;
 }
 
 .features h2 {
-  font-size: 3.5rem; /* Larger font size */
-  margin-bottom: 30px; /* Reduced margin to bring the heading closer to the items */
+  font-size: 3.5rem;
+  margin-bottom: 30px;
   color: #333;
-  font-weight: 700; /* Bolder heading */
-  letter-spacing: 1px; /* Increased letter spacing */
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 /* Feature Items Container */
 .feature-items {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns by default */
-  gap: 20px; /* Reduced gap between feature items */
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
 }
 
 .feature-item {
-  padding: 20px; /* Reduced padding inside each feature item */
+  padding: 25px;
   background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow for individual items */
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   text-align: center;
-  transition: all 0.3s ease; /* Smooth transition for all changes */
-  border: 1px solid #ddd; /* Light border for a subtle outline */
-  display: flex; /* Use flexbox to ensure content inside is spaced evenly */
+  transition: all 0.3s ease;
+  border: 1px solid #ddd;
+  display: flex;
   flex-direction: column;
-  justify-content: center; /* Center content vertically */
-  align-items: center; /* Center content horizontally */
-  height: 300px; /* Fixed height for all items */
-  width: 100%; /* Full width of the container */
+  justify-content: space-between;
+  height: 350px;
 }
 
 .feature-item i {
   font-size: 4rem;
-  margin-bottom: 15px; /* Reduced space between icon and text */
-  color: #ff7f50; /* Accent color for icons */
+  margin-bottom: 20px;
+  color: #ff7f50;
+  transition: color 0.3s;
 }
 
 .feature-item h3 {
-  font-size: 1.8rem; /* Slightly smaller font size */
-  margin-bottom: 10px; /* Reduced margin */
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: #333;
 }
 
 .feature-item p {
-  font-size: 1rem;
-  color: #666; /* Slightly lighter text color for readability */
+  font-size: 1.125rem;
+  color: #666;
   margin-top: 10px;
+  line-height: 1.5;
+}
+
+.feature-item:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  background-color: #ff7f50;
+  color: white;
+}
+
+.feature-item:hover i {
+  color: white;
 }
 
 /* Hover Effect for Feature Items */
 .feature-item:hover {
-  transform: translateY(-10px); /* Lift the item up */
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15); /* Larger shadow on hover */
-  background-color: #ff7f50; /* Change background color on hover */
-  color: white; /* Change text color to white */
-}
-
-.feature-item:hover i {
-  color: white; /* Change icon color on hover */
+  transform: translateY(-8px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  background-color: #e06c3b;
 }
 
 /* CTA Section */
@@ -183,24 +206,29 @@ footer p {
 
 /* Media Queries */
 
-/* For screens smaller than 700px */
-@media (max-width: 700px) {
-  .feature-items {
-      grid-template-columns: 1fr; /* Stack the items in a single column */
+/* For screens smaller than 1024px */
+@media (max-width: 1024px) {
+  .hero {
+      height: 40vh;
   }
 
   .hero h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
   }
 
   .hero p {
-      font-size: 1rem;
+      font-size: 1.125rem;
+  }
+
+  .feature-items {
+      grid-template-columns: 1fr 1fr;
   }
 }
 
+/* For screens smaller than 768px */
 @media (max-width: 768px) {
-  .feature-items {
-      grid-template-columns: 1fr 1fr; /* Stack 2 items per row */
+  .hero {
+      height: 35vh;
   }
 
   .hero h1 {
@@ -210,18 +238,132 @@ footer p {
   .hero p {
       font-size: 1rem;
   }
+
+  .feature-items {
+      grid-template-columns: 1fr;
+  }
 }
 
+/* For screens smaller than 480px */
 @media (max-width: 480px) {
-  .feature-items {
-      grid-template-columns: 1fr; /* Stack 1 item per row */
+  .hero {
+      height: 30vh;
   }
 
   .hero h1 {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
   }
 
   .hero p {
       font-size: 0.875rem;
   }
+
+  .feature-items {
+      grid-template-columns: 1fr;
+  }
+}
+
+/* GitHub Preview Section */
+.github-preview {
+  background-color: #f1f1f1;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.github-preview h2 {
+  font-size: 2.2rem; /* Smaller font size */
+  margin-bottom: 40px;
+  color: #333;
+}
+
+.github-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.repo-details {
+  flex: 1;
+  max-width: 60%;
+  padding: 20px;
+  text-align: left;
+}
+
+.repo-details h3 {
+  font-size: 1.8rem; /* Slightly smaller */
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.repo-details p {
+  font-size: 1.125rem; /* Slightly smaller text */
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.repo-details a {
+  margin-top: 20px;
+  display: inline-block;
+  font-size: 1rem;
+  padding: 12px 30px;
+  background-color: #2a2a2a;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.repo-details a:hover {
+  background-color: #ff7f50;
+}
+
+/* Repo Avatar */
+.repo-stats {
+  flex: 1;
+  max-width: 30%;
+  padding: 20px;
+  text-align: center;
+}
+
+.repo-stats img {
+  width: 150px;
+  border-radius: 50%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* Last commit message and details */
+#repo-last-commit {
+  font-size: 1.2rem;
+  margin-top: 10px;
+  color: #333;
+}
+
+#repo-last-commit .commit-message {
+  display: block;
+  font-weight: bold;
+  color: #007BFF;
+  margin-bottom: 5px;
+}
+
+#repo-last-commit-details {
+  font-size: 1rem;
+  color: #555;
+  margin-top: 5px;
+}
+
+#repo-last-commit-details .commit-author {
+  color: #333;
+  font-weight: bold;
+}
+
+#repo-last-commit-details .commit-date {
+  color: #777;
+  font-style: italic;
+}
+
+#repo-description {
+  display: none;
 }
