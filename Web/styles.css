@@ -334,9 +334,11 @@ footer p {
 
 /* Repo Avatar */
 .repo-stats {
-  flex: 1;
+  flex: 3;
+  overflow: hidden;
   max-width: 30%;
-  padding: 0px;
+  width: 100%;
+  height: auto;
   text-align: center;
 }
 
