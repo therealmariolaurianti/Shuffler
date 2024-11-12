@@ -15,7 +15,7 @@ html, body {
 
 /* Hero Section - Music Themed Background */
 .hero {
-  background: url('https://images.unsplash.com/photo-1521747116042-5b7e9d2194e2') no-repeat center center/cover; /* Replace with your own image URL */
+  background: url('https://plus.unsplash.com/premium_photo-1679082307672-02ebf0ba9b9a?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover; /* Replace with your own image URL */
   background-color: rgba(0, 0, 0, 0.6); /* Fallback color with slight transparency for text readability */
   display: flex;
   justify-content: center;
@@ -344,7 +344,7 @@ footer p {
 #repo-last-commit .commit-message {
   display: block;
   font-weight: bold;
-  color: #007BFF;
+  color: #ff7f50;
   margin-bottom: 5px;
 }
 
