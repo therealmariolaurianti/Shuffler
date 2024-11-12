@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 
 html, body {
@@ -15,7 +15,7 @@ html, body {
 
 /* Hero Section - Music Themed Background */
 .hero {
-  background: url('https://plus.unsplash.com/premium_photo-1679082307672-02ebf0ba9b9a?q=80&w=2370&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center/cover; /* Replace with your own image URL */
+  background: url('https://img.freepik.com/free-vector/shiny-tune-rhythm-notation-background-musical-event-vector_1017-47634.jpg?t=st=1731434239~exp=1731437839~hmac=1860f5b8b86239f0c6c3c88d9b60a34114d45a3491d7bbe0abcb93ce859c19ec&w=1060') no-repeat center center/cover; /* Replace with your own image URL */
   background-color: rgba(0, 0, 0, 0.6); /* Fallback color with slight transparency for text readability */
   display: flex;
   justify-content: center;
@@ -44,7 +44,7 @@ html, body {
 }
 
 .hero .btn-primary {
-  background-color: #ff7f50;
+  background-color: #0cc2c0;
   color: white;
   padding: 15px 30px;
   text-decoration: none;
@@ -56,12 +56,12 @@ html, body {
 }
 
 .hero .btn-primary:hover {
-  background-color: #e06c3b;
+  background-color: #097e9a;
   transform: scale(1.05);
 }
 
 .hero .btn-primary:focus {
-  outline: 3px solid #ff7f50;
+  outline: 3px solid #097e9a;
   outline-offset: 5px;
 }
 
@@ -114,7 +114,7 @@ html, body {
 .feature-item i {
   font-size: 4rem;
   margin-bottom: 20px;
-  color: #ff7f50;
+  color: #097e9a;
   transition: color 0.3s;
 }
 
@@ -134,7 +134,7 @@ html, body {
 .feature-item:hover {
   transform: translateY(-10px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
-  background-color: #ff7f50;
+  background-color: #097e9a;
   color: white;
 }
 
@@ -142,11 +142,19 @@ html, body {
   color: white;
 }
 
+.feature-item:hover h3 {
+  color: white;
+}
+
+.feature-item:hover p {
+  color: white;
+}
+
 /* Hover Effect for Feature Items */
 .feature-item:hover {
   transform: translateY(-8px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-  background-color: #e06c3b;
+  background-color: #097e9a;
 }
 
 /* CTA Section */
@@ -317,7 +325,7 @@ footer p {
 }
 
 .repo-details a:hover {
-  background-color: #ff7f50;
+  background-color: #097e9a;
 }
 
 /* Repo Avatar */
@@ -344,7 +352,7 @@ footer p {
 #repo-last-commit .commit-message {
   display: block;
   font-weight: bold;
-  color: #ff7f50;
+  color: #097e9a;
   margin-bottom: 5px;
 }
 
