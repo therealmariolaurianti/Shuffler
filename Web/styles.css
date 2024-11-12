@@ -31,7 +31,7 @@ html, body {
 }
 
 .hero h1 {
-  font-size: 3rem;
+  font-size: 5rem;
   margin-bottom: 10px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
@@ -186,7 +186,7 @@ html, body {
 
 /* Footer */
 footer {
-  background-color: #333;
+  background-color: #001d25;
   color: white;
   padding: 20px 0;
   text-align: center;
@@ -274,14 +274,14 @@ footer p {
 /* GitHub Preview Section */
 .github-preview {
   background-color: #f1f1f1;
-  padding: 60px 20px;
+  padding: 20px 20px;
   text-align: center;
 }
 
 .github-preview h2 {
   font-size: 2.2rem; /* Smaller font size */
   margin-bottom: 40px;
-  color: #333;
+  color: #001d25;
 }
 
 .github-info {
@@ -303,7 +303,7 @@ footer p {
 .repo-details h3 {
   font-size: 1.8rem; /* Slightly smaller */
   margin-bottom: 20px;
-  color: #333;
+  color: #001d25;
 }
 
 .repo-details p {
@@ -346,7 +346,7 @@ footer p {
 #repo-last-commit {
   font-size: 1.2rem;
   margin-top: 10px;
-  color: #333;
+  color: #001d25;
 }
 
 #repo-last-commit .commit-message {
@@ -363,7 +363,7 @@ footer p {
 }
 
 #repo-last-commit-details .commit-author {
-  color: #333;
+  color: #001d25;
   font-weight: bold;
 }
 
