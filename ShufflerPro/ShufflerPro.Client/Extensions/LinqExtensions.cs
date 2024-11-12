@@ -4,7 +4,7 @@ namespace ShufflerPro.Client.Extensions;
 
 public static class LinqExtensions
 {
-    public static List<string> DefaultExtensions => ["mp3", "m4a"];
+    public static List<string> DefaultExtensions => ["mp3", "m4a", "flac"];
 
     public static List<string> GetFilesByExtension(this string path)
     {

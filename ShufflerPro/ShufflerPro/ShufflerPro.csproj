@@ -10,6 +10,7 @@
         <Product>Shuffler</Product>
         <AssemblyName>ShufflerPro</AssemblyName>
         <RootNamespace>ShufflerPro</RootNamespace>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     </PropertyGroup>
 
     <ItemGroup>
