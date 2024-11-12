@@ -15,7 +15,7 @@ html, body {
 
 /* Hero Section - Music Themed Background */
 .hero {
-  background: url('background.jpg') no-repeat center center/cover; /* Replace with your own image URL */
+  background: url('images/background.jpg') no-repeat center center/cover; /* Replace with your own image URL */
   background-color: rgba(0, 0, 0, 0.6); /* Fallback color with slight transparency for text readability */
   display: flex;
   justify-content: center;
