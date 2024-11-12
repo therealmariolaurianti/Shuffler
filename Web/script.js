@@ -1,118 +1,98 @@
-// Define constants for the GitHub API and repo data
-const username = "therealmariolaurianti"; // Example GitHub username
-const repoName = "Shuffler"; // Example GitHub repository name
-const commitsPerPage = 30; // Number of commits to fetch per page
-let totalCommits = 0; // Total commits fetched
-let page = 1; // Page number for pagination
+document.addEventListener('DOMContentLoaded', function () {
+    const repoUrl = "https://api.github.com/repos/therealmariolaurianti/Shuffler"; // GitHub API endpoint for the repository
+    const commitsUrl = "https://api.github.com/repos/therealmariolaurianti/Shuffler/commits"; // API endpoint for commits
+    const repoDescription = document.getElementById('repo-description');
+    const repoStars = document.getElementById('repo-stars');
+    const repoForks = document.getElementById('repo-forks');
+    const repoCommits = document.getElementById('repo-commits');
+    const repoLastCommit = document.getElementById('repo-last-commit');
+    const repoLastCommitDetails = document.getElementById('repo-last-commit-details');
+    const repoAvatar = document.getElementById('repo-avatar');
+    const repoLink = document.getElementById('repo-link');
 
-// GitHub API URLs
-const repoUrl = `https://api.github.com/repos/${username}/${repoName}`;
-const commitsUrl = `https://api.github.com/repos/${username}/${repoName}/commits`;
-
-// DOM elements to display data
-const repoDescription = document.getElementById("repo-description");
-const repoStars = document.getElementById("repo-stars");
-const repoForks = document.getElementById("repo-forks");
-const repoAvatar = document.getElementById("repo-avatar");
-const repoLink = document.getElementById("repo-link");
-const repoCommits = document.getElementById("repo-commits");
-const repoLastCommit = document.getElementById("repo-last-commit");
-const repoLastCommitDetails = document.getElementById("repo-last-commit-details");
-
-// Fetch and display repo data
-function fetchRepoData() {
+    // Fetch data from GitHub API for the repository
     fetch(repoUrl)
-        .then(response => {
-            if (!response.ok) {
-                console.error('Failed to fetch repo data', response.status);
-                repoDescription.textContent = "Error loading data.";
-                return;
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data) {
-                // Handle missing or empty data fields with fallbacks
-                repoDescription.textContent = data.description || "No description available.";
-                repoStars.textContent = data.stargazers_count || "N/A";
-                repoForks.textContent = data.forks_count || "N/A";
-                repoAvatar.src = data.owner.avatar_url || 'default-avatar.jpg'; // Fallback image
-                repoLink.href = data.html_url || "#"; // Fallback to a default link
-                fetchCommits(); // Fetch commit data once the repo data is loaded
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching repo data:', error);
-            repoDescription.textContent = "Error loading data.";
-        });
-}
-
-// Fetch and count commits using pagination
-function fetchCommits() {
-    fetch(`${commitsUrl}?page=${page}&per_page=${commitsPerPage}`)
         .then(response => response.json())
         .then(data => {
-            if (data.length > 0) {
-                totalCommits += data.length; // Add the number of commits on this page
-                if (data.length === commitsPerPage) {
-                    // Continue fetching if there are more commits
-                    page++;
-                    fetchCommits();
-                } else {
-                    // No more commits, finalize the total commit count
-                    repoCommits.textContent = totalCommits;
-                }
-            } else {
-                // No commits found
-                repoCommits.textContent = "0";
-            }
+            // Populate the GitHub preview with data from the repository
+            repoDescription.textContent = data.description || "No description available.";
+            repoStars.textContent = data.stargazers_count;
+            repoForks.textContent = data.forks_count;
+            repoAvatar.src = data.owner.avatar_url;
+            repoAvatar.alt = data.owner.login + ' Avatar';
+            repoLink.href = data.html_url; // Dynamically set the GitHub URL link
         })
         .catch(error => {
-            console.error('Error fetching commits:', error);
-            repoCommits.textContent = "N/A"; // Fallback if there's an error
+            console.error('Error fetching GitHub repo data:', error);
+            // Fallback values in case of an error
+            repoDescription.textContent = "Unable to load repository details.";
+            repoStars.textContent = "N/A";
+            repoForks.textContent = "N/A";
         });
-}
 
-// Fetch and display the last commit's details
-function fetchLastCommit() {
-    fetch(commitsUrl + '?page=1&per_page=1') // Only get the first commit (latest)
+    // Function to fetch and calculate the total number of commits (handling pagination)
+    function getTotalCommits() {
+        let totalCommits = 0;
+        let page = 1;
+        const commitsPerPage = 30; // Default GitHub API returns 30 commits per page
+
+        function fetchCommits() {
+            // Fetch commits for the current page
+            fetch(`${commitsUrl}?page=${page}&per_page=${commitsPerPage}`)
+                .then(response => response.json())
+                .then(data => {
+                    totalCommits += data.length; // Add the number of commits from the current page
+
+                    // Check if there are more pages
+                    if (data.length === commitsPerPage) {
+                        page++; // Increment to get the next page
+                        fetchCommits(); // Recursively fetch next page of commits
+                    } else {
+                        // Once all pages are fetched, display the total commit count
+                        repoCommits.textContent = totalCommits;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching commits:', error);
+                    repoCommits.textContent = "N/A";
+                });
+        }
+
+        // Start fetching commits from page 1
+        fetchCommits();
+    }
+
+    // Fetch commit data from the GitHub API to get the last commit message, author, date, and time
+    fetch(commitsUrl)
         .then(response => response.json())
         .then(data => {
-            if (data.length > 0) {
-                const lastCommit = data[0];
-                repoLastCommit.textContent = lastCommit.committer.date ? `Last commit: ${lastCommit.committer.date}` : "No commit date available.";
-                repoLastCommitDetails.textContent = lastCommit.commit.message || "No commit message available.";
-            } else {
-                repoLastCommit.textContent = "No commits yet.";
-                repoLastCommitDetails.textContent = "N/A";
+            // Get the most recent commit
+            const lastCommit = data[0];
+            if (lastCommit) {
+                const commitMessage = lastCommit.commit.message || "No commit message available.";
+                const commitAuthor = lastCommit.commit.author.name || "Unknown Author";
+                const commitDate = new Date(lastCommit.commit.author.date); // Convert to Date object
+                const formattedDate = commitDate.toLocaleString(); // Format date and time in local format
+
+                // Format the commit information
+                repoLastCommit.innerHTML = `
+                  <strong>Last Commit:</strong><br />
+                  <span class="commit-message">${commitMessage}</span>
+              `;
+                repoLastCommitDetails.innerHTML = `
+                  <span class="commit-author">By: <strong>${commitAuthor}</strong></span><br />
+                  <span class="commit-date">On: <em>${formattedDate}</em></span>
+              `;
             }
         })
         .catch(error => {
-            console.error('Error fetching last commit:', error);
-            repoLastCommit.textContent = "Error loading commit data.";
+            console.error('Error fetching commit data:', error);
+            // Fallback values in case of an error
+            repoLastCommit.textContent = "N/A";
             repoLastCommitDetails.textContent = "N/A";
         });
-}
 
-// Check for API rate limit
-function checkRateLimit() {
-    fetch('https://api.github.com/rate_limit')
-        .then(response => response.json())
-        .then(data => {
-            const remaining = data.resources.core.remaining;
-            if (remaining === 0) {
-                console.warn("API rate limit reached. Please try again later.");
-            }
-        })
-        .catch(error => console.error('Error checking rate limit:', error));
-}
+    // Call function to get the total number of commits
+    getTotalCommits();
+});
 
-// Initialize the page
-function init() {
-    checkRateLimit(); // Check the rate limit before making requests
-    fetchRepoData(); // Fetch and display the repository data
-    fetchLastCommit(); // Fetch the last commit details
-}
-
-// Run the initialization function once the DOM is loaded
-document.addEventListener('DOMContentLoaded', init);
