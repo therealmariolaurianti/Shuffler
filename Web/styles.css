@@ -3,20 +3,28 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Roboto', sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   font-size: 15px;
+  width: 100%;
+  
   color: #333;
   background-color: #f9f9f9;
 }
 
 /* Hero Section - Music Themed Background */
 .hero {
-  background: url('images/background.jpg') no-repeat center center/cover; /* Replace with your own image URL */
-  background-color: rgba(0, 0, 0, 0.6); /* Fallback color with slight transparency for text readability */
+  background: url("images/background.jpg") no-repeat center center/cover; /* Replace with your own image URL */
+  background-color: rgba(
+    0,
+    0,
+    0,
+    0.6
+  ); /* Fallback color with slight transparency for text readability */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,6 +69,7 @@ html, body {
 
 .hero .btn-primary:hover {
   background-color: #0cc2c0;
+  cursor: pointer;
   transform: scale(1.05);
 }
 
@@ -221,57 +230,57 @@ footer p {
 /* For screens smaller than 1024px */
 @media (max-width: 1024px) {
   .hero {
-      height: 40vh;
+    height: 40vh;
   }
 
   .hero h1 {
-      font-size: 2.5rem;
+    font-size: 2.5rem;
   }
 
   .hero p {
-      font-size: 1.125rem;
+    font-size: 1.125rem;
   }
 
   .feature-items {
-      grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 /* For screens smaller than 768px */
 @media (max-width: 768px) {
   .hero {
-      height: 35vh;
+    height: 35vh;
   }
 
   .hero h1 {
-      font-size: 2rem;
+    font-size: 2rem;
   }
 
   .hero p {
-      font-size: 1rem;
+    font-size: 1rem;
   }
 
   .feature-items {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
 /* For screens smaller than 480px */
 @media (max-width: 480px) {
   .hero {
-      height: 30vh;
+    height: 30vh;
   }
 
   .hero h1 {
-      font-size: 1.75rem;
+    font-size: 1.75rem;
   }
 
   .hero p {
-      font-size: 0.875rem;
+    font-size: 0.875rem;
   }
 
   .feature-items {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
@@ -380,4 +389,85 @@ footer p {
 
 #repo-description {
   display: none;
+}
+
+/* Carousel Container */
+.carousel-container {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background-color: #f4f4f4;
+  align-items: center;
+  justify-self: center;
+  transition: all 0.5s ease; /* Smooth transition when resizing */
+}
+
+.carousel-wrapper {
+  display: flex;
+  transition: transform 0.5s ease;
+  width: 100%;
+}
+
+.carousel-wrapper img {
+  width: 100%; /* Image width now fills the container */
+  height: auto; /* Maintain the aspect ratio */
+  object-fit: contain; /* Make sure the image fits inside the container without cropping */
+}
+
+/* Carousel Navigation Buttons */
+.carousel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  font-size: 30px;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.prev-btn {
+  left: 20px;
+}
+
+.next-btn {
+  right: 20px;
+}
+
+.carousel-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+.carousel-indicators button {
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.carousel-indicators button.active {
+  background-color: #333;
+}
+
+/* Media Query: Center and adjust width for larger screens */
+@media (min-width: 800px) {
+  .carousel-container {
+      width: 800px; /* Fixed width of 800px for larger screens */
+  }
 }

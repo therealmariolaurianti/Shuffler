@@ -82,6 +82,29 @@
       </div>
     </section>
 
+    <div class="carousel-container">
+      <div class="carousel-wrapper">
+          <img src="https://via.placeholder.com/1200x800/FF5733/FFFFFF?text=Image+1" alt="Image 1">
+          <img src="https://via.placeholder.com/1200x800/33FF57/FFFFFF?text=Image+2" alt="Image 2">
+          <img src="https://via.placeholder.com/1200x800/3357FF/FFFFFF?text=Image+3" alt="Image 3">
+          <img src="https://via.placeholder.com/1200x800/FF33A1/FFFFFF?text=Image+4" alt="Image 4">
+          <img src="https://via.placeholder.com/1200x800/FFBD33/FFFFFF?text=Image+5" alt="Image 5">
+      </div>
+      <!-- Navigation buttons -->
+      <button class="carousel-btn prev-btn" onclick="moveSlide(-1)">&#10094;</button>
+      <button class="carousel-btn next-btn" onclick="moveSlide(1)">&#10095;</button>
+
+      <!-- Carousel indicators -->
+      <div class="carousel-indicators">
+          <button class="indicator" onclick="goToSlide(0)"></button>
+          <button class="indicator" onclick="goToSlide(1)"></button>
+          <button class="indicator" onclick="goToSlide(2)"></button>
+          <button class="indicator" onclick="goToSlide(3)"></button>
+          <button class="indicator" onclick="goToSlide(4)"></button>
+      </div>
+  </div>
+
+
     <!-- GitHub Repository Preview Section -->
     <section class="github-preview">
       <h2>ShufflerPro on GitHub</h2>
@@ -118,5 +141,6 @@
     <script src="scripts/script.js"></script>
     <script src="scripts/lastUpdated.js"></script>
     <script src="scripts/download.js"></script>
+    <script src="scripts/carousel.js"></script>
   </body>
 </html>
