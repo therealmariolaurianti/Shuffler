@@ -41,11 +41,13 @@ body {
 .hero h1 {
   font-size: 5rem;
   margin-bottom: 10px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .highlight {
   color: #0cc2c0; /* Change to your desired color */
+  font-weight: 100;
+  vertical-align: top;
+  
 }
 
 .hero p {
@@ -471,3 +473,5 @@ footer p {
       width: 800px; /* Fixed width of 800px for larger screens */
   }
 }
+
+

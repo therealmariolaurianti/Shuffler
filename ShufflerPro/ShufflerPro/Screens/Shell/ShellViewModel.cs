@@ -191,7 +191,7 @@ public class ShellViewModel : ViewModelBase
             if (Equals(value, _selectedSong)) return;
             _selectedSong = value;
             NotifyOfPropertyChange();
-            NotifyOfPropertyChange(nameof(IsRemoveSongVisible));
+            NotifyOfPropertyChange(nameof(IsRemoveSongFromPlaylistVisible));
             NotifyOfPropertyChange(nameof(CanEditSong));
         }
     }
@@ -359,7 +359,7 @@ public class ShellViewModel : ViewModelBase
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(CanRenamePlaylist));
             NotifyOfPropertyChange(nameof(CanRemovePlaylist));
-            NotifyOfPropertyChange(nameof(IsRemoveSongVisible));
+            NotifyOfPropertyChange(nameof(IsRemoveSongFromPlaylistVisible));
 
             SelectedPlaylistChanged();
         }
@@ -408,7 +408,7 @@ public class ShellViewModel : ViewModelBase
 
     public bool CanRenamePlaylist => SelectedPlaylist != null;
     public bool CanRemovePlaylist => SelectedPlaylist != null;
-    public bool IsRemoveSongVisible => SelectedPlaylist != null && SelectedSong != null;
+    public bool IsRemoveSongFromPlaylistVisible => SelectedPlaylist != null && SelectedSong != null;
 
     public bool IsSliderBeingDragged
     {
@@ -486,20 +486,23 @@ public class ShellViewModel : ViewModelBase
 
     private void OnSearchTextChanged()
     {
-        switch (LibrarySearchType)
+        Task.Run(() =>
         {
-            case LibrarySearchType.Artist:
-                Songs = _songFilterController.SearchSongs(AllSongs, SearchText, null, null);
-                break;
-            case LibrarySearchType.Song:
-                Songs = _songFilterController.SearchSongs(AllSongs, null, null, SearchText);
-                break;
-            case LibrarySearchType.Album:
-                Songs = _songFilterController.SearchSongs(AllSongs, null, SearchText, null);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+            switch (LibrarySearchType)
+            {
+                case LibrarySearchType.Artist:
+                    Songs = _songFilterController.SearchSongs(AllSongs, SearchText, null, null);
+                    break;
+                case LibrarySearchType.Song:
+                    Songs = _songFilterController.SearchSongs(AllSongs, null, null, SearchText);
+                    break;
+                case LibrarySearchType.Album:
+                    Songs = _songFilterController.SearchSongs(AllSongs, null, SearchText, null);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        });
     }
 
     private NewResult<NewUnit> WireTimer()
