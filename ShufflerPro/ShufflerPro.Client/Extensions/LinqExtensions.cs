@@ -65,4 +65,9 @@ public static class LinqExtensions
     {
         return items is null ? null : string.Join(separator, items);
     }
+
+    public static TimeSpan Tick(this TimeSpan timeSpan)
+    {
+        return timeSpan.Add(new TimeSpan(0, 0, 1));
+    }
 }

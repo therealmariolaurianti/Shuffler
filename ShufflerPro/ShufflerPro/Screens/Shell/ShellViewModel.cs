@@ -482,14 +482,16 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     {
         if (_timer is not { IsRunning: true })
             return;
-        
+
         var timeSpan = TimeSpan.FromSeconds(SelectedSongTime);
 
         _playerController.SetCurrentTime(timeSpan);
 
-        _timer!.Pause();
-        SetElapsedRunTimeDisplay(timeSpan);
-        _currentSongTime = timeSpan;
+        _timer.Pause();
+        {
+            SetElapsedRunTimeDisplay(timeSpan);
+            _currentSongTime = timeSpan;
+        }
         _timer.Start();
     }
 
@@ -535,20 +537,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     {
         Task.Run(() =>
         {
-            switch (LibrarySearchType)
+            Songs = LibrarySearchType switch
             {
-                case LibrarySearchType.Artist:
-                    Songs = _songFilterController.SearchSongs(AllSongs, SearchText, null, null);
-                    break;
-                case LibrarySearchType.Song:
-                    Songs = _songFilterController.SearchSongs(AllSongs, null, null, SearchText);
-                    break;
-                case LibrarySearchType.Album:
-                    Songs = _songFilterController.SearchSongs(AllSongs, null, SearchText, null);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                LibrarySearchType.Artist => _songFilterController.SearchSongs(AllSongs, SearchText, null, null),
+                LibrarySearchType.Song => _songFilterController.SearchSongs(AllSongs, null, null, SearchText),
+                LibrarySearchType.Album => _songFilterController.SearchSongs(AllSongs, null, SearchText, null),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         });
     }
 
@@ -575,7 +570,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         if (CurrentSong is null || _timer is null)
             return;
 
-        _currentSongTime = _currentSongTime.Add(new TimeSpan(0, 0, 1));
+        _currentSongTime = _currentSongTime.Tick();
         SetElapsedRunTimeDisplay(_currentSongTime);
     }
 
