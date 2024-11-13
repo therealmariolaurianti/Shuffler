@@ -5,9 +5,7 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class MediaController(
-    ArtistFactory artistFactory,
-    AlbumFactory albumFactory)
+public class MediaController(ArtistFactory artistFactory, AlbumFactory albumFactory)
 {
     public NewResult<NewUnit> LoadFromFolderPath(ICollection<SourceFolder> sourceFolders,
         Library library, List<ExcludedSong> excludedSongs)

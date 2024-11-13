@@ -15,7 +15,7 @@ public class SettingsController
     public async Task<NewResult<NewUnit>> Update(ItemTracker<Settings> itemTracker)
     {
         if (itemTracker.PropertyDifferences.Count == 0)
-            return NewUnit.Default;
+            return await NewUnit.DefaultAsync;
 
         return await _databaseController.UpdateSettings(itemTracker.Item);
     }
