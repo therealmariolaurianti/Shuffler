@@ -175,7 +175,7 @@ public class SourceTreeTests : UnitTestBase
         var library = new Library();
 
         mediaController
-            .LoadFromFolderPath(sourceFolders, library)
+            .LoadFromFolderPath(sourceFolders, library, [])
             .Do(_ =>
             {
                 root.IsProcessed.Should().Be(true);

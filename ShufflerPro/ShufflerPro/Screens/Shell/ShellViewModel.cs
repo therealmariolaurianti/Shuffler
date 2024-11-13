@@ -39,6 +39,7 @@ public class ShellViewModel : ViewModelBase
     private readonly PlayerController _playerController;
     private readonly PlaylistController _playlistController;
     private readonly RandomSongQueueFactory _randomSongQueueFactory;
+    private readonly SongController _songController;
     private readonly SongFilterController _songFilterController;
     private readonly SongQueueFactory _songQueueFactory;
     private readonly SongStack _songStack;
@@ -84,7 +85,7 @@ public class ShellViewModel : ViewModelBase
         SongStack songStack,
         PlaylistController playlistController,
         SongFilterController songFilterController,
-        ShufflerWindowManager windowManager)
+        ShufflerWindowManager windowManager, SongController songController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -98,6 +99,7 @@ public class ShellViewModel : ViewModelBase
         _playlistController = playlistController;
         _songFilterController = songFilterController;
         _windowManager = windowManager;
+        _songController = songController;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -777,7 +779,7 @@ public class ShellViewModel : ViewModelBase
             await Task.Run(() =>
             {
                 _sourceFolderController.BuildFromPath(folderPath, state)
-                    .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, _library))
+                    .Do(_ => _mediaController.LoadFromFolderPath(state.SourceFolders, _library, _library.ExcludedSongs))
                     .Do(_ => SourceFolders = state.SourceFolders);
             }).ConfigureAwait(true);
             return state;
@@ -1071,5 +1073,20 @@ public class ShellViewModel : ViewModelBase
                 HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                 NotifyCollectionsChanged();
             });
+    }
+
+    [UsedImplicitly]
+    public void RemoveSongFromLibrary()
+    {
+        var songs = SelectedSongs!.Cast<Song>().ToList();
+        
+        RunAsync(async () => await _songController
+            .Remove(songs, _library)
+            .IfFail(exception => _windowManager.ShowMessageBox(exception))
+            .IfSuccess(_ =>
+            {
+                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                NotifyCollectionsChanged();
+            }));
     }
 }

@@ -46,7 +46,7 @@ public class DatabaseController
             }
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> DeleteSource(SourceFolder sourceFolder)
@@ -59,7 +59,7 @@ public class DatabaseController
                     await sourceCollection.Delete(folder.Id);
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<List<Playlist>>> LoadPlaylists()
@@ -95,7 +95,7 @@ public class DatabaseController
             playlist.SetId(localDatabaseKey.AsBsonValue());
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> AddPlaylistIndex(PlaylistIndex playlistIndex)
@@ -108,7 +108,7 @@ public class DatabaseController
             playlistIndex.SetId(localDatabaseKey.AsBsonValue());
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> UpdatePlaylist(Playlist item)
@@ -121,7 +121,7 @@ public class DatabaseController
                 return NewResultExtensions.CreateFail<NewUnit>($"Failed to update {item.Name}");
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> DeletePlaylist(Playlist item)
@@ -139,7 +139,7 @@ public class DatabaseController
                 return NewResultExtensions.CreateFail<NewUnit>($"Failed to delete {item.Name}");
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> RemovePlaylistIndex(PlaylistIndex playlistIndex)
@@ -168,7 +168,8 @@ public class DatabaseController
         }
     }
 
-    private static async Task<NewResult<ISettings>> AddDefaultSettings(LocalDatabaseCollection<Settings> settingsCollection)
+    private static async Task<NewResult<ISettings>> AddDefaultSettings(
+        LocalDatabaseCollection<Settings> settingsCollection)
     {
         var createdSettings = new Settings
         {
@@ -191,6 +192,29 @@ public class DatabaseController
                 return NewResultExtensions.CreateFail<NewUnit>("Failed to update settings.");
         }
 
-        return NewUnit.Default;
+        return await NewUnit.DefaultAsync;
+    }
+
+    public async Task<NewResult<ExcludedSong>> RemoveSong(Guid selectedSongId)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var excludedSong = new ExcludedSong(ObjectId.NewObjectId(), selectedSongId);
+            var excludedSongCollection = connection.GetCollection<ExcludedSong>();
+            var localDatabaseKey = await excludedSongCollection.Insert(excludedSong);
+
+            excludedSong.Id = localDatabaseKey.AsBsonValue();
+
+            return excludedSong;
+        }
+    }
+
+    public async Task<NewResult<List<ExcludedSong>>> LoadExcludedSongs()
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var excludedSongCollection = connection.GetCollection<ExcludedSong>();
+            return (await excludedSongCollection.FindAll()).ToList();
+        }
     }
 }

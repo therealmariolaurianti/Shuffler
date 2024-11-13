@@ -9,4 +9,5 @@ public class Library
     public ObservableCollection<Artist> Artists { get; } = new();
     public IReadOnlyCollection<Song> Songs => Albums.SelectMany(al => al.Songs).ToList();
     public IReadOnlyCollection<Album> Albums => Artists.SelectMany(al => al.Albums).ToList();
+    public List<ExcludedSong> ExcludedSongs { get; set; } = new();
 }

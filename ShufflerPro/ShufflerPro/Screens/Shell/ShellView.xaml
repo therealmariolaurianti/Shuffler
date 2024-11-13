@@ -62,7 +62,8 @@
                 IsEnabled="{Binding CanEditSong}"
                 Header="Edit" cal:Message.Attach="EditSong" />
             <MenuItem 
-                Header="Remove From Library"/>
+                Header="Remove From Library"
+                cal:Message.Attach="RemoveSongFromLibrary"/>
             <Separator
                 Visibility="{calcBinding:Binding IsRemoveSongFromPlaylistVisible}" />
             <MenuItem

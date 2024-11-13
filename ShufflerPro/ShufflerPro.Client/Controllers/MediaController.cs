@@ -10,24 +10,24 @@ public class MediaController(
     AlbumFactory albumFactory)
 {
     public NewResult<NewUnit> LoadFromFolderPath(ICollection<SourceFolder> sourceFolders,
-        Library library)
+        Library library, List<ExcludedSong> excludedSongs)
     {
         return NewResultExtensions.Try(() =>
         {
             var roots = sourceFolders.Where(sf => sf.IsRoot);
             foreach (var root in roots)
-                ProcessPath(library, root);
+                ProcessPath(library, root, excludedSongs);
 
             return NewUnit.Default;
         });
     }
 
-    private void ProcessPath(Library library, SourceFolder sourceFolder)
+    private void ProcessPath(Library library, SourceFolder sourceFolder, List<ExcludedSong> excludedSongs)
     {
         if (sourceFolder is { IsRoot: false, IsProcessed: false, Items.Count: 0 })
         {
             var path = sourceFolder.FullPath;
-            var loadSongsInPath = LoadSongsInPath(path, sourceFolder);
+            var loadSongsInPath = LoadSongsInPath(path, sourceFolder, excludedSongs);
 
             Process(library, loadSongsInPath);
         }
@@ -35,10 +35,11 @@ public class MediaController(
         sourceFolder.IsProcessed = true;
 
         foreach (var folderItem in sourceFolder.Items)
-            ProcessPath(library, folderItem);
+            ProcessPath(library, folderItem, excludedSongs);
     }
 
-    private static List<Song> LoadSongsInPath(string mediaLibraryPath, SourceFolder sourceFolder)
+    private static List<Song> LoadSongsInPath(string mediaLibraryPath, SourceFolder sourceFolder,
+        List<ExcludedSong> excludedSongs)
     {
         try
         {
@@ -46,12 +47,15 @@ public class MediaController(
                 .GetFilesByExtension()
                 .ToHashSet();
 
-            return songsPaths.AsParallel().Select(SongFactory.Create).ToList();
+            var songs = songsPaths.AsParallel().Select(SongFactory.Create).ToList();
+            var songsToExclude = songs.Where(s => excludedSongs.Select(es => es.SongId).Contains(s.Id));
+
+            return songs.Except(songsToExclude).ToList();
         }
         catch (Exception)
         {
             sourceFolder.IsValid = false;
-            return new List<Song>();
+            return [];
         }
     }
 

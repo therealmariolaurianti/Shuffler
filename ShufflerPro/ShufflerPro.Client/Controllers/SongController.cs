@@ -11,10 +11,12 @@ namespace ShufflerPro.Client.Controllers;
 public class SongController
 {
     private readonly ArtistFactory _artistFactory;
+    private readonly DatabaseController _databaseController;
 
-    public SongController(ArtistFactory artistFactory)
+    public SongController(ArtistFactory artistFactory, DatabaseController databaseController)
     {
         _artistFactory = artistFactory;
+        _databaseController = databaseController;
     }
 
     public async Task<NewResult<NewUnit>> Update(UpdateSongsState state)
@@ -137,7 +139,7 @@ public class SongController
     private void HandleUpdateArtist(Song stateSong, Library library, string artistValue, string albumValue)
     {
         if (stateSong.CreatedAlbum?.Name != albumValue)
-            UpdateExistingSongCollections(stateSong, library);
+            UpdateSongCollections(stateSong, library);
 
         var existingArtist = library.Artists.SingleOrDefault(a => a.Name == artistValue);
         if (existingArtist != null)
@@ -165,12 +167,12 @@ public class SongController
 
             newArtist.Albums.Add(album);
             library.Artists.Add(newArtist);
-            
+
             stateSong.CreatedAlbum = album;
         }
     }
 
-    private static void UpdateExistingSongCollections(Song stateSong, Library library)
+    private void UpdateSongCollections(Song stateSong, Library library)
     {
         stateSong.CreatedAlbum!.Songs.Remove(stateSong);
         if (stateSong.CreatedAlbum.Songs.Count == 0)
@@ -180,5 +182,36 @@ public class SongController
             if (createdAlbumArtist.Albums.Count == 0)
                 library.Artists.Remove(createdAlbumArtist);
         }
+    }
+
+    public async Task<NewResult<NewUnit>> Remove(List<Song> songs, Library library)
+    {
+        foreach (var song in songs)
+        {
+            var result = await Remove(song, library);
+            if (result.Fail)
+                return result;
+        }
+        
+        return await NewUnit.DefaultAsync; 
+    }
+
+    private async Task<NewResult<NewUnit>> Remove(Song selectedSong, Library library)
+    {
+        return await _databaseController.RemoveSong(selectedSong.Id)
+            .Bind(_ =>
+            {
+                var songArtist = library.Artists.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Artist.Name);
+                if (songArtist is null)
+                    return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
+                
+                var album = songArtist.Albums.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Name);
+                if(album is null)
+                    return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
+                
+                UpdateSongCollections(selectedSong, library);
+                
+                return NewUnit.Default;
+            });
     }
 }
