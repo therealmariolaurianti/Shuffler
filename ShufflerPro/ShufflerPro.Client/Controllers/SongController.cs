@@ -13,10 +13,14 @@ public class SongController
     private readonly ArtistFactory _artistFactory;
     private readonly DatabaseController _databaseController;
 
-    public SongController(ArtistFactory artistFactory, DatabaseController databaseController)
+    private readonly PlaylistController _playlistController;
+
+    public SongController(ArtistFactory artistFactory, DatabaseController databaseController,
+        PlaylistController playlistController)
     {
         _artistFactory = artistFactory;
         _databaseController = databaseController;
+        _playlistController = playlistController;
     }
 
     public async Task<NewResult<NewUnit>> Update(UpdateSongsState state)
@@ -184,34 +188,51 @@ public class SongController
         }
     }
 
-    public async Task<NewResult<NewUnit>> Remove(List<Song> songs, Library library)
+    public async Task<NewResult<NewUnit>> Remove(List<Song> songs, Library library, PlaylistState? playlistState)
     {
         foreach (var song in songs)
         {
-            var result = await Remove(song, library);
+            var result = await Remove(song, library, playlistState);
             if (result.Fail)
                 return result;
         }
-        
-        return await NewUnit.DefaultAsync; 
+
+        return await NewUnit.DefaultAsync;
     }
 
-    private async Task<NewResult<NewUnit>> Remove(Song selectedSong, Library library)
+    private async Task<NewResult<NewUnit>> Remove(Song selectedSong, Library library, PlaylistState? playlistState)
     {
         return await _databaseController.RemoveSong(selectedSong.Id)
-            .Bind(_ =>
-            {
-                var songArtist = library.Artists.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Artist.Name);
-                if (songArtist is null)
-                    return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
-                
-                var album = songArtist.Albums.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Name);
-                if(album is null)
-                    return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
-                
-                UpdateSongCollections(selectedSong, library);
-                
-                return NewUnit.Default;
-            });
+            .Bind(_ => RemoteFromCollections(selectedSong, library))
+            .Bind(async _ => await HandlePlaylist(selectedSong, library, playlistState));
+    }
+
+    private NewResult<NewUnit> RemoteFromCollections(Song selectedSong, Library library)
+    {
+        var songArtist = library.Artists.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Artist.Name);
+        if (songArtist is null)
+            return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
+
+        var album = songArtist.Albums.SingleOrDefault(a => a.Name == selectedSong.CreatedAlbum?.Name);
+        if (album is null)
+            return NewResultExtensions.CreateFail<NewUnit>("Song could not be removed");
+
+        UpdateSongCollections(selectedSong, library);
+
+        return NewUnit.Default;
+    }
+
+    private async Task<NewResult<NewUnit>> HandlePlaylist(Song selectedSong, Library library,
+        PlaylistState? playlistState)
+    {
+        var playlists = library.Playlists.Where(p => p.Indexes.Select(i => i.SongId).Contains(selectedSong.Id));
+        foreach (var playlist in playlists)
+        {
+            var result = await _playlistController.RemoveSong(playlist, playlistState, selectedSong);
+            if (result.Fail)
+                return result;
+        }
+
+        return await NewUnit.DefaultAsync;
     }
 }

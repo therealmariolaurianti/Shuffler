@@ -69,10 +69,10 @@ public class PlaylistController(DatabaseController databaseController)
         return await databaseController.DeletePlaylist(item);
     }
 
-    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState playlistState,
+    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState? playlistState,
         Song selectedSong)
     {
-        playlistState.Songs.Remove(selectedSong);
+        playlistState?.Songs?.Remove(selectedSong);
 
         var playlistIndex = playlist.Indexes.Single(i => i.SongId == selectedSong.Id);
         playlist.Indexes.Remove(playlistIndex);

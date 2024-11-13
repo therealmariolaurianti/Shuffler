@@ -1081,7 +1081,7 @@ public class ShellViewModel : ViewModelBase
         var songs = SelectedSongs!.Cast<Song>().ToList();
         
         RunAsync(async () => await _songController
-            .Remove(songs, _library)
+            .Remove(songs, _library, _playlistState)
             .IfFail(exception => _windowManager.ShowMessageBox(exception))
             .IfSuccess(_ =>
             {
