@@ -13,7 +13,7 @@ body {
   width: 100%;
   
   color: #333;
-  background-color: #f9f9f9;
+  background-color: #D3D3D3;
 }
 
 /* Hero Section - Music Themed Background */
@@ -88,7 +88,7 @@ body {
   align-items: center;
   flex-direction: column;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  
   margin-top: -50px;
 }
 
@@ -393,11 +393,11 @@ footer p {
 
 /* Carousel Container */
 .carousel-container {
+  margin: 20px;
   position: relative;
   overflow: hidden;
   display: flex;
   justify-content: center;
-  background-color: #f4f4f4;
   align-items: center;
   justify-self: center;
   transition: all 0.5s ease; /* Smooth transition when resizing */
@@ -444,7 +444,7 @@ footer p {
 /* Carousel Indicators */
 .carousel-indicators {
   position: absolute;
-  bottom: 20px;
+  bottom: 30px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
