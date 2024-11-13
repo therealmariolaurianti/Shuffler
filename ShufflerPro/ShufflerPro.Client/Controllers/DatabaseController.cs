@@ -195,11 +195,11 @@ public class DatabaseController
         return await NewUnit.DefaultAsync;
     }
 
-    public async Task<NewResult<ExcludedSong>> RemoveSong(Guid selectedSongId)
+    public async Task<NewResult<ExcludedSong>> RemoveSong(Song selectedSong)
     {
         using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
         {
-            var excludedSong = new ExcludedSong(ObjectId.NewObjectId(), selectedSongId);
+            var excludedSong = new ExcludedSong(ObjectId.NewObjectId(), selectedSong.Id, selectedSong.Path);
             var excludedSongCollection = connection.GetCollection<ExcludedSong>();
             var localDatabaseKey = await excludedSongCollection.Insert(excludedSong);
 
@@ -216,5 +216,24 @@ public class DatabaseController
             var excludedSongCollection = connection.GetCollection<ExcludedSong>();
             return (await excludedSongCollection.FindAll()).ToList();
         }
+    }
+
+    public async Task<NewResult<NewUnit>> RemoveExcludedSongs(List<Song> songs,
+        List<ExcludedSong> excludedSongs)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            var excludedSongCollection = connection.GetCollection<ExcludedSong>();
+            foreach (var song in songs)
+            {
+                var excludedSong = excludedSongs.Single(es => es.SongId == song.Id);
+                var result = await excludedSongCollection
+                    .Delete(new LocalDatabaseKey(excludedSong.Id));
+                if (result == false)
+                    return NewResultExtensions.CreateFail<NewUnit>();
+            }
+        }
+
+        return await NewUnit.DefaultAsync;
     }
 }

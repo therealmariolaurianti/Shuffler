@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Caliburn.Micro;
 using JetBrains.Annotations;
 using MahApps.Metro.Controls;
 using Microsoft.Xaml.Behaviors.Core;
@@ -29,7 +30,7 @@ using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace ShufflerPro.Screens.Shell;
 
-public class ShellViewModel : ViewModelBase
+public class ShellViewModel : ViewModelBase, IHandle<SongAction>
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
@@ -85,7 +86,9 @@ public class ShellViewModel : ViewModelBase
         SongStack songStack,
         PlaylistController playlistController,
         SongFilterController songFilterController,
-        ShufflerWindowManager windowManager, SongController songController)
+        ShufflerWindowManager windowManager,
+        SongController songController,
+        IEventAggregator eventAggregator)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -109,6 +112,8 @@ public class ShellViewModel : ViewModelBase
 
         EditPlaylistItemCommand = new ActionCommand(RenamePlaylist);
         EditLostFocusCommand = new ActionCommand(EditingItemLostFocus);
+        
+        eventAggregator.SubscribeOnBackgroundThread(this);
     }
 
     public Song? CurrentSong
@@ -435,6 +440,16 @@ public class ShellViewModel : ViewModelBase
     }
 
     public bool CanEditSong => SelectedSong?.Id != CurrentSong?.Id;
+
+    async Task IHandle<SongAction>
+        .HandleAsync(SongAction message, CancellationToken cancellationToken)
+    {
+        await Task.Run(() =>
+        {
+            HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+            NotifyCollectionsChanged();
+        }, cancellationToken);
+    }
 
     private void HandleSelectedTime()
     {
@@ -826,7 +841,7 @@ public class ShellViewModel : ViewModelBase
 
         if (messageResult == MessageBoxResult.Yes)
             RunAsync(async () => await _sourceFolderController.Remove(_library, _selectedTreeViewItem.SourceFolder)
-                .IfFail(exception => MessageBox.Show(exception.Message))
+                .IfFail(exception => _windowManager.ShowMessageBox(exception))
                 .IfSuccess(_ =>
                 {
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
@@ -938,7 +953,7 @@ public class ShellViewModel : ViewModelBase
     [UsedImplicitly]
     public void LaunchSettings()
     {
-        RunAsync(async () => await _windowManager.LaunchSettings());
+        RunAsync(async () => await _windowManager.LaunchSettings(_library));
     }
 
     [UsedImplicitly]
@@ -1078,15 +1093,17 @@ public class ShellViewModel : ViewModelBase
     [UsedImplicitly]
     public void RemoveSongFromLibrary()
     {
-        var songs = SelectedSongs!.Cast<Song>().ToList();
-        
-        RunAsync(async () => await _songController
-            .Remove(songs, _library, _playlistState)
-            .IfFail(exception => _windowManager.ShowMessageBox(exception))
-            .IfSuccess(_ =>
-            {
-                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
-                NotifyCollectionsChanged();
-            }));
+        RunAsync(async () =>
+        {
+            var songs = SelectedSongs!.Cast<Song>().ToList();
+            await _songController
+                .Remove(songs, _library, _playlistState)
+                .IfFail(exception => _windowManager.ShowMessageBox(exception))
+                .IfSuccess(_ =>
+                {
+                    HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                    NotifyCollectionsChanged();
+                });
+        });
     }
 }

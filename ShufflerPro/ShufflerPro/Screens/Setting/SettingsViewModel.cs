@@ -3,6 +3,7 @@ using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
+using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
@@ -10,23 +11,27 @@ namespace ShufflerPro.Screens.Setting;
 
 public interface ISettingsViewModelFactory : IFactory
 {
-    SettingsViewModel Create();
+    SettingsViewModel Create(Library library);
 }
 
 public class SettingsViewModel : ViewModelBase
 {
     private readonly ItemTracker<Settings> _itemTracker;
+    private readonly Library _library;
     private readonly ISettings _settings;
     private readonly SettingsController _settingsController;
     private bool _canSave;
     private bool _saving;
+    private readonly ShufflerWindowManager _windowManager;
 
-    public SettingsViewModel(ISettings settings, ItemTracker<Settings> itemTracker,
-        SettingsController settingsController)
+    public SettingsViewModel(Library library, ISettings settings, ItemTracker<Settings> itemTracker,
+        SettingsController settingsController, ShufflerWindowManager windowManager)
     {
+        _library = library;
         _settings = settings;
         _itemTracker = itemTracker;
         _settingsController = settingsController;
+        _windowManager = windowManager;
 
         _itemTracker.Attach((Settings)settings);
     }
@@ -91,5 +96,10 @@ public class SettingsViewModel : ViewModelBase
         if (_itemTracker.IsDirty && !_saving)
             _itemTracker.Revert();
         return base.CanCloseAsync(cancellationToken);
+    }
+
+    public void LaunchExcludedSongs()
+    {
+        _windowManager.LaunchExcludedSongs(_library);
     }
 }

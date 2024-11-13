@@ -1,5 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Media.Imaging;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Attributes;
@@ -19,6 +18,8 @@ public class EditSongsViewModel : ViewModelBase
     private readonly Library _library;
     private readonly SongController _songController;
     private readonly List<Song> _songs;
+
+    private readonly ShufflerWindowManager _windowManager;
     private string _album;
     private BitmapImage? _albumArt;
     private bool _albumArtChanged;
@@ -34,13 +35,14 @@ public class EditSongsViewModel : ViewModelBase
         List<Song> songs,
         Library library,
         SongController songController,
-        ItemTracker<EditSongsViewModel> itemTracker, BinaryHelper binaryHelper)
+        ItemTracker<EditSongsViewModel> itemTracker, BinaryHelper binaryHelper, ShufflerWindowManager windowManager)
     {
         _songs = songs;
         _library = library;
         _songController = songController;
         _itemTracker = itemTracker;
         _binaryHelper = binaryHelper;
+        _windowManager = windowManager;
 
         Start();
         itemTracker.Attach(this);
@@ -202,7 +204,7 @@ public class EditSongsViewModel : ViewModelBase
             .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences,
                 new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged), _library))
             .Do(_ => SetCollectionProperties())
-            .IfFail(_ => MessageBox.Show("Failed to update song."))
+            .IfFail(exception => _windowManager.ShowMessageBox(exception))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
 

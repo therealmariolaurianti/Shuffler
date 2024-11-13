@@ -12,10 +12,11 @@ public class SongController
 {
     private readonly ArtistFactory _artistFactory;
     private readonly DatabaseController _databaseController;
-
     private readonly PlaylistController _playlistController;
 
-    public SongController(ArtistFactory artistFactory, DatabaseController databaseController,
+    public SongController(
+        ArtistFactory artistFactory,
+        DatabaseController databaseController,
         PlaylistController playlistController)
     {
         _artistFactory = artistFactory;
@@ -116,7 +117,7 @@ public class SongController
                     song.Tag.AlbumArtists = [value];
                     song.Tag.Performers = [value];
 
-                    HandleUpdateArtist(stateSong, library, value, stateSong.Album);
+                    AddToCollections(stateSong, library, value, stateSong.Album);
                 }
                     break;
                 case "Album":
@@ -126,7 +127,7 @@ public class SongController
                     song.Tag.Album = null;
                     song.Tag.Album = value;
 
-                    HandleUpdateArtist(stateSong, library, stateSong.Artist, value);
+                    AddToCollections(stateSong, library, stateSong.Artist, value);
                 }
                     break;
                 case "Track":
@@ -140,7 +141,7 @@ public class SongController
         });
     }
 
-    private void HandleUpdateArtist(Song stateSong, Library library, string artistValue, string albumValue)
+    private void AddToCollections(Song stateSong, Library library, string artistValue, string albumValue)
     {
         if (stateSong.CreatedAlbum?.Name != albumValue)
             UpdateSongCollections(stateSong, library);
@@ -178,8 +179,8 @@ public class SongController
 
     private void UpdateSongCollections(Song stateSong, Library library)
     {
-        stateSong.CreatedAlbum!.Songs.Remove(stateSong);
-        if (stateSong.CreatedAlbum.Songs.Count == 0)
+        stateSong.CreatedAlbum?.Songs.Remove(stateSong);
+        if (stateSong.CreatedAlbum?.Songs.Count == 0)
         {
             var createdAlbumArtist = stateSong.CreatedAlbum.Artist;
             createdAlbumArtist.Albums.Remove(stateSong.CreatedAlbum);
@@ -202,8 +203,12 @@ public class SongController
 
     private async Task<NewResult<NewUnit>> Remove(Song selectedSong, Library library, PlaylistState? playlistState)
     {
-        return await _databaseController.RemoveSong(selectedSong.Id)
-            .Bind(_ => RemoteFromCollections(selectedSong, library))
+        return await _databaseController.RemoveSong(selectedSong)
+            .Bind(excludedSong =>
+            {
+                library.ExcludedSongs.Add(excludedSong);
+                return RemoteFromCollections(selectedSong, library);
+            })
             .Bind(async _ => await HandlePlaylist(selectedSong, library, playlistState));
     }
 
@@ -234,5 +239,28 @@ public class SongController
         }
 
         return await NewUnit.DefaultAsync;
+    }
+
+    public async Task<NewResult<NewUnit>> RemoveExcludedSongs(List<Song> songs,
+        Library library)
+    {
+        return await _databaseController.RemoveExcludedSongs(songs, library.ExcludedSongs)
+            .Do(_ => AddToCollections(songs, library))
+            .Do(_ => RemoveFromLibrary(songs, library));
+    }
+
+    private void RemoveFromLibrary(List<Song> songs, Library library)
+    {
+        foreach (var song in songs)
+        {
+            var libraryExcludedSong = library.ExcludedSongs.Single(s => s.SongId == song.Id);
+            library.ExcludedSongs.Remove(libraryExcludedSong);
+        }
+    }
+
+    private void AddToCollections(List<Song> songs, Library library)
+    {
+        foreach (var song in songs)
+            AddToCollections(song, library, song.Artist, song.Album);
     }
 }

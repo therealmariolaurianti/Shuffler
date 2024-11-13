@@ -31,6 +31,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <mah:ToggleSwitch
                 IsOn="{Binding IsDarkModeEnabled}"
@@ -43,6 +44,14 @@
                 Width="85"
                 Margin="2"
                 HorizontalAlignment="Left" />
+            <Button
+                Grid.Row="2"
+                Name="LaunchExcludedSongs"
+                Cursor="Hand"
+                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                Width="125"
+                Margin="10"
+                Content="Excluded Songs" />
         </Grid>
         <StackPanel
             HorizontalAlignment="Center"

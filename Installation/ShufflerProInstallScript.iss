@@ -39,7 +39,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "D:\Projects\Builds\ShufflerPro\Build\77\*"; Excludes: "*.targets,*.pdb,*.props,*.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\Builds\ShufflerPro\Build\91\*"; Excludes: "*.targets,*.pdb,*.props,*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\Builds\ShufflerPro\.root"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

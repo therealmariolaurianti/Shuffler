@@ -5,6 +5,7 @@ using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
 using ShufflerPro.Screens.EditSong.Multiple;
 using ShufflerPro.Screens.EditSong.Single;
+using ShufflerPro.Screens.ExcludedSongs;
 using ShufflerPro.Screens.Setting;
 
 namespace ShufflerPro.Framework;
@@ -13,22 +14,27 @@ public class ShufflerWindowManager : WindowManager
 {
     private readonly IEditSongsViewModelFactory _editSongsViewModelFactory;
     private readonly IEditSongViewModelFactory _editSongViewModelFactory;
+
+    private readonly IExcludedSongsViewModelFactory _excludedSongsViewModelFactory;
     private readonly ISettingsViewModelFactory _settingsViewModelFactory;
 
     public ShufflerWindowManager(
         IEditSongViewModelFactory editSongViewModelFactory,
         ISettingsViewModelFactory settingsViewModelFactory,
-        IEditSongsViewModelFactory editSongsViewModelFactory)
+        IEditSongsViewModelFactory editSongsViewModelFactory,
+        IExcludedSongsViewModelFactory excludedSongsViewModelFactory)
     {
         _editSongViewModelFactory = editSongViewModelFactory;
         _settingsViewModelFactory = settingsViewModelFactory;
         _editSongsViewModelFactory = editSongsViewModelFactory;
+        _excludedSongsViewModelFactory = excludedSongsViewModelFactory;
     }
 
-    public async Task LaunchSettings()
+    public async Task<NewResult<NewUnit>> LaunchSettings(Library library)
     {
-        var viewModel = _settingsViewModelFactory.Create();
-        await ShowDialogAsync(viewModel);
+        var viewModel = _settingsViewModelFactory.Create(library);
+        var dialogAsync = await ShowDialogAsync(viewModel);
+        return dialogAsync.CreateFromDialogResult();
     }
 
     public async Task<NewResult<NewUnit>> ShowEditSongs(List<Song> songs, Library library)
@@ -50,5 +56,13 @@ public class ShufflerWindowManager : WindowManager
     public void ShowMessageBox(Exception exception)
     {
         MessageBox.Show(exception.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
+    public async Task<NewResult<NewUnit>> LaunchExcludedSongs(Library library)
+    {
+        var viewModel = _excludedSongsViewModelFactory.Create(library);
+
+        var dialogAsync = await ShowDialogAsync(viewModel);
+        return dialogAsync.CreateFromDialogResult();
     }
 }
