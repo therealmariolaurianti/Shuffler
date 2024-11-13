@@ -31,7 +31,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <mah:ToggleSwitch
                 IsOn="{Binding IsDarkModeEnabled}"
@@ -44,14 +44,29 @@
                 Width="85"
                 Margin="2"
                 HorizontalAlignment="Left" />
-            <Button
-                Grid.Row="2"
-                Name="LaunchExcludedSongs"
-                Cursor="Hand"
-                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                Width="125"
-                Margin="10"
-                Content="Excluded Songs" />
+            <Grid
+                Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button
+                    Grid.Column="0"
+                    Name="LaunchExcludedSongs"
+                    Cursor="Hand"
+                    BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                    Width="125"
+                    Margin="10"
+                    Content="Excluded Songs" />
+                <Button
+                    Grid.Column="1"
+                    Name="LaunchKeyBinds"
+                    Cursor="Hand"
+                    BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                    Width="125"
+                    Margin="10"
+                    Content="Keybinds" />
+            </Grid>
         </Grid>
         <StackPanel
             HorizontalAlignment="Center"

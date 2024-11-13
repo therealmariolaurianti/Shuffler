@@ -17,6 +17,12 @@
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     d:DataContext="{d:DesignInstance excludedSongs:ExcludedSongsViewModel}">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{x:Static wpf:CloseWindowCommand.Instance}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Window.Resources>
         <ContextMenu x:Key="DataGridContextMenu">
             <MenuItem
@@ -33,8 +39,7 @@
         ItemsSource="{Binding ExcludedSongs}"
         SelectedItemsList="{Binding SelectedSongs}"
         IsReadOnly="True"
-        AlternationCount="2"
-        CanUserSortColumns="False">
+        AlternationCount="2">
         <DataGrid.Style>
             <Style TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
                 <Setter Property="AlternatingRowBackground"

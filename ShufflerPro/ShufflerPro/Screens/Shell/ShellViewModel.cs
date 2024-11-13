@@ -52,6 +52,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     private double _elapsedRunningTime;
     private string? _elapsedRunningTimeDisplay;
     private bool _isLoadingSourceFolders;
+
+
+    private bool _isMuted;
     private bool _isRepeatChecked;
     private bool _isShuffleChecked;
     private bool _isSliderBeingDragged;
@@ -72,6 +75,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     private ObservableCollection<SourceTreeViewItem>? _sourceTreeItems;
     private double _startingSongTime;
     private CountDownTimer? _timer;
+    private double _volumeLevelBeforeMute;
 
     public ShellViewModel(
         Library library,
@@ -112,9 +116,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
 
         EditPlaylistItemCommand = new ActionCommand(RenamePlaylist);
         EditLostFocusCommand = new ActionCommand(EditingItemLostFocus);
-        
+
+        MusicPlayerCommands = new MusicPlayerCommands(PlayPause, Mute);
+
         eventAggregator.SubscribeOnBackgroundThread(this);
     }
+
+    public MusicPlayerCommands MusicPlayerCommands { get; }
 
     public Song? CurrentSong
     {
@@ -284,7 +292,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
             if (value.Equals(_applicationVolumeLevel)) return;
             _applicationVolumeLevel = value;
             NotifyOfPropertyChange();
-            NotifyOfPropertyChange();
         }
     }
 
@@ -449,6 +456,26 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
             HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
             NotifyCollectionsChanged();
         }, cancellationToken);
+    }
+
+    private void Mute()
+    {
+        if (!_isMuted)
+        {
+            _volumeLevelBeforeMute = ApplicationVolumeLevel;
+
+            ApplicationVolumeLevel = 0;
+            AdjustApplicationVolume();
+
+            _isMuted = true;
+        }
+        else
+        {
+            _isMuted = false;
+            ApplicationVolumeLevel = _volumeLevelBeforeMute;
+
+            AdjustApplicationVolume();
+        }
     }
 
     private void HandleSelectedTime()
@@ -658,6 +685,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     [UsedImplicitly]
     public void AdjustApplicationVolume()
     {
+        if (_isMuted)
+            _isMuted = false;
+
         var newVolume = ushort.MaxValue / 10d * ApplicationVolumeLevel;
         var newVolumeAllChannels = ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
 

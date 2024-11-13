@@ -9,11 +9,6 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Screens.Setting;
 
-public interface ISettingsViewModelFactory : IFactory
-{
-    SettingsViewModel Create(Library library);
-}
-
 public class SettingsViewModel : ViewModelBase
 {
     private readonly ItemTracker<Settings> _itemTracker;
@@ -100,6 +95,11 @@ public class SettingsViewModel : ViewModelBase
 
     public void LaunchExcludedSongs()
     {
-        _windowManager.LaunchExcludedSongs(_library);
+        RunAsync(async () => await _windowManager.LaunchExcludedSongs(_library));
+    }
+
+    public void LaunchKeyBinds()
+    {
+        RunAsync(async () => await _windowManager.LaunchKeyBinds());
     }
 }
