@@ -480,6 +480,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
 
     private void HandleSelectedTime()
     {
+        if (_timer is not { IsRunning: true })
+            return;
+        
         var timeSpan = TimeSpan.FromSeconds(SelectedSongTime);
 
         _playerController.SetCurrentTime(timeSpan);
