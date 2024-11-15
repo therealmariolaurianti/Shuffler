@@ -1,5 +1,8 @@
-﻿using JetBrains.Annotations;
+﻿using System.Runtime.CompilerServices;
+using Caliburn.Micro;
+using JetBrains.Annotations;
 using ShufflerPro.Client.AudioEqualizer;
+using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Screens.AudioEqualizer;
@@ -7,10 +10,13 @@ namespace ShufflerPro.Screens.AudioEqualizer;
 public class AudioEqualizerViewModel : ViewModelBase
 {
     private readonly IEqualizerBandContainer _equalizerBandContainer;
+    private readonly IEventAggregator _eventAggregator;
 
-    public AudioEqualizerViewModel(IEqualizerBandContainer equalizerBandContainer)
+    public AudioEqualizerViewModel(
+        IEqualizerBandContainer equalizerBandContainer, IEventAggregator eventAggregator)
     {
         _equalizerBandContainer = equalizerBandContainer;
+        _eventAggregator = eventAggregator;
         Bands = equalizerBandContainer.Bands;
     }
 
@@ -100,9 +106,16 @@ public class AudioEqualizerViewModel : ViewModelBase
         }
     }
 
+    public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
+    {
+        RunAsync(async () => await _eventAggregator.PublishOnBackgroundThreadAsync(new EqualizerAction()));
+        base.NotifyOfPropertyChange(propertyName);
+    }
+
     [UsedImplicitly]
     public void ResetBands()
     {
         _equalizerBandContainer.Initialize();
+        TryCloseAsync(true);
     }
 }

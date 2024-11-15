@@ -21,6 +21,7 @@ using ShufflerPro.Client.Factories;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Client.States;
 using ShufflerPro.Framework;
+using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 using DragDropEffects = System.Windows.DragDropEffects;

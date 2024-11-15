@@ -11,11 +11,10 @@ public class PlayerController(
     WaveOutEvent outEvent,
     IEqualizerBandContainer equalizerBandContainer) : IDisposable
 {
-    private readonly IEqualizerBandContainer _equalizerBandContainer = equalizerBandContainer;
     private AudioFileReader? _audioFileReader;
-    private Equalizer _equalizer;
+    private Equalizer? _equalizer;
     private WaveOutEvent? _outEvent = outEvent;
-    private ISongQueue _songQueue;
+    private ISongQueue? _songQueue;
     private PausableTimer? _timer;
 
     public required Action PlayerDisposed;
@@ -34,7 +33,8 @@ public class PlayerController(
 
         _timer?.Stop();
         _timer?.Dispose();
-
+        
+        _equalizer = null;
         _timer = null;
         _outEvent = null;
         _audioFileReader = null;
@@ -42,9 +42,9 @@ public class PlayerController(
         PlayerDisposed.Invoke();
     }
 
-    private NewResult<NewUnit> StartNextSong(ISongQueue songQueue)
+    private NewResult<NewUnit> StartNextSong(ISongQueue? songQueue)
     {
-        if (songQueue.NextSong is null)
+        if (songQueue?.NextSong is null)
         {
             Dispose();
             return NewResultExtensions.CreateFail<NewUnit>("Player disposed.");
@@ -82,14 +82,10 @@ public class PlayerController(
 
         _songQueue = songQueue;
 
-        //reader = new AudioFileReader(selectedFile);
-        //equalizer = new Equalizer(reader, bands);
-        //player = new WaveOutEvent();
-
         try
         {
             _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-            _equalizer = new Equalizer(_audioFileReader, _equalizerBandContainer.Bands);
+            _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
 
             _outEvent ??= new WaveOutEvent();
             _outEvent.Init(_equalizer);
@@ -111,7 +107,7 @@ public class PlayerController(
 
         _audioFileReader.CurrentTime = time;
 
-        var actual = (TimeSpan)(_songQueue.CurrentSong!.Duration! - time);
+        var actual = (TimeSpan)(_songQueue?.CurrentSong!.Duration! - time);
 
         StopStart(actual);
     }

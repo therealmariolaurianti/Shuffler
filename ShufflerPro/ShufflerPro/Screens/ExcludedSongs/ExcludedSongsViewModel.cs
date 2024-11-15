@@ -5,17 +5,12 @@ using JetBrains.Annotations;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Factories;
-using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Framework;
+using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Screens.ExcludedSongs;
-
-public interface IExcludedSongsViewModelFactory : IFactory
-{
-    ExcludedSongsViewModel Create(Library library);
-}
 
 public class ExcludedSongsViewModel : ViewModelBase
 {
