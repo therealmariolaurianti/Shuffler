@@ -34,6 +34,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
+    private readonly HotKeyListener _hotKeyListener;
     private readonly Library _library;
     private readonly LibraryController _libraryController;
     private readonly MediaController _mediaController;
@@ -51,7 +52,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
     private TimeSpan _currentSongTime;
     private double _elapsedRunningTime;
     private string? _elapsedRunningTimeDisplay;
-    private readonly HotKeyListener _hotKeyListener;
     private bool _isLoadingSourceFolders;
 
 
