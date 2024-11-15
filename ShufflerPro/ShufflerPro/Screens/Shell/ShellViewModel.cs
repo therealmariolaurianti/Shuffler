@@ -11,6 +11,7 @@ using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
+using NAudio.Wave;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -1073,7 +1074,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     [UsedImplicitly]
     public void LaunchSettings()
     {
-        RunAsync(async () => await _windowManager.LaunchSettings(_library));
+        RunAsync(async () => await _windowManager.ShowSettings(_library));
     }
 
     [UsedImplicitly]
@@ -1177,5 +1178,14 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     NotifyCollectionsChanged();
                 });
         });
+    }
+
+    [UsedImplicitly]
+    public void LaunchAudioEqualizer()
+    {
+        if (_playerController.AudioFileReader is null)
+            return;
+        
+        RunAsync(async () => await _windowManager.ShowAudioEqualizer(_playerController.AudioFileReader));
     }
 }

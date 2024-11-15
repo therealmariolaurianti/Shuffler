@@ -1,7 +1,9 @@
 ﻿using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using NAudio.Wave;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.AudioEqualizer;
 using ShufflerPro.Screens.EditSong.Multiple;
 using ShufflerPro.Screens.EditSong.Single;
 using ShufflerPro.Screens.Exceptions;
@@ -12,6 +14,7 @@ namespace ShufflerPro.Framework;
 
 public class ShufflerWindowManager : WindowManager
 {
+    private readonly IAudioEqualizerViewModelFactory _audioEqualizerViewModelFactory;
     private readonly IEditSongsViewModelFactory _editSongsViewModelFactory;
     private readonly IEditSongViewModelFactory _editSongViewModelFactory;
     private readonly IExceptionViewModelFactory _exceptionViewModelFactory;
@@ -23,16 +26,18 @@ public class ShufflerWindowManager : WindowManager
         ISettingsViewModelFactory settingsViewModelFactory,
         IEditSongsViewModelFactory editSongsViewModelFactory,
         IExcludedSongsViewModelFactory excludedSongsViewModelFactory,
-        IExceptionViewModelFactory exceptionViewModelFactory)
+        IExceptionViewModelFactory exceptionViewModelFactory,
+        IAudioEqualizerViewModelFactory audioEqualizerViewModelFactory)
     {
         _editSongViewModelFactory = editSongViewModelFactory;
         _settingsViewModelFactory = settingsViewModelFactory;
         _editSongsViewModelFactory = editSongsViewModelFactory;
         _excludedSongsViewModelFactory = excludedSongsViewModelFactory;
         _exceptionViewModelFactory = exceptionViewModelFactory;
+        _audioEqualizerViewModelFactory = audioEqualizerViewModelFactory;
     }
 
-    public async Task<NewResult<NewUnit>> LaunchSettings(Library library)
+    public async Task<NewResult<NewUnit>> ShowSettings(Library library)
     {
         var viewModel = _settingsViewModelFactory.Create(library);
         var dialogAsync = await ShowDialogAsync(viewModel);
@@ -62,9 +67,17 @@ public class ShufflerWindowManager : WindowManager
         return dialogAsync.CreateFromDialogResult();
     }
 
-    public async Task<NewResult<NewUnit>> LaunchExcludedSongs(Library library)
+    public async Task<NewResult<NewUnit>> ShowExcludedSongs(Library library)
     {
         var viewModel = _excludedSongsViewModelFactory.Create(library);
+
+        var dialogAsync = await ShowDialogAsync(viewModel);
+        return dialogAsync.CreateFromDialogResult();
+    }
+
+    public async Task<NewResult<NewUnit>> ShowAudioEqualizer(ISampleProvider sampleProvider)
+    {
+        var viewModel = _audioEqualizerViewModelFactory.Create(sampleProvider);
 
         var dialogAsync = await ShowDialogAsync(viewModel);
         return dialogAsync.CreateFromDialogResult();

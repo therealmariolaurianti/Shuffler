@@ -103,6 +103,6 @@ public class SettingsViewModel : ViewModelBase
     [UsedImplicitly]
     public void LaunchExcludedSongs()
     {
-        RunAsync(async () => await _windowManager.LaunchExcludedSongs(_library));
+        RunAsync(async () => await _windowManager.ShowExcludedSongs(_library));
     }
 }

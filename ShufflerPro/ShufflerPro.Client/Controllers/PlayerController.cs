@@ -8,7 +8,6 @@ namespace ShufflerPro.Client.Controllers;
 
 public class PlayerController(WaveOutEvent outEvent) : IDisposable
 {
-    private AudioFileReader? _audioFileReader;
     private WaveOutEvent? _outEvent = outEvent;
     private ISongQueue _songQueue;
     private PausableTimer? _timer;
@@ -20,19 +19,21 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     public bool IsCompleted { get; set; }
     public bool IsPaused { get; private set; }
 
+    public AudioFileReader? AudioFileReader { get; set; }
+
     public void Dispose()
     {
         _outEvent?.Stop();
         _outEvent?.Dispose();
 
-        _audioFileReader?.Dispose();
+        AudioFileReader?.Dispose();
 
         _timer?.Stop();
         _timer?.Dispose();
 
         _timer = null;
         _outEvent = null;
-        _audioFileReader = null;
+        AudioFileReader = null;
 
         PlayerDisposed.Invoke();
     }
@@ -79,10 +80,10 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
         try
         {
-            _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
+            AudioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
             _outEvent ??= new WaveOutEvent();
 
-            _outEvent.Init(_audioFileReader);
+            _outEvent.Init(AudioFileReader);
             _outEvent.Play();
 
             DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
@@ -95,10 +96,10 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
     public void SetCurrentTime(TimeSpan time)
     {
-        if (_audioFileReader is null)
+        if (AudioFileReader is null)
             return;
 
-        _audioFileReader.CurrentTime = time;
+        AudioFileReader.CurrentTime = time;
 
         var actual = (TimeSpan)(_songQueue.CurrentSong!.Duration! - time);
 

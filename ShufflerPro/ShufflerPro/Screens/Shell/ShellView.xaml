@@ -696,6 +696,7 @@
                             </StackPanel>
                         </ToggleButton>
                         <Button
+                            Name="LaunchAudioEqualizer"
                             Cursor="Hand"
                             ToolTip="Audio Equalizer"
                             Margin="2"
