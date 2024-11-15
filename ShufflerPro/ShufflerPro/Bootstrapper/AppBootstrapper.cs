@@ -8,6 +8,7 @@ using Ninject;
 using NLog;
 using ShufflerPro.Bootstrapper.Extensions;
 using ShufflerPro.Database.Bootstrapper;
+using ShufflerPro.Framework;
 using ShufflerPro.Screens.Exceptions;
 using ShufflerPro.Screens.Startup;
 
@@ -52,6 +53,7 @@ public class AppBootstrapper : BootstrapperBase
     {
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
+        _kernel.Bind<HotKeyListener>().ToSelf().InSingletonScope();
         
         _kernel.BindLogging();
         _kernel.BindSettings();

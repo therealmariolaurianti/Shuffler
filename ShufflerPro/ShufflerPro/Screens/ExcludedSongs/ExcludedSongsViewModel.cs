@@ -59,8 +59,13 @@ public class ExcludedSongsViewModel : ViewModelBase
             if (Equals(value, _selectedSongs)) return;
             _selectedSongs = value;
             NotifyOfPropertyChange();
+            NotifyOfPropertyChange(nameof(CanAddToLibrary));
         }
     }
+
+    public bool CanAddToLibrary => _songs.Count > 0;
+
+    private List<Song> _songs => SelectedSongs?.Cast<Song>().ToList() ?? [];
 
     private void Start()
     {
@@ -76,12 +81,11 @@ public class ExcludedSongsViewModel : ViewModelBase
     {
         RunAsync(async () =>
         {
-            var songs = SelectedSongs!.Cast<Song>().ToList();
-            await _songController.RemoveExcludedSongs(songs, _library)
+            await _songController.RemoveExcludedSongs(_songs, _library)
                 .IfFail(exception => _windowManager.ShowMessageBox(exception))
                 .IfSuccessAsync(async _ =>
                 {
-                    foreach (var selectedSong in songs)
+                    foreach (var selectedSong in _songs)
                         ExcludedSongs.Remove(selectedSong);
 
                     NotifyOfPropertyChange(nameof(ExcludedSongs));

@@ -5,6 +5,7 @@
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Mario Laurianti"
 #define MyAppExeName "ShufflerPro.exe"
+#define BuildVersion "94"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -39,7 +40,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "D:\Projects\Builds\ShufflerPro\Build\91\*"; Excludes: "*.targets,*.pdb,*.props,*.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Projects\Builds\ShufflerPro\Build\{#BuildVersion}\*"; Excludes: "*.targets,*.pdb,*.props,*.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\Projects\Builds\ShufflerPro\.root"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

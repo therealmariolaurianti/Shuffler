@@ -30,7 +30,7 @@ using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace ShufflerPro.Screens.Shell;
 
-public class ShellViewModel : ViewModelBase, IHandle<SongAction>
+public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
@@ -51,6 +51,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
     private TimeSpan _currentSongTime;
     private double _elapsedRunningTime;
     private string? _elapsedRunningTimeDisplay;
+    private readonly HotKeyListener _hotKeyListener;
     private bool _isLoadingSourceFolders;
 
 
@@ -92,7 +93,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         SongFilterController songFilterController,
         ShufflerWindowManager windowManager,
         SongController songController,
-        IEventAggregator eventAggregator)
+        IEventAggregator eventAggregator, HotKeyListener hotKeyListener)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -107,6 +108,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         _songFilterController = songFilterController;
         _windowManager = windowManager;
         _songController = songController;
+        _hotKeyListener = hotKeyListener;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -114,15 +116,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         _playerController.SongChanged += OnSongChanged;
         _playerController.PlayerDisposed += OnPlayerDisposed;
 
+        WireHotKeys();
+
         EditPlaylistItemCommand = new ActionCommand(RenamePlaylist);
         EditLostFocusCommand = new ActionCommand(EditingItemLostFocus);
 
-        MusicPlayerCommands = new MusicPlayerCommands(PlayPause, Mute);
-
         eventAggregator.SubscribeOnBackgroundThread(this);
     }
-
-    public MusicPlayerCommands MusicPlayerCommands { get; }
 
     public Song? CurrentSong
     {
@@ -448,6 +448,14 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
 
     public bool CanEditSong => SelectedSong?.Id != CurrentSong?.Id;
 
+    public void Dispose()
+    {
+        _playerController.Dispose();
+        _hotKeyListener.Dispose();
+        _timer?.Dispose();
+        _hotKeyListener.Dispose();
+    }
+
     async Task IHandle<SongAction>
         .HandleAsync(SongAction message, CancellationToken cancellationToken)
     {
@@ -458,6 +466,15 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         }, cancellationToken);
     }
 
+    private void WireHotKeys()
+    {
+        _hotKeyListener.OnNextTrack += NextSong;
+        _hotKeyListener.OnPreviousTrack += PreviousSong;
+        _hotKeyListener.OnPlayPause += PlayPause;
+        _hotKeyListener.OnMute += Mute;
+    }
+
+    [UsedImplicitly]
     private void Mute()
     {
         if (!_isMuted)
@@ -686,10 +703,16 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>
         if (_isMuted)
             _isMuted = false;
 
-        var newVolume = ushort.MaxValue / 10d * ApplicationVolumeLevel;
-        var newVolumeAllChannels = ((uint)newVolume & 0x0000ffff) | ((uint)newVolume << 16);
+        var newVolumeAllChannels = CalculateVolumeAllChannels(ApplicationVolumeLevel);
+        _ = WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
+    }
 
-        WinImport.waveOutSetVolume(IntPtr.Zero, newVolumeAllChannels);
+    private static uint CalculateVolumeAllChannels(double applicationVolumeLevel)
+    {
+        var newVolume = ushort.MaxValue / 10d * applicationVolumeLevel;
+        var lowOrderBits = (uint)newVolume & 0x0000ffff;
+        var highOrderBits = (uint)newVolume << 16;
+        return lowOrderBits | highOrderBits;
     }
 
     public NewResult<NewUnit> InitializePlaySong(bool isSourceGrid)

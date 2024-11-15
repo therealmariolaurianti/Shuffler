@@ -9,6 +9,7 @@
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
     xmlns:excludedSongs="clr-namespace:ShufflerPro.Screens.ExcludedSongs"
     xmlns:cm="http://caliburnmicro.com"
+    xmlns:calcBinding="clr-namespace:CalcBinding;assembly=CalcBinding"
     mc:Ignorable="d"
     Height="400"
     Width="600"
@@ -24,9 +25,11 @@
             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
     </Window.InputBindings>
     <Window.Resources>
-        <ContextMenu x:Key="DataGridContextMenu">
+        <ContextMenu
+            x:Key="DataGridContextMenu">
             <MenuItem
                 Header="Add to Library"
+                IsEnabled="{Binding CanAddToLibrary}"
                 cm:Message.Attach="AddToLibrary" />
         </ContextMenu>
     </Window.Resources>
@@ -34,7 +37,7 @@
         RowHeight="23"
         Margin="5"
         AutoGenerateColumns="False"
-        ContextMenu="{StaticResource DataGridContextMenu}"
+        ContextMenu="{DynamicResource DataGridContextMenu}"
         ScrollViewer.CanContentScroll="True"
         ItemsSource="{Binding ExcludedSongs}"
         SelectedItemsList="{Binding SelectedSongs}"

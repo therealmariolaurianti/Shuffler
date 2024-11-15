@@ -22,14 +22,6 @@
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
-    <Window.InputBindings>
-        <KeyBinding
-            Key="Space"
-            Command="{Binding MusicPlayerCommands.PlayPauseCommand}" />
-        <KeyBinding
-            Key="M"
-            Command="{Binding MusicPlayerCommands.MuteCommand}" />
-    </Window.InputBindings>
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button
