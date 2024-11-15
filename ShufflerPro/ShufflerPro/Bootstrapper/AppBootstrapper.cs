@@ -5,7 +5,6 @@ using Bootstrap.Extensions.StartupTasks;
 using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
-using NLog;
 using ShufflerPro.Bootstrapper.Extensions;
 using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Framework;
@@ -54,7 +53,7 @@ public class AppBootstrapper : BootstrapperBase
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
         _kernel.Bind<HotKeyListener>().ToSelf().InSingletonScope();
-        
+
         _kernel.BindLogging();
         _kernel.BindSettings();
 
@@ -70,9 +69,6 @@ public class AppBootstrapper : BootstrapperBase
 
     protected override void OnUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
     {
-        var logger = _kernel.Get<ILogger>();
-        logger.Error(e);
-
         var exceptionViewModel = _kernel.Get<IExceptionViewModelFactory>();
         var windowManager = _kernel.Get<IWindowManager>();
 

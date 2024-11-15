@@ -1,23 +1,22 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using JetBrains.Annotations;
+using NLog;
 using ShufflerPro.Client.Extensions;
-using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Database;
 using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Screens.Exceptions;
 
-public interface IExceptionViewModelFactory : IFactory
-{
-    ExceptionViewModel Create(Exception exception);
-}
-
 public class ExceptionViewModel : ViewModelBase
 {
     private string _exceptionMessages;
 
-    public ExceptionViewModel(Exception exception)
+    public ExceptionViewModel(Exception exception, ILogger logger)
     {
+        //log exception to file
+        logger.Error(exception);
+        
         _exceptionMessages = string.Join(Environment.NewLine, exception.Messages());
     }
 
@@ -32,6 +31,7 @@ public class ExceptionViewModel : ViewModelBase
         }
     }
 
+    [UsedImplicitly]
     public void OpenLogFile()
     {
         RootFinder.FindRoot()
@@ -47,8 +47,15 @@ public class ExceptionViewModel : ViewModelBase
             });
     }
 
+    [UsedImplicitly]
     public void OpenGitHubIssues()
     {
         WebsiteLauncher.OpenWebsite("https://github.com/therealmariolaurianti/Shuffler/issues");
+    }
+
+    [UsedImplicitly]
+    public void Close()
+    {
+        TryCloseAsync(true);
     }
 }

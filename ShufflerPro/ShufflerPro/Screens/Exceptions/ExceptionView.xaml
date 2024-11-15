@@ -18,7 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <TextBlock
             HorizontalAlignment="Center"
@@ -38,11 +38,21 @@
             Name="OpenGitHubIssues"
             Grid.Row="2"
             Width="150"
+            Background="{DynamicResource MahApps.Brushes.Accent2}"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Height="30"
+            Margin="10"
+            Content="Report to GitHub" />
+        <Button
+            Name="Close"
+            Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Height="30"
             Margin="10"
-            Content="Report to GitHub"/>
+            Width="100"
+            Content="Close"/>
         <Button
             Name="OpenLogFile"
             Grid.Row="2"
@@ -50,7 +60,7 @@
             VerticalAlignment="Center"
             Height="30"
             Margin="10"
-            Width="75"
-            Content="Open Log"/>
+            Width="100"
+            Content="Open Log" />
     </Grid>
 </mah:MetroWindow>
