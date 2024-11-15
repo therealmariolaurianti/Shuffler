@@ -209,7 +209,7 @@ public class SongController
                 library.ExcludedSongs.Add(excludedSong);
                 return RemoteFromCollections(selectedSong, library);
             })
-            .Bind(async _ => await HandlePlaylist(selectedSong, library, playlistState));
+            .Bind(async _ => await HandleRemoveFromPlaylists(selectedSong, library, playlistState));
     }
 
     private NewResult<NewUnit> RemoteFromCollections(Song selectedSong, Library library)
@@ -227,8 +227,8 @@ public class SongController
         return NewUnit.Default;
     }
 
-    private async Task<NewResult<NewUnit>> HandlePlaylist(Song selectedSong, Library library,
-        PlaylistState playlistState)
+    private async Task<NewResult<NewUnit>> HandleRemoveFromPlaylists(Song selectedSong, Library library,
+        PlaylistState? playlistState)
     {
         var playlists = library.Playlists.Where(p => p.Indexes.Select(i => i.SongId).Contains(selectedSong.Id));
         foreach (var playlist in playlists)
