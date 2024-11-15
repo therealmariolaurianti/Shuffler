@@ -37,14 +37,21 @@ public class PlaylistController(DatabaseController databaseController)
         return await NewUnit.DefaultAsync;
     }
 
-    public async Task<NewResult<NewUnit>> AddSong(Playlist playlist, Song song)
+    public async Task<NewResult<NewUnit>> AddSong(Playlist playlist, Song song, int? index = null)
     {
         if (playlist.Indexes.Any(i => i.SongId == song.Id))
             return await NewUnit.DefaultAsync;
-        var playlistIndex = new PlaylistIndex(ObjectId.NewObjectId(), song.Id, playlist.SongCount, playlist.Id);
-        playlist.Indexes.Add(playlistIndex);
 
+        var playlistIndex = CreatePlaylistIndex(playlist, song, index);
         return await databaseController.AddPlaylistIndex(playlistIndex);
+    }
+
+    private static PlaylistIndex CreatePlaylistIndex(Playlist playlist, Song song, int? index)
+    {
+        var playlistIndex =
+            new PlaylistIndex(ObjectId.NewObjectId(), song.Id, index ?? playlist.SongCount, playlist.Id);
+        playlist.Indexes.Add(playlistIndex);
+        return playlistIndex;
     }
 
     public async Task<NewResult<NewUnit>> AddPlaylist(Library library, Playlist playlist)
@@ -69,14 +76,36 @@ public class PlaylistController(DatabaseController databaseController)
         return await databaseController.DeletePlaylist(item);
     }
 
-    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState? playlistState,
+    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState playlistState,
         Song selectedSong)
     {
-        playlistState?.Songs?.Remove(selectedSong);
+        playlistState.Songs?.Remove(selectedSong);
+        return await DeletePlaylistIndex(playlist, selectedSong);
+    }
 
+    private async Task<NewResult<NewUnit>> DeletePlaylistIndex(Playlist playlist, Song selectedSong)
+    {
         var playlistIndex = playlist.Indexes.Single(i => i.SongId == selectedSong.Id);
         playlist.Indexes.Remove(playlistIndex);
 
         return await databaseController.RemovePlaylistIndex(playlistIndex);
+    }
+
+    public async Task<NewResult<NewUnit>> MoveSong(PlaylistState playlistState, Song source, int targetIndex)
+    {
+        return await NewResultExtensions.Try(() =>
+            {
+                var oldIndex = playlistState.Songs!.IndexOf(source);
+                playlistState.Songs!.Move(oldIndex, targetIndex);
+
+                foreach (var playlistStateSong in playlistState.Songs)
+                {
+                    var playlistIndex = playlistState.Indexes.Single(i => i.SongId == playlistStateSong.Id);
+                    playlistIndex.SetIndex(playlistState.Songs.IndexOf(playlistStateSong));
+                }
+
+                return NewUnit.Default;
+            })
+            .Bind(async _ => await databaseController.UpdatePlaylistIndexes(playlistState.Indexes));
     }
 }

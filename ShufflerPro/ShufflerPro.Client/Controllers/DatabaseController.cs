@@ -236,4 +236,20 @@ public class DatabaseController
 
         return await NewUnit.DefaultAsync;
     }
+
+    public async Task<NewResult<NewUnit>> UpdatePlaylistIndexes(List<PlaylistIndex> indexesToUpdate)
+    {
+        using (var connection = _localDatabase.CreateConnection(_databasePath.Path))
+        {
+            foreach (var playlistIndex in indexesToUpdate)
+            {
+                var playlistIndexCollection = connection.GetCollection<PlaylistIndex>();
+                var result = await playlistIndexCollection.Update(playlistIndex);
+                if (!result)
+                    return NewResultExtensions.CreateFail<NewUnit>();
+            }
+        }
+
+        return await NewUnit.DefaultAsync;
+    }
 }

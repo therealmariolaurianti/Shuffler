@@ -228,7 +228,7 @@ public class SongController
     }
 
     private async Task<NewResult<NewUnit>> HandlePlaylist(Song selectedSong, Library library,
-        PlaylistState? playlistState)
+        PlaylistState playlistState)
     {
         var playlists = library.Playlists.Where(p => p.Indexes.Select(i => i.SongId).Contains(selectedSong.Id));
         foreach (var playlist in playlists)

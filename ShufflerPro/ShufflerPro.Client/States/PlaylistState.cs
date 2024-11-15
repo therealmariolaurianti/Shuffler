@@ -4,8 +4,16 @@ using ShufflerPro.Client.Extensions;
 
 namespace ShufflerPro.Client.States;
 
-public class PlaylistState(IReadOnlyCollection<Song> songs)
+public class PlaylistState
 {
+    public Playlist Playlist { get; }
+
+    public PlaylistState(IReadOnlyCollection<Song> songs, Playlist playlist)
+    {
+        Playlist = playlist;
+        Songs = songs.ToObservableCollection();
+    }
+
     public IReadOnlyCollection<Artist> Artists => Albums
         .Select(s => s.Artist)
         .Distinct()
@@ -17,7 +25,8 @@ public class PlaylistState(IReadOnlyCollection<Song> songs)
         .Distinct()
         .ToObservableCollection();
 
-    public ObservableCollection<Song>? Songs { get; set; } = songs.ToObservableCollection();
+    public ObservableCollection<Song>? Songs { get; set; }
+    public List<PlaylistIndex> Indexes => Playlist.Indexes;
 
     public ObservableCollection<Album> FilterAlbums(Artist? selectedArtist)
     {

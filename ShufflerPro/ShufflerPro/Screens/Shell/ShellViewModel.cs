@@ -461,18 +461,18 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         if (sourceItem is null)
             return;
 
+        dropInfo.Effects = DragDropEffects.Copy;
+
         switch (dropInfo.TargetItem)
         {
             case PlaylistGridItem:
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
-                dropInfo.Effects = DragDropEffects.Copy;
                 break;
             case Song:
             {
                 if (SelectedPlaylist is null)
                     return;
                 dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
-                dropInfo.Effects = DragDropEffects.Copy;
             }
                 break;
         }
@@ -487,16 +487,21 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             var dropInfoData = dropInfo.Data as List<object>;
             songs = dropInfoData?.Cast<Song>().ToList();
         }
-        else if(dropInfo.Data is Song song)
+        else if (dropInfo.Data is Song song)
+        {
             songs.Add(song);
+        }
 
-        if (songs!.Count == 0)
+        if (songs!.Count == 0 || dropInfo.Data is null)
             return;
-        
+
         switch (dropInfo.TargetItem)
         {
             case PlaylistGridItem playlistGridItem:
                 HandleDropSongOnPlaylist(playlistGridItem, songs);
+                break;
+            case Song song:
+                HandleMoveSongInPlaylist(song, (dropInfo.Data as Song)!);
                 break;
         }
     }
@@ -511,9 +516,22 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }, cancellationToken);
     }
 
+    private void HandleMoveSongInPlaylist(Song target, Song source)
+    {
+        if (Songs == null || SelectedPlaylist is null || _playlistState is null)
+            return;
+
+        var index = Songs.IndexOf(target);
+
+        RunAsync(async () => await _playlistController
+            .MoveSong(_playlistState, source, index)
+            .IfFailAsync(async exception => await _windowManager.ShowException(exception)));
+    }
+
     private void HandleDropSongOnPlaylist(PlaylistGridItem playlistGridItem, List<Song> songs)
     {
-        RunAsync(async () => await _playlistController.AddSongs(playlistGridItem.Item, songs));
+        RunAsync(async () => await _playlistController
+            .AddSongs(playlistGridItem.Item, songs));
     }
 
     private void WireHotKeys()
@@ -792,7 +810,11 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 
-            return _songQueueFactory.Create(currentSong, _songFilterController.FilterSongs(AllSongs, null, null),
+            var observableCollection = _playlistState is null
+                ? _songFilterController.FilterSongs(AllSongs, null, null)
+                : _playlistState.Songs;
+            
+            return _songQueueFactory.Create(currentSong, observableCollection,
                 new RepeatState(IsRepeatChecked, RepeatType));
         });
     }
@@ -942,7 +964,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         if (messageResult == MessageBoxResult.Yes)
             RunAsync(async () => await _sourceFolderController.Remove(_library, _selectedTreeViewItem.SourceFolder)
-                .IfFail(exception => _windowManager.ShowMessageBox(exception))
+                .IfFailAsync(async exception => await _windowManager.ShowException(exception))
                 .IfSuccess(_ =>
                 {
                     if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
@@ -1151,7 +1173,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             var songs = SelectedSongs!.Cast<Song>().ToList();
             await _songController
                 .Remove(songs, _library, _playlistState)
-                .IfFail(exception => _windowManager.ShowMessageBox(exception))
+                .IfFailAsync(async exception => await _windowManager.ShowException(exception))
                 .IfSuccess(_ =>
                 {
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);

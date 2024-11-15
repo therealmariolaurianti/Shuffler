@@ -3,7 +3,6 @@ using System.IO;
 using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Database;
-using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Screens.Exceptions;
@@ -19,7 +18,7 @@ public class ExceptionViewModel : ViewModelBase
 
     public ExceptionViewModel(Exception exception)
     {
-        ExceptionMessages = string.Join(Environment.NewLine, exception.Messages());
+        _exceptionMessages = string.Join(Environment.NewLine, exception.Messages());
     }
 
     public string ExceptionMessages
@@ -32,7 +31,7 @@ public class ExceptionViewModel : ViewModelBase
             NotifyOfPropertyChange();
         }
     }
-    
+
     public void OpenLogFile()
     {
         RootFinder.FindRoot()

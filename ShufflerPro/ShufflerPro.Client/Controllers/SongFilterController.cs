@@ -15,18 +15,15 @@ public class SongFilterController
         _playlistController = playlistController;
     }
 
-    public NewResult<PlaylistState> FilterSongs(IReadOnlyCollection<Song> allSongs, Playlist? playlist)
+    public NewResult<PlaylistState> FilterSongs(IReadOnlyCollection<Song> allSongs, Playlist playlist)
     {
-        if (playlist is null)
-            return new PlaylistState(allSongs);
-
         var songIds = playlist.Indexes.Select(i => i.SongId);
         var songs = allSongs.Where(a => songIds.Contains(a.Id)).ToList();
 
-        return new PlaylistState(_playlistController.IndexSongs(playlist, songs));
+        return new PlaylistState(_playlistController.IndexSongs(playlist, songs), playlist);
     }
 
-    public ObservableCollection<Song>? FilterSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album)
+    public ObservableCollection<Song> FilterSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album)
     {
         var filteredSongs = allSongs.AsEnumerable();
 
@@ -45,7 +42,7 @@ public class SongFilterController
             .ToObservableCollection();
     }
 
-    public ObservableCollection<Song>? SearchSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album,
+    public ObservableCollection<Song> SearchSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album,
         string? song)
     {
         var filteredSongs = allSongs.AsEnumerable();
@@ -64,7 +61,7 @@ public class SongFilterController
     public ObservableCollection<Song>? FilterPlaylist(PlaylistState playlistState, string? artist, string? album)
     {
         var playlistSongs = playlistState.Songs;
-        if (artist is null && album is null)
+        if ((artist is null && album is null) || playlistSongs is null)
             return playlistSongs;
 
         var filteredSongs = playlistSongs.AsEnumerable();
@@ -75,6 +72,7 @@ public class SongFilterController
         if (artist != null && album != null)
             filteredSongs = playlistSongs.Where(s => s.Artist == artist && s.Album == album);
 
-        return filteredSongs.ToObservableCollection();
+        var observableCollection = _playlistController.IndexSongs(playlistState.Playlist, filteredSongs.ToList());
+        return observableCollection;
     }
 }
