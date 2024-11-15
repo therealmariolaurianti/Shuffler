@@ -1036,10 +1036,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         if (CurrentSong is null || _songQueue is null)
             return;
 
-        var elapsedTime = ElapsedRunningTime;
-        ResetCurrentElapsed();
-
-        if (elapsedTime >= 5)
+        if (ElapsedRunningTime >= 5)
             OnSongChanged(CurrentSong);
 
         _playingPrevious = true;
