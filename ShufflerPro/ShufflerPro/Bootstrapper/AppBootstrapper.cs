@@ -56,6 +56,7 @@ public class AppBootstrapper : BootstrapperBase
 
         _kernel.BindLogging();
         _kernel.BindSettings();
+        _kernel.BindEqualizer();
 
         Bootstrap.Bootstrapper
             .Including.ShufflerProDatabase()

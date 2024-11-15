@@ -1183,9 +1183,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     [UsedImplicitly]
     public void LaunchAudioEqualizer()
     {
-        if (_playerController.AudioFileReader is null)
-            return;
-        
-        RunAsync(async () => await _windowManager.ShowAudioEqualizer(_playerController.AudioFileReader));
+        RunAsync(async () => await _windowManager.ShowAudioEqualizer(null));
     }
 }

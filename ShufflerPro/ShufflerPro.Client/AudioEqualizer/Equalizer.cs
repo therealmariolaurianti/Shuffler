@@ -1,7 +1,7 @@
 ﻿using NAudio.Dsp;
 using NAudio.Wave;
 
-namespace ShufflerPro.Framework.WPF.Controls;
+namespace ShufflerPro.Client.AudioEqualizer;
 
 /// <summary>
 ///     Basic example of a multi-band eq
@@ -83,11 +83,4 @@ public class Equalizer : ISampleProvider
         updated = true;
         CreateFilters();
     }
-}
-
-public class EqualizerBand
-{
-    public float Frequency { get; set; }
-    public float Gain { get; set; }
-    public float Bandwidth { get; set; }
 }

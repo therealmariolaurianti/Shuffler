@@ -1,13 +1,19 @@
 ﻿using System.Timers;
 using NAudio.Wave;
+using ShufflerPro.Client.AudioEqualizer;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class PlayerController(WaveOutEvent outEvent) : IDisposable
+public class PlayerController(
+    WaveOutEvent outEvent,
+    IEqualizerBandContainer equalizerBandContainer) : IDisposable
 {
+    private readonly IEqualizerBandContainer _equalizerBandContainer = equalizerBandContainer;
+    private AudioFileReader? _audioFileReader;
+    private Equalizer _equalizer;
     private WaveOutEvent? _outEvent = outEvent;
     private ISongQueue _songQueue;
     private PausableTimer? _timer;
@@ -19,21 +25,19 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
     public bool IsCompleted { get; set; }
     public bool IsPaused { get; private set; }
 
-    public AudioFileReader? AudioFileReader { get; set; }
-
     public void Dispose()
     {
         _outEvent?.Stop();
         _outEvent?.Dispose();
 
-        AudioFileReader?.Dispose();
+        _audioFileReader?.Dispose();
 
         _timer?.Stop();
         _timer?.Dispose();
 
         _timer = null;
         _outEvent = null;
-        AudioFileReader = null;
+        _audioFileReader = null;
 
         PlayerDisposed.Invoke();
     }
@@ -78,12 +82,18 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
         _songQueue = songQueue;
 
+        //reader = new AudioFileReader(selectedFile);
+        //equalizer = new Equalizer(reader, bands);
+        //player = new WaveOutEvent();
+
         try
         {
-            AudioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-            _outEvent ??= new WaveOutEvent();
+            _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
+            _equalizer = new Equalizer(_audioFileReader, _equalizerBandContainer.Bands);
 
-            _outEvent.Init(AudioFileReader);
+            _outEvent ??= new WaveOutEvent();
+            _outEvent.Init(_equalizer);
+
             _outEvent.Play();
 
             DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
@@ -96,10 +106,10 @@ public class PlayerController(WaveOutEvent outEvent) : IDisposable
 
     public void SetCurrentTime(TimeSpan time)
     {
-        if (AudioFileReader is null)
+        if (_audioFileReader is null)
             return;
 
-        AudioFileReader.CurrentTime = time;
+        _audioFileReader.CurrentTime = time;
 
         var actual = (TimeSpan)(_songQueue.CurrentSong!.Duration! - time);
 
