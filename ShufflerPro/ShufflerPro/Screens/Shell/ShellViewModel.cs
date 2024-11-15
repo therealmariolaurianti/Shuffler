@@ -11,7 +11,6 @@ using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
-using NAudio.Wave;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -815,7 +814,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             var observableCollection = _playlistState is null
                 ? _songFilterController.FilterSongs(AllSongs, null, null)
                 : _playlistState.Songs;
-            
+
             return _songQueueFactory.Create(currentSong, observableCollection,
                 new RepeatState(IsRepeatChecked, RepeatType));
         });
@@ -1184,6 +1183,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     [UsedImplicitly]
     public void LaunchAudioEqualizer()
     {
-        RunAsync(async () => await _windowManager.ShowAudioEqualizer(null));
+        RunAsync(async () => await _windowManager.ShowAudioEqualizer(_playerController));
     }
 }

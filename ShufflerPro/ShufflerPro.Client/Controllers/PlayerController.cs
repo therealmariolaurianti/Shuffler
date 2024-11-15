@@ -33,7 +33,7 @@ public class PlayerController(
 
         _timer?.Stop();
         _timer?.Dispose();
-        
+
         _equalizer = null;
         _timer = null;
         _outEvent = null;
@@ -162,5 +162,10 @@ public class PlayerController(
     public void Previous(ISongQueue songQueue)
     {
         StartPreviousSong(songQueue);
+    }
+
+    public void UpdateEqualizer()
+    {
+        _equalizer?.Update();
     }
 }

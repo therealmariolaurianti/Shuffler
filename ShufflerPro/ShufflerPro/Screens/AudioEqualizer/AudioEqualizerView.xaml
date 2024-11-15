@@ -14,6 +14,12 @@
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     mc:Ignorable="d" d:DataContext="{d:DesignInstance audioEqualizer:AudioEqualizerViewModel}">
+    <Window.InputBindings>
+        <KeyBinding
+            Key="Escape"
+            Command="{x:Static wpf:CloseWindowCommand.Instance}"
+            CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=Window}}" />
+    </Window.InputBindings>
     <Grid
         Margin="2"
         HorizontalAlignment="Center">
@@ -58,6 +64,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -76,6 +83,7 @@
                 <Slider
                     Margin="8"
                     Grid.Row="1"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -94,6 +102,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -112,6 +121,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -130,6 +140,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -148,6 +159,7 @@
                 <Slider
                     Margin="8"
                     Grid.Row="1"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -166,6 +178,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -185,6 +198,7 @@
                 <Slider
                     Grid.Row="1"
                     Margin="8"
+                    Style="{DynamicResource MahApps.Styles.Slider.Flat}"
                     Maximum="{Binding MaximumGain}"
                     Minimum="{Binding MinimumGain}"
                     Orientation="Vertical"
@@ -195,12 +209,12 @@
             Grid.Column="0"
             Grid.Row="1"
             Grid.ColumnSpan="2"
-            Name="Close"
+            Name="ResetBands"
             Cursor="Hand"
             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
             Width="100"
             Margin="10"
             Height="30"
-            Content="Close" />
+            Content="Reset" />
     </Grid>
 </mah:MetroWindow>

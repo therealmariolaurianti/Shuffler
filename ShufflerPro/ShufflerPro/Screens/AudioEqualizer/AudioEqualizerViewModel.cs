@@ -1,8 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
-using Caliburn.Micro;
 using JetBrains.Annotations;
 using ShufflerPro.Client.AudioEqualizer;
-using ShufflerPro.Framework.Actions;
+using ShufflerPro.Client.Controllers;
 using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Screens.AudioEqualizer;
@@ -10,20 +9,21 @@ namespace ShufflerPro.Screens.AudioEqualizer;
 public class AudioEqualizerViewModel : ViewModelBase
 {
     private readonly IEqualizerBandContainer _equalizerBandContainer;
-    private readonly IEventAggregator _eventAggregator;
+    private readonly PlayerController _playerController;
 
-    public AudioEqualizerViewModel(
-        IEqualizerBandContainer equalizerBandContainer, IEventAggregator eventAggregator)
+    public AudioEqualizerViewModel(PlayerController playerController,
+        IEqualizerBandContainer equalizerBandContainer)
     {
+        _playerController = playerController;
         _equalizerBandContainer = equalizerBandContainer;
-        _eventAggregator = eventAggregator;
+
         Bands = equalizerBandContainer.Bands;
     }
 
-    public EqualizerBand[] Bands { get; }
+    public EqualizerBand[] Bands { get; internal set; }
 
-    public float MinimumGain => -30;
-    public float MaximumGain => 30;
+    public static float MinimumGain => -30;
+    public static float MaximumGain => 30;
 
     public float Band1
     {
@@ -108,7 +108,7 @@ public class AudioEqualizerViewModel : ViewModelBase
 
     public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
     {
-        RunAsync(async () => await _eventAggregator.PublishOnBackgroundThreadAsync(new EqualizerAction()));
+        _playerController.UpdateEqualizer();
         base.NotifyOfPropertyChange(propertyName);
     }
 
@@ -116,6 +116,8 @@ public class AudioEqualizerViewModel : ViewModelBase
     public void ResetBands()
     {
         _equalizerBandContainer.Initialize();
-        TryCloseAsync(true);
+        Bands = _equalizerBandContainer.Bands;
+        
+        NotifyOfPropertyChange("");
     }
 }

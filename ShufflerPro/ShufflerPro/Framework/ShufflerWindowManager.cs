@@ -1,6 +1,7 @@
 ﻿using System.Windows.Media.Imaging;
 using Caliburn.Micro;
 using NAudio.Wave;
+using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Result;
 using ShufflerPro.Screens.AudioEqualizer;
@@ -75,9 +76,9 @@ public class ShufflerWindowManager : WindowManager
         return dialogAsync.CreateFromDialogResult();
     }
 
-    public async Task<NewResult<NewUnit>> ShowAudioEqualizer(ISampleProvider sampleProvider)
+    public async Task<NewResult<NewUnit>> ShowAudioEqualizer(PlayerController playerController)
     {
-        var viewModel = _audioEqualizerViewModelFactory.Create(sampleProvider);
+        var viewModel = _audioEqualizerViewModelFactory.Create(playerController);
 
         var dialogAsync = await ShowDialogAsync(viewModel);
         return dialogAsync.CreateFromDialogResult();

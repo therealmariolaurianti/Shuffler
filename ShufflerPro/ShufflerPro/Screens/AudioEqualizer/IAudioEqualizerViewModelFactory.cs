@@ -1,9 +1,9 @@
-﻿using NAudio.Wave;
+﻿using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Interfaces;
 
 namespace ShufflerPro.Screens.AudioEqualizer;
 
 public interface IAudioEqualizerViewModelFactory : IFactory
 {
-    AudioEqualizerViewModel Create(ISampleProvider sampleProvider);
+    AudioEqualizerViewModel Create(PlayerController playerController);
 }
