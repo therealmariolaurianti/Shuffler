@@ -8,8 +8,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Caliburn.Micro;
+using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
-using MahApps.Metro.Controls;
 using Microsoft.Xaml.Behaviors.Core;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -23,14 +23,12 @@ using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 using DragDropEffects = System.Windows.DragDropEffects;
-using DragEventArgs = System.Windows.DragEventArgs;
-using ListBox = System.Windows.Controls.ListBox;
+using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using MessageBox = System.Windows.MessageBox;
-using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace ShufflerPro.Screens.Shell;
 
-public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
+public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, IDropTarget
 {
     private readonly AlbumArtLoader _albumArtLoader;
     private readonly ContextMenuBuilder _contextMenuBuilder;
@@ -456,6 +454,53 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
         _hotKeyListener.Dispose();
     }
 
+
+    void IDropTarget.DragOver(IDropInfo dropInfo)
+    {
+        var sourceItem = dropInfo.Data;
+        if (sourceItem is null)
+            return;
+
+        switch (dropInfo.TargetItem)
+        {
+            case PlaylistGridItem:
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Highlight;
+                dropInfo.Effects = DragDropEffects.Copy;
+                break;
+            case Song:
+            {
+                if (SelectedPlaylist is null)
+                    return;
+                dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+                dropInfo.Effects = DragDropEffects.Copy;
+            }
+                break;
+        }
+    }
+
+    void IDropTarget.Drop(IDropInfo dropInfo)
+    {
+        var songs = new List<Song>();
+
+        if (dropInfo.Data.GetType() == typeof(List<object>))
+        {
+            var dropInfoData = dropInfo.Data as List<object>;
+            songs = dropInfoData?.Cast<Song>().ToList();
+        }
+        else if(dropInfo.Data is Song song)
+            songs.Add(song);
+
+        if (songs!.Count == 0)
+            return;
+        
+        switch (dropInfo.TargetItem)
+        {
+            case PlaylistGridItem playlistGridItem:
+                HandleDropSongOnPlaylist(playlistGridItem, songs);
+                break;
+        }
+    }
+
     async Task IHandle<SongAction>
         .HandleAsync(SongAction message, CancellationToken cancellationToken)
     {
@@ -464,6 +509,11 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
             HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
             NotifyCollectionsChanged();
         }, cancellationToken);
+    }
+
+    private void HandleDropSongOnPlaylist(PlaylistGridItem playlistGridItem, List<Song> songs)
+    {
+        RunAsync(async () => await _playlistController.AddSongs(playlistGridItem.Item, songs));
     }
 
     private void WireHotKeys()
@@ -1005,54 +1055,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable
     public void LaunchSettings()
     {
         RunAsync(async () => await _windowManager.LaunchSettings(_library));
-    }
-
-    [UsedImplicitly]
-    public void GridMouseLeftButtonDown(object source, MouseEventArgs mouseEventArgs)
-    {
-        if (SelectedSongs is null || SelectedSongs.Count == 0)
-            return;
-
-        if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
-            if (source is DataGrid dp)
-            {
-                if (mouseEventArgs.OriginalSource.GetType() == typeof(MetroThumb))
-                    return;
-
-                var selectedSongs = SelectedSongs.Cast<Song>().ToList();
-                DragDrop.DoDragDrop(dp, selectedSongs, DragDropEffects.Move);
-            }
-    }
-
-    [UsedImplicitly]
-    public void PlaylistDrop(object source, DragEventArgs dragEventArgs)
-    {
-        var inputElement = (ListBox)source;
-        var mousePosition = dragEventArgs.GetPosition(inputElement);
-        if (inputElement.InputHitTest(mousePosition) is UIElement element)
-        {
-            var data = DependencyProperty.UnsetValue;
-            while (data == DependencyProperty.UnsetValue)
-                if (element != null)
-                {
-                    data = inputElement.ItemContainerGenerator.ItemFromContainer(element);
-
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        var dependencyObject = VisualTreeHelper.GetParent(element);
-                        if (dependencyObject is UIElement uiElement)
-                            element = uiElement;
-                    }
-                }
-
-            if (data != DependencyProperty.UnsetValue)
-            {
-                var eventData = dragEventArgs.Data.GetData(typeof(List<Song>));
-
-                if (data is PlaylistGridItem playlist && eventData is List<Song> songs)
-                    RunAsync(async () => await _playlistController.AddSongs(playlist.Item, songs));
-            }
-        }
     }
 
     [UsedImplicitly]

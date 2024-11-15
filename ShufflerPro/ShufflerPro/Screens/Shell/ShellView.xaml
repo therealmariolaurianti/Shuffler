@@ -12,6 +12,7 @@
     xmlns:shell="clr-namespace:ShufflerPro.Screens.Shell"
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
+    xmlns:dd="urn:gong-wpf-dragdrop"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
@@ -61,9 +62,9 @@
             <MenuItem
                 IsEnabled="{Binding CanEditSong}"
                 Header="Edit" cal:Message.Attach="EditSong" />
-            <MenuItem 
+            <MenuItem
                 Header="Remove From Library"
-                cal:Message.Attach="RemoveSongFromLibrary"/>
+                cal:Message.Attach="RemoveSongFromLibrary" />
             <Separator
                 Visibility="{calcBinding:Binding IsRemoveSongFromPlaylistVisible}" />
             <MenuItem
@@ -356,7 +357,10 @@
                                     ItemsSource="{Binding Playlists}"
                                     SelectedItem="{Binding SelectedPlaylist}"
                                     x:Name="KeyListBox"
-                                    cal:Message.Attach="[Event Drop] = [Action PlaylistDrop($source, $eventArgs)]"
+                                    dd:DragDrop.IsDropTarget="True"
+                                    dd:DragDrop.IsDragSource="True"
+                                    dd:DragDrop.DropTargetAdornerBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    dd:DragDrop.DropHandler="{Binding}"
                                     Grid.Row="1">
                                     <ListBox.InputBindings>
                                         <KeyBinding
@@ -586,12 +590,16 @@
                         Grid.Row="2">
                         <controls:ShufflerDataGrid
                             RowHeight="23"
-                            cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)]; [Event MouseMove]= [Action GridMouseLeftButtonDown($source, $eventArgs)]"
+                            cal:Message.Attach="[Event MouseDoubleClick] = [Action GridDoubleClicked($source, $eventArgs)];"
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             SelectedItemsList="{Binding SelectedSongs}"
+                            dd:DragDrop.IsDragSource="True"
+                            dd:DragDrop.IsDropTarget="True"
+                            dd:DragDrop.DropHandler="{Binding}"
                             ScrollViewer.CanContentScroll="True"
                             ItemsSource="{Binding Songs}"
+                            dd:DragDrop.DropTargetAdornerBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             ContextMenu="{StaticResource DataGridContextMenu}"
                             IsReadOnly="True"
                             AlternationCount="2"

@@ -13,7 +13,6 @@
     Width="300"
     WindowStartupLocation="CenterScreen"
     ShowTitleBar="False"
-    Topmost="True"
     ShowCloseButton="False"
     WindowStyle="None"
     IsWindowDraggable="False"
