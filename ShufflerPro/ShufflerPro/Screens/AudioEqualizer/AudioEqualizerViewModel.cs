@@ -115,9 +115,10 @@ public class AudioEqualizerViewModel : ViewModelBase
     [UsedImplicitly]
     public void ResetBands()
     {
-        _equalizerBandContainer.Initialize();
-        Bands = _equalizerBandContainer.Bands;
+        for (var i = 0; i < 8; i++) 
+            Bands[i].Gain = 0;
         
-        NotifyOfPropertyChange("");
+        _playerController.UpdateEqualizer();
+        NotifyOfPropertyChange(string.Empty);
     }
 }
