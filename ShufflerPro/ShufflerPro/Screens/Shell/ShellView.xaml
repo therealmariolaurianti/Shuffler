@@ -663,9 +663,9 @@
                 BorderThickness="1">
                 <Grid>
                     <StackPanel
-                        Margin="10"
-                        Orientation="Horizontal"
+                        Margin="5"
                         VerticalAlignment="Center"
+                        Orientation="Horizontal"
                         HorizontalAlignment="Left">
                         <controls:RepeatToggleButton
                             IsChecked="{Binding IsRepeatChecked}"
@@ -673,7 +673,7 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <iconPacks:PackIconModern
+                                <iconPacks:PackIconFontaudio
                                     Width="20"
                                     Height="20"
                                     Kind="Repeat" />
@@ -689,12 +689,27 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <iconPacks:PackIconModern
+                                <iconPacks:PackIconFontaudio
                                     Width="20"
                                     Height="20"
                                     Kind="Shuffle" />
                             </StackPanel>
                         </ToggleButton>
+                        <Button
+                            Cursor="Hand"
+                            ToolTip="Audio Equalizer"
+                            Margin="2"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <iconPacks:PackIconFontaudio
+                                    Width="20"
+                                    Height="20"
+                                    Kind="Headphones" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                     <TextBlock
                         TextAlignment="Center"
