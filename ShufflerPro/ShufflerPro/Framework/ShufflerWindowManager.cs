@@ -6,7 +6,6 @@ using ShufflerPro.Screens.EditSong.Multiple;
 using ShufflerPro.Screens.EditSong.Single;
 using ShufflerPro.Screens.Exceptions;
 using ShufflerPro.Screens.ExcludedSongs;
-using ShufflerPro.Screens.KeyBinds;
 using ShufflerPro.Screens.Setting;
 
 namespace ShufflerPro.Framework;
@@ -17,7 +16,6 @@ public class ShufflerWindowManager : WindowManager
     private readonly IEditSongViewModelFactory _editSongViewModelFactory;
     private readonly IExceptionViewModelFactory _exceptionViewModelFactory;
     private readonly IExcludedSongsViewModelFactory _excludedSongsViewModelFactory;
-    private readonly IKeybindViewModelFactory _keybindViewModelFactory;
     private readonly ISettingsViewModelFactory _settingsViewModelFactory;
 
     public ShufflerWindowManager(
@@ -25,13 +23,12 @@ public class ShufflerWindowManager : WindowManager
         ISettingsViewModelFactory settingsViewModelFactory,
         IEditSongsViewModelFactory editSongsViewModelFactory,
         IExcludedSongsViewModelFactory excludedSongsViewModelFactory,
-        IKeybindViewModelFactory keybindViewModelFactory, IExceptionViewModelFactory exceptionViewModelFactory)
+        IExceptionViewModelFactory exceptionViewModelFactory)
     {
         _editSongViewModelFactory = editSongViewModelFactory;
         _settingsViewModelFactory = settingsViewModelFactory;
         _editSongsViewModelFactory = editSongsViewModelFactory;
         _excludedSongsViewModelFactory = excludedSongsViewModelFactory;
-        _keybindViewModelFactory = keybindViewModelFactory;
         _exceptionViewModelFactory = exceptionViewModelFactory;
     }
 
@@ -68,14 +65,6 @@ public class ShufflerWindowManager : WindowManager
     public async Task<NewResult<NewUnit>> LaunchExcludedSongs(Library library)
     {
         var viewModel = _excludedSongsViewModelFactory.Create(library);
-
-        var dialogAsync = await ShowDialogAsync(viewModel);
-        return dialogAsync.CreateFromDialogResult();
-    }
-
-    public async Task<NewResult<NewUnit>> LaunchKeyBinds()
-    {
-        var viewModel = _keybindViewModelFactory.Create();
 
         var dialogAsync = await ShowDialogAsync(viewModel);
         return dialogAsync.CreateFromDialogResult();

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -15,12 +16,16 @@ public class SettingsViewModel : ViewModelBase
     private readonly Library _library;
     private readonly ISettings _settings;
     private readonly SettingsController _settingsController;
+    private readonly ShufflerWindowManager _windowManager;
     private bool _canSave;
     private bool _saving;
-    private readonly ShufflerWindowManager _windowManager;
 
-    public SettingsViewModel(Library library, ISettings settings, ItemTracker<Settings> itemTracker,
-        SettingsController settingsController, ShufflerWindowManager windowManager)
+    public SettingsViewModel(
+        Library library,
+        ISettings settings,
+        ItemTracker<Settings> itemTracker,
+        SettingsController settingsController,
+        ShufflerWindowManager windowManager)
     {
         _library = library;
         _settings = settings;
@@ -72,6 +77,7 @@ public class SettingsViewModel : ViewModelBase
         base.NotifyOfPropertyChange(propertyName);
     }
 
+    [UsedImplicitly]
     public void Save()
     {
         _saving = true;
@@ -80,6 +86,7 @@ public class SettingsViewModel : ViewModelBase
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
 
+    [UsedImplicitly]
     public void Cancel()
     {
         _itemTracker.Revert();
@@ -93,13 +100,9 @@ public class SettingsViewModel : ViewModelBase
         return base.CanCloseAsync(cancellationToken);
     }
 
+    [UsedImplicitly]
     public void LaunchExcludedSongs()
     {
         RunAsync(async () => await _windowManager.LaunchExcludedSongs(_library));
-    }
-
-    public void LaunchKeyBinds()
-    {
-        RunAsync(async () => await _windowManager.LaunchKeyBinds());
     }
 }
