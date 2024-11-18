@@ -451,10 +451,22 @@
                                     <Grid
                                         Visibility="{calcBinding:Binding IsShowLyricsChecked}">
                                         <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto" />
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
+                                        <Border
+                                            Grid.Row="0"
+                                            Grid.RowSpan="2"
+                                            Panel.ZIndex="1000"
+                                            Opacity=".5"
+                                            Visibility="{calcBinding:Binding IsLoadingLyrics}"
+                                            Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}">
+                                            <mah:ProgressRing
+                                                Foreground="{DynamicResource AccentColorBrush}"
+                                                IsActive="{Binding IsLoadingLyrics}"/>
+                                        </Border>
                                         <TextBlock
+                                            Grid.Row="0"
                                             Margin="2,0,2,2"
                                             FontSize="16"
                                             TextAlignment="Center"

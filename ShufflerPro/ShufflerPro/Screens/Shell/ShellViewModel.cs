@@ -81,6 +81,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private double _startingSongTime;
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
+    private bool _isLoadingLyrics;
 
     public ShellViewModel(
         Library library,
@@ -460,7 +461,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (value == _isShowLyricsChecked) return;
             _isShowLyricsChecked = value;
+            
             NotifyOfPropertyChange();
+            LoadSongLyrics();
         }
     }
 
@@ -553,11 +556,35 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         RunAsync(async () =>
         {
             if (SelectedSong is { Title: not null })
+            {
+                SongLyrics = string.Empty;
+                IsLoadingLyrics = true;
+                
                 await _lyricsController
                     .Load(SelectedSong.Artist, SelectedSong.Title)
-                    .IfSuccess(songLyrics => SongLyrics = songLyrics)
-                    .IfFail(_ => SongLyrics = "Failed to load.");
+                    .IfSuccess(songLyrics =>
+                    {
+                        SongLyrics = songLyrics;
+                        IsLoadingLyrics = false;
+                    })
+                    .IfFail(_ =>
+                    {
+                        SongLyrics = "Failed to load.";
+                        IsLoadingLyrics = false;
+                    });
+            }
         });
+    }
+
+    public bool IsLoadingLyrics
+    {
+        get => _isLoadingLyrics;
+        set
+        {
+            if (value == _isLoadingLyrics) return;
+            _isLoadingLyrics = value;
+            NotifyOfPropertyChange();
+        }
     }
 
     private void HandleMoveSongInPlaylist(Song target, Song source)
