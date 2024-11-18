@@ -534,7 +534,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 HandleDropSongOnPlaylist(playlistGridItem, songs);
                 break;
             case Song song:
-                HandleMoveSongInPlaylist(song, (dropInfo.Data as Song)!);
+                HandleMoveSongInPlaylist(song, songs.First());
                 break;
         }
     }
