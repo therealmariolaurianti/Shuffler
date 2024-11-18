@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro", "ShufflerPro\ShufflerPro.csproj", "{A90DEF9B-8E9E-48AE-98DA-302AA958381B}"
 EndProject
@@ -12,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Tests", "ShufflerPro.Tests\ShufflerPro.Tests.csproj", "{972DA2A6-BC9A-4EF0-934D-A7F58F6656F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Database", "ShufflerPro.Database\ShufflerPro.Database.csproj", "{79DF2810-FE35-4964-857F-40166FB1A1F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShufflerPro.Web", "ShufflerPro.Web\ShufflerPro.Web.csproj", "{0060723F-985A-479E-8ACD-12F5B8E3FB4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79DF2810-FE35-4964-857F-40166FB1A1F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0060723F-985A-479E-8ACD-12F5B8E3FB4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0060723F-985A-479E-8ACD-12F5B8E3FB4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0060723F-985A-479E-8ACD-12F5B8E3FB4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0060723F-985A-479E-8ACD-12F5B8E3FB4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

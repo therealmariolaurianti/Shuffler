@@ -9,3 +9,8 @@ public interface ISettings
     public bool IsDarkModeEnabled { get; set; }
     void Update(ISettings settings);
 }
+
+public interface IAccessTokens
+{
+
+}

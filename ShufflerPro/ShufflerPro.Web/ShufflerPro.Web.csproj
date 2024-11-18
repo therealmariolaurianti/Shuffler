@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Bootstrapper.Ninject" Version="2.0.3.13" />
+      <PackageReference Include="GeniusLyrics.NET" Version="1.0.0" />
+      <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ShufflerPro.Client\ShufflerPro.Client.csproj" />
+      <ProjectReference Include="..\ShufflerPro.Result\ShufflerPro.Result.csproj" />
+    </ItemGroup>
+
+</Project>

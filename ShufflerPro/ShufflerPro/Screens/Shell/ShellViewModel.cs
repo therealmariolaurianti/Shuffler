@@ -23,6 +23,7 @@ using ShufflerPro.Framework;
 using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
+using ShufflerPro.Web;
 using DragDropEffects = System.Windows.DragDropEffects;
 using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using MessageBox = System.Windows.MessageBox;
@@ -36,6 +37,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private readonly HotKeyListener _hotKeyListener;
     private readonly Library _library;
     private readonly LibraryController _libraryController;
+
+    private readonly LyricsController _lyricsController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
     private readonly PlaylistController _playlistController;
@@ -56,6 +59,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private bool _isMuted;
     private bool _isRepeatChecked;
+    private bool _isShowLyricsChecked;
     private bool _isShuffleChecked;
     private bool _isSliderBeingDragged;
     private LibrarySearchType _librarySearchType;
@@ -70,6 +74,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private IList? _selectedSongs;
     private double _selectedSongTime;
     private SourceTreeViewItem? _selectedTreeViewItem;
+    private string _songLyrics;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem>? _sourceTreeItems;
@@ -92,7 +97,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         SongFilterController songFilterController,
         ShufflerWindowManager windowManager,
         SongController songController,
-        IEventAggregator eventAggregator, HotKeyListener hotKeyListener)
+        IEventAggregator eventAggregator, HotKeyListener hotKeyListener, LyricsController lyricsController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -108,6 +113,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _windowManager = windowManager;
         _songController = songController;
         _hotKeyListener = hotKeyListener;
+        _lyricsController = lyricsController;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -447,6 +453,28 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     public bool CanEditSong => SelectedSong?.Id != CurrentSong?.Id;
 
+    public bool IsShowLyricsChecked
+    {
+        get => _isShowLyricsChecked;
+        set
+        {
+            if (value == _isShowLyricsChecked) return;
+            _isShowLyricsChecked = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public string SongLyrics
+    {
+        get => _songLyrics;
+        set
+        {
+            if (value == _songLyrics) return;
+            _songLyrics = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     public void Dispose()
     {
         _playerController.Dispose();
@@ -515,6 +543,21 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
             NotifyCollectionsChanged();
         }, cancellationToken);
+    }
+
+    public void LoadSongLyrics()
+    {
+        if (!IsShowLyricsChecked)
+            return;
+
+        RunAsync(async () =>
+        {
+            if (SelectedSong is { Title: not null })
+                await _lyricsController
+                    .Load(SelectedSong.Artist, SelectedSong.Title)
+                    .IfSuccess(songLyrics => SongLyrics = songLyrics)
+                    .IfFail(_ => SongLyrics = "Failed to load.");
+        });
     }
 
     private void HandleMoveSongInPlaylist(Song target, Song source)
@@ -850,6 +893,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     CurrentSong!.IsPlaying = true;
 
                     NotifyInterfaceChanged();
+                    LoadSongLyrics();
                 }));
     }
 
