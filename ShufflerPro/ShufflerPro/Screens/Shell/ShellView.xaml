@@ -13,6 +13,7 @@
     xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:controls="clr-namespace:ShufflerPro.Framework.WPF.Controls"
     xmlns:dd="urn:gong-wpf-dragdrop"
+    xmlns:attachedProperties="clr-namespace:ShufflerPro.Framework.WPF.AttachedProperties"
     mc:Ignorable="d"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
@@ -170,8 +171,10 @@
                 <Border
                     Margin="0,0,10,0"
                     Grid.Column="1"
+                    cal:Message.Attach="[Event MouseDown] = [Action JumpToCurrentSong()]"
                     Background="{DynamicResource MahApps.Brushes.Control.Background}"
                     BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                    IsMouseDirectlyOverChanged="UIElement_OnIsMouseDirectlyOverChanged"
                     BorderThickness="1">
                     <Grid
                         Margin="2">
@@ -184,15 +187,21 @@
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center">
                             <TextBlock
+                                x:Name="TitleTextBlock"
+                                IsHitTestVisible="False"
                                 TextAlignment="Center"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Title, FallbackValue=''}" />
                             <TextBlock
+                                x:Name="ArtistTextBlock"
                                 TextAlignment="Center"
+                                IsHitTestVisible="False"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
                             <TextBlock
+                                x:Name="AlbumTextBlock"
                                 TextAlignment="Center"
+                                IsHitTestVisible="False"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Album, FallbackValue=''}" />
                         </StackPanel>
@@ -208,6 +217,7 @@
                                 Grid.Column="0"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Right"
+                                IsHitTestVisible="False"
                                 Text="{Binding ElapsedRunningTimeDisplay}" />
                             <controls:ShufflerSlider
                                 Margin="5"
@@ -225,6 +235,7 @@
                             <TextBlock
                                 Grid.Column="2"
                                 VerticalAlignment="Center"
+                                IsHitTestVisible="False"
                                 HorizontalAlignment="Left"
                                 Text="{Binding CurrentSongTime}" />
                         </Grid>
@@ -458,13 +469,14 @@
                                             Grid.Row="1"
                                             Panel.ZIndex="1000"
                                             Opacity=".5"
+                                            Margin="2"
                                             Visibility="{calcBinding:Binding IsLoadingLyrics}"
                                             Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}">
                                             <mah:ProgressRing
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
                                                 Foreground="{DynamicResource AccentColorBrush}"
-                                                IsActive="{Binding IsLoadingLyrics}"/>
+                                                IsActive="{Binding IsLoadingLyrics}" />
                                         </Border>
                                         <TextBlock
                                             Grid.Row="0"
@@ -477,6 +489,7 @@
                                         <TextBox
                                             Name="SongLyrics"
                                             Grid.Row="1"
+                                            BorderBrush="Transparent"
                                             TextWrapping="Wrap"
                                             ScrollViewer.CanContentScroll="True"
                                             ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -647,6 +660,7 @@
                             AutoGenerateColumns="False"
                             SelectedItem="{Binding SelectedSong}"
                             SelectedItemsList="{Binding SelectedSongs}"
+                            attachedProperties:JumpToItemAttachedProperty.SelectingItem="{Binding JumpToSong}"
                             dd:DragDrop.IsDragSource="True"
                             dd:DragDrop.IsDropTarget="True"
                             dd:DragDrop.DropHandler="{Binding}"

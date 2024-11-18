@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
+using Caliburn.Micro;
+using Action = Caliburn.Micro.Action;
 
 namespace ShufflerPro.Framework.WPF.Controls;
 

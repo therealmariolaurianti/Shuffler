@@ -82,6 +82,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
     private bool _isLoadingLyrics;
+    private Song? _jumpToSong;
 
     public ShellViewModel(
         Library library,
@@ -1255,5 +1256,25 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     public void LaunchAudioEqualizer()
     {
         RunAsync(async () => await _windowManager.ShowAudioEqualizer(_playerController));
+    }
+
+    [UsedImplicitly]
+    public void JumpToCurrentSong()
+    {
+        if (CurrentSong is null)
+            return;
+        
+        JumpToSong = CurrentSong;
+        JumpToSong = null;
+    }
+
+    public Song? JumpToSong
+    {
+        get => _jumpToSong;
+        set
+        {
+            _jumpToSong = value;
+            NotifyOfPropertyChange();
+        }
     }
 }
