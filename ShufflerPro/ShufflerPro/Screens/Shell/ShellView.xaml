@@ -169,12 +169,12 @@
                     </StackPanel>
                 </Border>
                 <Border
+                    x:Name="SongBorder"
                     Margin="0,0,10,0"
                     Grid.Column="1"
                     cal:Message.Attach="[Event MouseDown] = [Action JumpToCurrentSong()]"
                     Background="{DynamicResource MahApps.Brushes.Control.Background}"
                     BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                    IsMouseDirectlyOverChanged="UIElement_OnIsMouseDirectlyOverChanged"
                     BorderThickness="1">
                     <Grid
                         Margin="2">
@@ -182,25 +182,35 @@
                             <RowDefinition />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <Grid.Resources>
+                            <Style x:Key="HoverStyle" TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsMouseOver, ElementName=SongBorder}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Grid.Resources>
                         <StackPanel
                             Orientation="Vertical"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center">
                             <TextBlock
-                                x:Name="TitleTextBlock"
+                                x:Name="TitleText"
+                                Style="{DynamicResource HoverStyle}"
                                 IsHitTestVisible="False"
                                 TextAlignment="Center"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Title, FallbackValue=''}" />
                             <TextBlock
-                                x:Name="ArtistTextBlock"
                                 TextAlignment="Center"
+                                Style="{DynamicResource HoverStyle}"
                                 IsHitTestVisible="False"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Artist, FallbackValue=''}" />
                             <TextBlock
-                                x:Name="AlbumTextBlock"
                                 TextAlignment="Center"
+                                Style="{DynamicResource HoverStyle}"
                                 IsHitTestVisible="False"
                                 FontSize="14"
                                 Text="{Binding CurrentSong.Album, FallbackValue=''}" />
