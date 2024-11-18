@@ -812,16 +812,26 @@
                         FontSize="14"
                         Text="{Binding SongSelectionSummary, Mode=OneWay}" />
                     <StackPanel
+                        Margin="5"
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
+                            ToolTip="Import Folders"
                             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                            Width="100"
-                            Margin="10"
-                            Content="Import" />
+                            Width="50"
+                            Margin="2">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <iconPacks:PackIconModern
+                                    Width="20"
+                                    Height="20"
+                                    Kind="FolderOpen" />
+                            </StackPanel>
+                        </Button>
                     </StackPanel>
                 </Grid>
             </Border>
