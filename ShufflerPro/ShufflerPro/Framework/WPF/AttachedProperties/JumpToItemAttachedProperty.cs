@@ -17,13 +17,13 @@ public class JumpToItemAttachedProperty
 
     private static void OnSelectingItemChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
-        if (d is not DataGrid grid || grid.SelectedItem == null || e.NewValue == null)
+        if (d is not DataGrid grid || e.NewValue is not Song song)
             return;
 
         grid.Dispatcher.InvokeAsync(() =>
         {
             grid.UpdateLayout();
-            grid.ScrollIntoView(grid.SelectedItem, null);
+            grid.ScrollIntoView(song, null);
         });
     }
 
