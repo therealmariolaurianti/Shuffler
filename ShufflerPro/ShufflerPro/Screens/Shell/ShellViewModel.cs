@@ -553,7 +553,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         if (!IsShowLyricsChecked)
             return;
 
-        RunAsync(async () =>
+        Task.Run(async () =>
         {
             if (SelectedSong is { Title: not null })
             {
