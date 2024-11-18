@@ -476,6 +476,9 @@
                                         <TextBox
                                             Name="SongLyrics"
                                             Grid.Row="1"
+                                            TextWrapping="Wrap"
+                                            ScrollViewer.CanContentScroll="True"
+                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
                                             Margin="2"
                                             IsReadOnly="True" />
                                     </Grid>

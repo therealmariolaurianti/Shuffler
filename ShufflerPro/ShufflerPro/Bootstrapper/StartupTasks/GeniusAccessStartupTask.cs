@@ -27,24 +27,32 @@ public class GeniusAccessStartupTask : IStartupTask
 
     private async Task BuildAccess()
     {
-        using (var client = new HttpClient())
+        try
         {
-            var requestBody =
-                new StringContent($"client_id={ClientId}&client_secret={ClientSecret}&grant_type=client_credentials",
-                    Encoding.UTF8, "application/x-www-form-urlencoded");
-
-            var response = await client.PostAsync(AccessTokenUrl, requestBody);
-            if (response.IsSuccessStatusCode)
+            using (var client = new HttpClient())
             {
-                var jsonResponse = await response.Content.ReadAsStringAsync();
-                var json = JObject.Parse(jsonResponse);
+                var requestBody =
+                    new StringContent(
+                        $"client_id={ClientId}&client_secret={ClientSecret}&grant_type=client_credentials",
+                        Encoding.UTF8, "application/x-www-form-urlencoded");
 
-                var accessToken = json["access_token"]?.ToString();
-                if (accessToken == null)
-                    return;
+                var response = await client.PostAsync(AccessTokenUrl, requestBody);
+                if (response.IsSuccessStatusCode)
+                {
+                    var jsonResponse = await response.Content.ReadAsStringAsync();
+                    var json = JObject.Parse(jsonResponse);
 
-                _accessKeysContainer.GeniusToken = accessToken;
+                    var accessToken = json["access_token"]?.ToString();
+                    if (accessToken == null)
+                        return;
+
+                    _accessKeysContainer.GeniusToken = accessToken;
+                }
             }
+        }
+        catch (Exception)
+        {
+            _accessKeysContainer.GeniusToken = null;
         }
     }
 
