@@ -1,0 +1,11 @@
+Changelist 1.1.0:
+  - Add 8 band audio equalizer
+    - Adjust ranges between 100 - 9.k hz
+  - Adjust UI layout
+  - Add hotkeys for Play/Pause, Next, Previous, and Mute
+  - Song search runs asynchronously to improve performance
+  - Add ability to remove individual song(s)
+  - Add better drag & drop grid support
+    - Add drag & drop reording inside playlists
+    - Add ability to drag multiple songs into playlist at once
+  - Add better exception logging
