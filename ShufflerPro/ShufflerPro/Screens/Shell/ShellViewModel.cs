@@ -570,7 +570,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     })
                     .IfFail(_ =>
                     {
-                        SongLyrics = "Failed to load.";
+                        SongLyrics = "No lyrics.";
                         IsLoadingLyrics = false;
                     });
             }

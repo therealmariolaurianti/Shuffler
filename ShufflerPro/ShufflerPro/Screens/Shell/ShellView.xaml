@@ -186,7 +186,8 @@
                             <Style x:Key="HoverStyle" TargetType="{x:Type TextBlock}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding IsMouseOver, ElementName=SongBorder}" Value="True">
-                                        <Setter Property="Foreground" Value="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" />
+                                        <Setter Property="Foreground"
+                                                Value="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" />
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
@@ -479,7 +480,6 @@
                                             Grid.Row="1"
                                             Panel.ZIndex="1000"
                                             Opacity=".5"
-                                            Margin="2"
                                             Visibility="{calcBinding:Binding IsLoadingLyrics}"
                                             Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}">
                                             <mah:ProgressRing
@@ -498,12 +498,12 @@
                                             Text="Lyrics" />
                                         <TextBox
                                             Name="SongLyrics"
+                                            Margin="2,0,2,2"
                                             Grid.Row="1"
                                             BorderBrush="Transparent"
                                             TextWrapping="Wrap"
                                             ScrollViewer.CanContentScroll="True"
                                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                            Margin="2"
                                             IsReadOnly="True" />
                                     </Grid>
                                 </Grid>
