@@ -6,25 +6,18 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Web;
 
-public class LyricsController
+public class LyricsController(AccessKeysContainer accessKeysContainer)
 {
-    private readonly AccessKeysContainer _accessKeysContainer;
-
-    public LyricsController(AccessKeysContainer accessKeysContainer)
-    {
-        _accessKeysContainer = accessKeysContainer;
-    }
-
     public async Task<NewResult<string>> Load(string artist, string title)
     {
-        if (_accessKeysContainer.GeniusToken is null)
+        if (accessKeysContainer.GeniusToken is null)
             return NewResultExtensions.CreateFail<string>("Access token not authenticated");
         return await LoadLyrics(title, artist);
     }
 
     private async Task<NewResult<string>> LoadLyrics(string artist, string title)
     {
-        var genius = new GeniusClient(_accessKeysContainer.GeniusToken!);
+        var genius = new GeniusClient(accessKeysContainer.GeniusToken!);
         var song = await genius.GetSong(title, artist, true);
 
         return Format(song) ?? NewResultExtensions.CreateFail<string>(new Exception("Error fetching song data."));

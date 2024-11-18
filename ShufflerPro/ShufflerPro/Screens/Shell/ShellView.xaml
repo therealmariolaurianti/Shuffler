@@ -455,13 +455,14 @@
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
                                         <Border
-                                            Grid.Row="0"
-                                            Grid.RowSpan="2"
+                                            Grid.Row="1"
                                             Panel.ZIndex="1000"
                                             Opacity=".5"
                                             Visibility="{calcBinding:Binding IsLoadingLyrics}"
                                             Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}">
                                             <mah:ProgressRing
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
                                                 Foreground="{DynamicResource AccentColorBrush}"
                                                 IsActive="{Binding IsLoadingLyrics}"/>
                                         </Border>
