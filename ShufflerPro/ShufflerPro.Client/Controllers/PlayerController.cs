@@ -20,6 +20,7 @@ public class PlayerController(
 
     public required Action PlayerDisposed;
     public required Action<Song> SongChanged;
+    private bool _isPlayingStaticSong;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
     public bool IsCompleted { get; set; }
@@ -86,9 +87,15 @@ public class PlayerController(
         try
         {
             if (_songQueue.CurrentSong.IsStatic)
+            {
                 radioController.StartStation(_songQueue.CurrentSong.Path!);
+                _isPlayingStaticSong = true;
+            }
             else
             {
+                _isPlayingStaticSong = false;
+                radioController.StopStation();
+                
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
                 _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
 
@@ -149,8 +156,16 @@ public class PlayerController(
 
     public void Pause()
     {
-        _outEvent?.Pause();
-        _timer?.Pause();
+        if (_isPlayingStaticSong)
+        {
+            radioController.StopStation();
+        }
+        else
+        {
+            _outEvent?.Pause();
+            _timer?.Pause();
+        }
+        
         IsPaused = true;
     }
 

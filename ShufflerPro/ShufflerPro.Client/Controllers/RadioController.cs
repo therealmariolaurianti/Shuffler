@@ -4,31 +4,32 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class RadioController
+public class RadioController(IEnumerable<IRadioStation> radioStations)
 {
-    private readonly IEnumerable<IRadioStation> _radioStations;
-
-    public RadioController(IEnumerable<IRadioStation> radioStations)
-    {
-        _radioStations = radioStations;
-    }
+    private WasapiOut? _wasapiOut;
 
     public void StartStation(string url)
     {
+        StopStation();
+        
         using (var mediaFoundationReader = new MediaFoundationReader(url))
-        using (var wasapiOut = new WasapiOut())
         {
-            wasapiOut.Init(mediaFoundationReader);
-            wasapiOut.Play();
+            _wasapiOut = new WasapiOut();
             
-            //todo
-            while (wasapiOut.PlaybackState == PlaybackState.Playing)
-                Thread.Sleep(1000);
+            _wasapiOut.Init(mediaFoundationReader);
+            _wasapiOut.Play();   
         }
     }
 
     public NewResult<List<IRadioStation>> GetStations()
     {
-        return _radioStations.ToList();
+        return radioStations.ToList();
+    }
+
+    public void StopStation()
+    {
+        _wasapiOut?.Stop();
+        _wasapiOut?.Dispose();
+        _wasapiOut = null;
     }
 }
