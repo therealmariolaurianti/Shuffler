@@ -82,6 +82,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private ISongQueue? _songQueue;
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
+    private SourceTreeState? _sourceTreeState;
     private double _startingSongTime;
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
@@ -101,7 +102,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         SongFilterController songFilterController,
         ShufflerWindowManager windowManager,
         SongController songController,
-        IEventAggregator eventAggregator, HotKeyListener hotKeyListener, LyricsController lyricsController,
+        IEventAggregator eventAggregator,
+        HotKeyListener hotKeyListener,
+        LyricsController lyricsController,
         SourceTreeController sourceTreeController)
     {
         _playerController = playerController;
@@ -167,6 +170,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         get
         {
+            if (_sourceTreeState is not null)
+                return [];
+
             if (_playlistState is not null)
                 return _playlistState.FilterAlbums(SelectedArtist);
 
@@ -175,9 +181,18 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    public IReadOnlyCollection<Artist> Artists => _playlistState?.Artists ?? _library
-        .Artists
-        .OrderBy(a => a.Name).ToReadOnlyCollection();
+    public IReadOnlyCollection<Artist> Artists
+    {
+        get
+        {
+            if (_sourceTreeState is not null)
+                return [];
+
+            return _playlistState?.Artists ?? _library
+                .Artists
+                .OrderBy(a => a.Name).ToReadOnlyCollection();
+        }
+    }
 
     private IReadOnlyCollection<Song> AllSongs => _library.Songs;
     private IReadOnlyCollection<Album> AllAlbums => _library.Albums;
@@ -288,6 +303,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (Equals(value, _selectedTreeItem)) return;
             _selectedTreeItem = value;
             NotifyOfPropertyChange();
+            HandleSelectedTreeItem();
         }
     }
 
@@ -583,6 +599,30 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
             NotifyCollectionsChanged();
         }, cancellationToken);
+    }
+
+    private void HandleSelectedTreeItem()
+    {
+        if (SelectedTreeItem is null || !_sourceTreeController.IsStaticSource(SelectedTreeItem))
+        {
+            _sourceTreeState = null;
+            HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+            return;
+        }
+
+        if (_sourceTreeController.IsStaticSource(SelectedTreeItem))
+        {
+            var items = SelectedTreeItem.Parent is null
+                ? SelectedTreeItem.Items.Cast<SourceTreeViewItem>()
+                : [SelectedTreeItem];
+
+            _sourceTreeController.BuildSourceTreeState(items.ToList())
+                .Do(sourceTreeState =>
+                {
+                    _sourceTreeState = sourceTreeState;
+                    Songs = _sourceTreeState.Songs;
+                });
+        }
     }
 
     public void LoadSongLyrics()

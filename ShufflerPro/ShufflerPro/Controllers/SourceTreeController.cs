@@ -82,4 +82,35 @@ public class SourceTreeController
     {
         return sourceTreeItems.Single(sti => sti.Id == RadioStationId);
     }
+
+    public bool IsStaticSource(SourceTreeViewItem sourceTreeItem)
+    {
+        if (sourceTreeItem.Id == RadioStationId)
+            return true;
+
+        if (sourceTreeItem.Parent is SourceTreeViewItem parent)
+            if (parent.Id == RadioStationId)
+                return true;
+
+        return false;
+    }
+
+    public NewResult<SourceTreeState> BuildSourceTreeState(List<SourceTreeViewItem> items)
+    {
+        var staticSongs = new List<Song>();
+        foreach (var sourceTreeViewItem in items)
+        {
+            var path = sourceTreeViewItem.SourceFolder.FullPath;
+            var song = new Song(null, path)
+            {
+                Title = sourceTreeViewItem.SourceFolder.Header,
+                Artist = sourceTreeViewItem.SourceFolder.FullPath,
+                Track = 1
+            };
+            staticSongs.Add(song);
+        }
+
+
+        return new SourceTreeState(staticSongs);
+    }
 }

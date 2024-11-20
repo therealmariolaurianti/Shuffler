@@ -14,9 +14,9 @@ public class SourceFolder
         IsValid = true;
     }
 
-    public SourceFolder(string name, string fullPath, bool isRoot, SourceFolder? parent)
+    public SourceFolder(string header, string fullPath, bool isRoot, SourceFolder? parent)
     {
-        Header = BuildHeader(name);
+        Header = BuildHeader(header);
         FullPath = fullPath;
         IsRoot = isRoot;
         Parent = parent;
