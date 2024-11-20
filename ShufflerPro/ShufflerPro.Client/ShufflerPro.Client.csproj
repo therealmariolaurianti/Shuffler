@@ -22,4 +22,10 @@
         <ProjectReference Include="..\ShufflerPro.Result\ShufflerPro.Result.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="System.Diagnostics.PerformanceCounter">
+        <HintPath>..\ShufflerPro\bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Diagnostics.PerformanceCounter.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

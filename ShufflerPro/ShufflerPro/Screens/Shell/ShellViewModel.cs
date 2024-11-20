@@ -556,7 +556,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     public override string? DisplayName { get; set; } =
         $"ShufflerPro (v{Assembly.GetExecutingAssembly().GetName().Version})";
 
-    public string? NetworkUsage => _playerController.NetworkUsage;
+    public bool ShowNetworkUsage => _playerController.IsPlayingStaticSong;
 
     public void Dispose()
     {
@@ -676,6 +676,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                         IsLoadingLyrics = false;
                     });
             }
+            else 
+                SongLyrics = "No lyrics.";
         });
     }
 
@@ -830,7 +832,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _currentSongTime = _currentSongTime.Tick();
         SetElapsedRunTimeDisplay(_currentSongTime);
 
-        NotifyOfPropertyChange(nameof(NetworkUsage));
+        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     private void SetElapsedRunTimeDisplay(TimeSpan timeSpan)
@@ -852,7 +854,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(AllAlbums));
         NotifyOfPropertyChange(nameof(SongSelectionSummary));
         NotifyOfPropertyChange(nameof(SourceFolders));
-        NotifyOfPropertyChange(nameof(NetworkUsage));
+        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
@@ -1046,7 +1048,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(ElapsedRunningTime));
         NotifyOfPropertyChange(nameof(AlbumArt));
         NotifyOfPropertyChange(nameof(HasAlbumArt));
-        NotifyOfPropertyChange(nameof(NetworkUsage));
+        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     private NewResult<NewUnit> HandleSelectedSong()

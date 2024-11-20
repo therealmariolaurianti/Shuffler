@@ -76,8 +76,8 @@ public class PlayerController(
     {
         ReInitialize();
     }
-
-    public string? NetworkUsage => radioController.NetworkUsage;
+    
+    public bool IsPlayingStaticSong => radioController.IsPlaying;
 
     public void PlaySong(ISongQueue? songQueue)
     {

@@ -32,14 +32,15 @@ public class UpdateController
 
     public NewResult<NewUnit> ApplyUpdate()
     {
-        // Step 1: Run the update EXE silently
         var processStartInfo = new ProcessStartInfo
         {
-            FileName = _updatePath, // Path to your update EXE
-            CreateNoWindow = true, // Do not create a window
-            UseShellExecute = false, // Do not use shell execute
-            RedirectStandardOutput = true, // Optionally capture output
-            RedirectStandardError = true // Optionally capture error output
+            FileName = _updatePath,
+            Arguments = $"/VERYSILENT /SUPPRESSMSGBOXES /NORESTART /SP- /DIR=\"{_rootPath}\"",
+            WorkingDirectory = _rootPath,
+            CreateNoWindow = true,
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
         };
 
         var updateProcess = Process.Start(processStartInfo);

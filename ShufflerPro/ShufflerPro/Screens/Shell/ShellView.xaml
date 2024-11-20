@@ -291,6 +291,34 @@
                                 HorizontalAlignment="Left"
                                 Text="{Binding CurrentSongTime}" />
                         </Grid>
+                        <StackPanel
+                            Grid.Row="0"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top"
+                            Visibility="{calcBinding:Binding ShowNetworkUsage, FalseToVisibility=Collapsed}"
+                            ToolTip="Streaming"
+                            Margin="5">
+                            <StackPanel.Style>
+                                <Style TargetType="{x:Type StackPanel}">
+                                    <Style.Triggers>
+                                        <Trigger Property="Visibility" Value="Visible">
+                                            <Trigger.EnterActions>
+                                                <BeginStoryboard>
+                                                    <Storyboard RepeatBehavior="Forever">
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:01" BeginTime="00:00:00" From="0.0" To="1.0" />
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:01" BeginTime="00:00:01" From="1.0" To="0.0" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </Trigger.EnterActions>
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </StackPanel.Style>
+                            <iconPacks:PackIconModern
+                                Height="15"
+                                Width="15"
+                                Kind="MusicWifi" />
+                        </StackPanel>
                     </Grid>
                 </Border>
                 <Border
@@ -819,11 +847,6 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
-                        <Label
-                            VerticalContentAlignment="Center"
-                            HorizontalAlignment="Right"
-                            Width="150"
-                            Content="{Binding NetworkUsage}"/>
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
