@@ -986,7 +986,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         return NewResultExtensions.Try(() =>
         {
             if (_sourceTreeState is not null && currentSong.IsStatic)
-                return _songQueueFactory.Create(_sourceTreeState);
+                return _songQueueFactory.Create(_sourceTreeState, SelectedSong);
 
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);

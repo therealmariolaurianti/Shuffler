@@ -13,6 +13,7 @@
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Version>1.0.2</Version>
+        <ApplicationIcon>Images\favicon.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
@@ -68,6 +69,7 @@
         </None>
         <None Remove="Images\Server.gif" />
         <Resource Include="Images\Server.gif" />
+        <None Remove="Images\music.png" />
     </ItemGroup>
 
 </Project>

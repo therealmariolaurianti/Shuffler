@@ -64,12 +64,16 @@ public class SongQueueFactory
         return index == -1 ? null : songs?.Skip(index.Value).FirstOrDefault();
     }
 
-    public ISongQueue Create(SourceTreeState sourceTreeState)
+    public ISongQueue Create(SourceTreeState sourceTreeState, Song? selectedSong)
     {
+        var currentSong = selectedSong is null
+            ? sourceTreeState.Songs.First()
+            : sourceTreeState.Songs.First(s => s.Id == selectedSong.Id);
+        
         return new SongQueue
         {
             PreviousSong = null,
-            CurrentSong = sourceTreeState.Songs.First(),
+            CurrentSong = currentSong,
             NextSong = null
         };
     }
