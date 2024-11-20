@@ -22,7 +22,7 @@ public class PlayerController(
     public required Action<Song> SongChanged;
     private bool _isPlayingStaticSong;
 
-    public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing;
+    public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing || radioController.IsPlaying;
     public bool IsCompleted { get; set; }
     public bool IsPaused { get; private set; }
 

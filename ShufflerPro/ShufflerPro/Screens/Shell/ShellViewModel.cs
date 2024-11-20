@@ -1117,7 +1117,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     if (SelectedTreeItem.Parent is SourceTreeViewItem parent)
                     {
                         parent.Items.Remove(SelectedTreeItem);
-                        ClearEmptyParents(parent);
+                        if(!parent.IsTopLevelItem)
+                            ClearEmptyParents(parent);
                     }
                     else if (SelectedTreeItem.SourceFolder.IsRoot)
                     {
@@ -1129,19 +1130,26 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 }));
     }
 
-    private void ClearEmptyParents(SourceTreeViewItem parent)
+    private void ClearEmptyParents(SourceTreeViewItem sourceTreeViewItem)
     {
         while (true)
         {
-            if (parent.Items.Count == 0)
-                switch (parent.Parent)
+            if (sourceTreeViewItem.Items.Count == 0)
+                switch (sourceTreeViewItem.Parent)
                 {
                     case SourceTreeViewItem parentItem:
-                        parentItem.Items.Remove(parent);
-                        parent = parentItem;
+                    {
+                        parentItem.Items.Remove(sourceTreeViewItem);
+                        sourceTreeViewItem = parentItem;
                         continue;
+                    }
                     case null:
-                        SourceTreeItems.Remove(parent);
+                    {
+                        if (sourceTreeViewItem.IsTopLevelItem)
+                            break;
+                        
+                        SourceTreeItems.Remove(sourceTreeViewItem);
+                    }
                         break;
                 }
 

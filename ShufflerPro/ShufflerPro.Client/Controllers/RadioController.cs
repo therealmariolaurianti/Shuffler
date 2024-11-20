@@ -7,17 +7,18 @@ namespace ShufflerPro.Client.Controllers;
 public class RadioController(IEnumerable<IRadioStation> radioStations)
 {
     private WasapiOut? _wasapiOut;
+    public bool IsPlaying => _wasapiOut?.PlaybackState == PlaybackState.Playing;
 
     public void StartStation(string url)
     {
         StopStation();
-        
+
         using (var mediaFoundationReader = new MediaFoundationReader(url))
         {
             _wasapiOut = new WasapiOut();
-            
+
             _wasapiOut.Init(mediaFoundationReader);
-            _wasapiOut.Play();   
+            _wasapiOut.Play();
         }
     }
 
