@@ -378,8 +378,12 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (value == _isShuffleChecked) return;
             _isShuffleChecked = value;
             NotifyOfPropertyChange();
+
             if (IsRepeatChecked && IsShuffleChecked)
                 IsRepeatChecked = false;
+
+            if (CurrentSong is not null)
+                BuildSongQueue(CurrentSong, false);
         }
     }
 
@@ -392,8 +396,12 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (value == _isRepeatChecked) return;
             _isRepeatChecked = value;
             NotifyOfPropertyChange();
+
             if (IsShuffleChecked && IsRepeatChecked)
                 IsShuffleChecked = false;
+
+            if (CurrentSong is not null)
+                BuildSongQueue(CurrentSong, false);
         }
     }
 
@@ -944,11 +952,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 return SelectedSong;
             })
             .Bind(currentSong => BuildSongQueue(currentSong!, isSourceGrid)
-                .Do(songQueue =>
-                {
-                    _songQueue = songQueue;
-                    CurrentSong = _songQueue.CurrentSong;
-                })
                 .Bind(_ => WireTimer()));
     }
 
@@ -968,6 +971,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
             return _songQueueFactory.Create(currentSong, observableCollection,
                 new RepeatState(IsRepeatChecked, RepeatType));
+        }).Do(songQueue =>
+        {
+            _songQueue = songQueue;
+            CurrentSong = _songQueue.CurrentSong;
         });
     }
 
