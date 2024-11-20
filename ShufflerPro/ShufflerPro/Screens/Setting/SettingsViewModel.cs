@@ -44,7 +44,7 @@ public class SettingsViewModel : ViewModelBase
             if (value == _settings.IsDarkModeEnabled) return;
             _settings.IsDarkModeEnabled = value;
             NotifyOfPropertyChange();
-            ThemeManager.ChangeTheme(ThemeId, value);
+            SetTheme();
         }
     }
 
@@ -56,8 +56,13 @@ public class SettingsViewModel : ViewModelBase
             if (value.Equals(_settings.ThemeId)) return;
             _settings.ThemeId = value;
             NotifyOfPropertyChange();
-            ThemeManager.ChangeTheme(value, IsDarkModeEnabled);
+            SetTheme();
         }
+    }
+
+    private void SetTheme()
+    {
+        ThemeManager.ChangeTheme(ThemeId, IsDarkModeEnabled);
     }
 
     public bool CanSave
@@ -89,15 +94,21 @@ public class SettingsViewModel : ViewModelBase
     [UsedImplicitly]
     public void Cancel()
     {
-        _itemTracker.Revert();
+        RevertChanges();
         TryCloseAsync(false);
     }
 
     public override Task<bool> CanCloseAsync(CancellationToken cancellationToken = new())
     {
         if (_itemTracker.IsDirty && !_saving)
-            _itemTracker.Revert();
+            RevertChanges();
         return base.CanCloseAsync(cancellationToken);
+    }
+
+    private void RevertChanges()
+    {
+        _itemTracker.Revert();
+        SetTheme();
     }
 
     [UsedImplicitly]
