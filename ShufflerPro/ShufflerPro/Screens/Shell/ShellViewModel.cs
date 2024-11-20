@@ -215,7 +215,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(Albums));
 
-            SearchText = null;
+            if(!string.IsNullOrEmpty(SearchText))
+                SearchText = null;
+            
             HandleFilterSongs(value?.Name);
         }
     }
@@ -229,7 +231,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             _selectedAlbum = value;
             NotifyOfPropertyChange();
 
-            SearchText = null;
+            if(!string.IsNullOrEmpty(SearchText))
+                SearchText = null;
+            
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
