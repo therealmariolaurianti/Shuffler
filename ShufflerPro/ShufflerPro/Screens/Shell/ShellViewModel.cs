@@ -783,6 +783,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
             if (!CurrentSong?.IsStatic ?? false)
                 _timer.SetTime(CurrentSong!.Duration!.Value);
+            else
+                _timer.SetMaxTime();
 
             _timer.TimeChanged += OnTimeChanged;
             _timer.Start();

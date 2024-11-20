@@ -94,4 +94,9 @@ public class CountDownTimer : IDisposable
         _stopWatch.Reset();
         _timer.Start();
     }
+
+    public void SetMaxTime()
+    {
+        _max = TimeSpan.FromDays(1);
+    }
 }
