@@ -4,10 +4,14 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class RadioController(IEnumerable<IRadioStation> radioStations)
+public class RadioController(
+    IEnumerable<IRadioStation> radioStations,
+    NetworkController networkController)
 {
     private WasapiOut? _wasapiOut;
     public bool IsPlaying => _wasapiOut?.PlaybackState == PlaybackState.Playing;
+
+    public string? NetworkUsage => IsPlaying ? networkController.NetworkUsage : null;
 
     public void StartStation(string url)
     {
@@ -19,6 +23,8 @@ public class RadioController(IEnumerable<IRadioStation> radioStations)
 
             _wasapiOut.Init(mediaFoundationReader);
             _wasapiOut.Play();
+
+            networkController.Initialize();
         }
     }
 
@@ -32,5 +38,7 @@ public class RadioController(IEnumerable<IRadioStation> radioStations)
         _wasapiOut?.Stop();
         _wasapiOut?.Dispose();
         _wasapiOut = null;
+
+        networkController.Stop();
     }
 }

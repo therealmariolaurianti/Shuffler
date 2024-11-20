@@ -819,6 +819,11 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
+                        <Label
+                            VerticalContentAlignment="Center"
+                            HorizontalAlignment="Right"
+                            Width="150"
+                            Content="{Binding NetworkUsage}"/>
                         <Button
                             Name="AddSource"
                             Cursor="Hand"

@@ -77,6 +77,8 @@ public class PlayerController(
         ReInitialize();
     }
 
+    public string? NetworkUsage => radioController.NetworkUsage;
+
     public void PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
