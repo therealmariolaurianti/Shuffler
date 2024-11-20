@@ -19,6 +19,7 @@ using ShufflerPro.Client.Extensions;
 using ShufflerPro.Client.Factories;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Client.States;
+using ShufflerPro.Controllers;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
@@ -48,12 +49,14 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private readonly SongQueueFactory _songQueueFactory;
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
+    private readonly SourceTreeController _sourceTreeController;
     private readonly ShufflerWindowManager _windowManager;
     private double _applicationVolumeLevel;
     private Song? _currentSong;
     private TimeSpan _currentSongTime;
     private double _elapsedRunningTime;
     private string? _elapsedRunningTimeDisplay;
+    private bool _isLoadingLyrics;
     private bool _isLoadingSourceFolders;
 
 
@@ -62,6 +65,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private bool _isShowLyricsChecked;
     private bool _isShuffleChecked;
     private bool _isSliderBeingDragged;
+    private Song? _jumpToSong;
     private LibrarySearchType _librarySearchType;
     private bool _playingPrevious;
     private PlaylistState? _playlistState;
@@ -77,12 +81,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private string _songLyrics;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song>? _songs;
-    private ObservableCollection<SourceTreeViewItem>? _sourceTreeItems;
+    private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
     private double _startingSongTime;
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
-    private bool _isLoadingLyrics;
-    private Song? _jumpToSong;
 
     public ShellViewModel(
         Library library,
@@ -99,7 +101,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         SongFilterController songFilterController,
         ShufflerWindowManager windowManager,
         SongController songController,
-        IEventAggregator eventAggregator, HotKeyListener hotKeyListener, LyricsController lyricsController)
+        IEventAggregator eventAggregator, HotKeyListener hotKeyListener, LyricsController lyricsController,
+        SourceTreeController sourceTreeController)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -116,6 +119,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _songController = songController;
         _hotKeyListener = hotKeyListener;
         _lyricsController = lyricsController;
+        _sourceTreeController = sourceTreeController;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -265,7 +269,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private TimeSpan TimeSpan { get; }
 
-    public ObservableCollection<SourceTreeViewItem>? SourceTreeItems
+    public ObservableCollection<SourceTreeViewItem> SourceTreeItems
     {
         get => _sourceTreeItems;
         set
@@ -462,7 +466,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (value == _isShowLyricsChecked) return;
             _isShowLyricsChecked = value;
-            
+
             NotifyOfPropertyChange();
             LoadSongLyrics();
         }
@@ -475,6 +479,27 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (value == _songLyrics) return;
             _songLyrics = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public bool IsLoadingLyrics
+    {
+        get => _isLoadingLyrics;
+        set
+        {
+            if (value == _isLoadingLyrics) return;
+            _isLoadingLyrics = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public Song? JumpToSong
+    {
+        get => _jumpToSong;
+        set
+        {
+            _jumpToSong = value;
             NotifyOfPropertyChange();
         }
     }
@@ -560,7 +585,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             {
                 SongLyrics = string.Empty;
                 IsLoadingLyrics = true;
-                
+
                 await _lyricsController
                     .Load(SelectedSong.Artist, SelectedSong.Title)
                     .IfSuccess(songLyrics =>
@@ -575,17 +600,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     });
             }
         });
-    }
-
-    public bool IsLoadingLyrics
-    {
-        get => _isLoadingLyrics;
-        set
-        {
-            if (value == _isLoadingLyrics) return;
-            _isLoadingLyrics = value;
-            NotifyOfPropertyChange();
-        }
     }
 
     private void HandleMoveSongInPlaylist(Song target, Song source)
@@ -754,13 +768,14 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     protected override Task OnInitializeAsync(CancellationToken cancellationToken)
     {
-        SourceTreeItems = [];
+        _sourceTreeController.Initialize()
+            .Do(sourceTreeItems => SourceTreeItems = sourceTreeItems);
+
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
 
         InitializeApplicationVolume();
         StartLibrary();
-
         NotifyCollectionsChanged();
 
         return base.OnInitializeAsync(cancellationToken);
@@ -1014,16 +1029,21 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void ProcessSourceFolders()
     {
-        SourceTreeItems?.Clear();
+        _sourceTreeController.GetLibrary(SourceTreeItems)
+            .Do(librarySource =>
+            {
+                librarySource.Items.Clear();
 
-        var buildContextMenu = _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath, RemoveSourceFolder);
-        foreach (var sourceFolder in SourceFolders)
-            SourceTreeItems?.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
+                var buildContextMenu =
+                    _contextMenuBuilder.BuildContextMenu(OpenBrowserToFolderPath, RemoveSourceFolder);
+                foreach (var sourceFolder in SourceFolders)
+                    librarySource.Items.Add(BuildTreeGridItem(sourceFolder, buildContextMenu));
 
-        HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
-        NotifyCollectionsChanged();
+                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
+                NotifyCollectionsChanged();
 
-        IsLoadingSourceFolders = false;
+                IsLoadingSourceFolders = false;
+            });
     }
 
     private void RemoveSourceFolder()
@@ -1047,7 +1067,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     }
                     else if (_selectedTreeViewItem.SourceFolder.IsRoot)
                     {
-                        SourceTreeItems?.Remove(_selectedTreeViewItem);
+                        SourceTreeItems.Remove(_selectedTreeViewItem);
                     }
 
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
@@ -1067,7 +1087,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                         parent = parentItem;
                         continue;
                     case null:
-                        SourceTreeItems?.Remove(parent);
+                        SourceTreeItems.Remove(parent);
                         break;
                 }
 
@@ -1091,7 +1111,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             Header = sourceFolder.Header,
             ContextMenu = contextMenu,
-            SourceFolder = sourceFolder
+            SourceFolder = sourceFolder,
+            Id = Guid.NewGuid()
         };
 
         if (!sourceFolder.IsValid)
@@ -1263,18 +1284,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         if (CurrentSong is null)
             return;
-        
+
         JumpToSong = CurrentSong;
         JumpToSong = null;
-    }
-
-    public Song? JumpToSong
-    {
-        get => _jumpToSong;
-        set
-        {
-            _jumpToSong = value;
-            NotifyOfPropertyChange();
-        }
     }
 }

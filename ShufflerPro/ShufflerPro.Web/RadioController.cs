@@ -1,9 +1,18 @@
 ﻿using NAudio.Wave;
+using ShufflerPro.Result;
+using ShufflerPro.Web.Radio;
 
 namespace ShufflerPro.Web;
 
 public class RadioController
 {
+    private readonly IEnumerable<IRadioStation> _radioStations;
+
+    public RadioController(IEnumerable<IRadioStation> radioStations)
+    {
+        _radioStations = radioStations;
+    }
+
     public void StartStation(IRadioStation radioStation)
     {
         using (var mediaFoundationReader = new MediaFoundationReader(radioStation.Url))
@@ -12,26 +21,14 @@ public class RadioController
             wasapiOut.Init(mediaFoundationReader);
             wasapiOut.Play();
             
+            //todo
             while (wasapiOut.PlaybackState == PlaybackState.Playing)
                 Thread.Sleep(1000);
         }
     }
-}
 
-public interface IRadioStation
-{
-    public string Name { get; }
-    public string Url { get; }
-}
-
-public class ChillHopRadioStation : IRadioStation
-{
-    public string Name => "ChillHop";
-    public string Url => "https://streams.fluxfm.de/Chillhop/mp3-128/streams.fluxfm.de/";
-}
-
-public class LofiRadioStation : IRadioStation
-{
-    public string Name => "Lofi";
-    public string Url => "https://streams.fluxfm.de/Chillhop/aac-64/streams.fluxfm.de/";
+    public NewResult<List<IRadioStation>> GetStations()
+    {
+        return _radioStations.ToList();
+    }
 }
