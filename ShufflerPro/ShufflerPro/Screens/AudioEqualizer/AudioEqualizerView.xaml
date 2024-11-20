@@ -28,10 +28,24 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid>
+        <Button
+            Grid.Column="0"
+            Grid.Row="0"
+            Grid.ColumnSpan="2"
+            Name="ResetBands"
+            Cursor="Hand"
+            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+            Width="100"
+            Margin="10"
+            Height="30"
+            Content="Reset" />
+        <Grid
+            Grid.Column="0"
+            Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -49,7 +63,7 @@
         </Grid>
         <StackPanel
             Grid.Column="1"
-            Grid.Row="0"
+            Grid.Row="1"
             Orientation="Horizontal">
             <Grid>
                 <Grid.RowDefinitions>
@@ -207,14 +221,14 @@
         </StackPanel>
         <Button
             Grid.Column="0"
-            Grid.Row="1"
+            Grid.Row="2"
             Grid.ColumnSpan="2"
-            Name="ResetBands"
+            Name="Close"
             Cursor="Hand"
             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
             Width="100"
             Margin="10"
             Height="30"
-            Content="Reset" />
+            Content="Cancel" />
     </Grid>
 </mah:MetroWindow>

@@ -77,7 +77,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private Song? _selectedSong;
     private IList? _selectedSongs;
     private double _selectedSongTime;
-    private SourceTreeViewItem? _selectedTreeViewItem;
+    private SourceTreeViewItem? _selectedTreeItem;
     private string _songLyrics;
     private ISongQueue? _songQueue;
     private ObservableCollection<Song>? _songs;
@@ -276,6 +276,17 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (Equals(value, _sourceTreeItems)) return;
             _sourceTreeItems = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
+    public SourceTreeViewItem? SelectedTreeItem
+    {
+        get => _selectedTreeItem;
+        set
+        {
+            if (Equals(value, _selectedTreeItem)) return;
+            _selectedTreeItem = value;
             NotifyOfPropertyChange();
         }
     }
@@ -766,11 +777,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(SourceFolders));
     }
 
-    protected override Task OnInitializeAsync(CancellationToken cancellationToken)
+    protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
     {
-        _sourceTreeController.Initialize()
-            .Do(sourceTreeItems => SourceTreeItems = sourceTreeItems);
-
         Songs = [];
         LibrarySearchType = LibrarySearchType.Artist;
 
@@ -778,13 +786,21 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         StartLibrary();
         NotifyCollectionsChanged();
 
-        return base.OnInitializeAsync(cancellationToken);
+        await base.OnInitializeAsync(cancellationToken);
     }
 
     private void StartLibrary()
     {
         ResetCurrentElapsed();
-        ProcessSourceFolders();
+        InitializeSourceTree()
+            .Do(_ => ProcessSourceFolders());
+    }
+
+    private NewResult<NewUnit> InitializeSourceTree()
+    {
+        return _sourceTreeController.Initialize()
+            .IfSuccess(sourceTreeItems => SourceTreeItems = sourceTreeItems)
+            .Map(_ => NewUnit.Default);
     }
 
     private void ResetCurrentElapsed()
@@ -1014,17 +1030,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     public void OpenBrowserToFolderPath()
     {
-        if (_selectedTreeViewItem is null)
+        if (SelectedTreeItem is null)
             return;
 
-        Process.Start("explorer.exe", _selectedTreeViewItem.SourceFolder.FullPath);
-    }
-
-    [UsedImplicitly]
-    public void SelectedTreeViewItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-    {
-        if (e.NewValue is SourceTreeViewItem treeViewItem)
-            _selectedTreeViewItem = treeViewItem;
+        Process.Start("explorer.exe", SelectedTreeItem.SourceFolder.FullPath);
     }
 
     private void ProcessSourceFolders()
@@ -1048,26 +1057,26 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void RemoveSourceFolder()
     {
-        if (_selectedTreeViewItem is null)
+        if (SelectedTreeItem is null)
             return;
 
         var messageResult = MessageBox.Show(
-            $"Are you sure you want to remove '{_selectedTreeViewItem.Header}'?",
+            $"Are you sure you want to remove '{SelectedTreeItem.Header}'?",
             "Delete Source", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 
         if (messageResult == MessageBoxResult.Yes)
-            RunAsync(async () => await _sourceFolderController.Remove(_library, _selectedTreeViewItem.SourceFolder)
+            RunAsync(async () => await _sourceFolderController.Remove(_library, SelectedTreeItem.SourceFolder)
                 .IfFailAsync(async exception => await _windowManager.ShowException(exception))
                 .IfSuccess(_ =>
                 {
-                    if (_selectedTreeViewItem.Parent is SourceTreeViewItem parent)
+                    if (SelectedTreeItem.Parent is SourceTreeViewItem parent)
                     {
-                        parent.Items.Remove(_selectedTreeViewItem);
+                        parent.Items.Remove(SelectedTreeItem);
                         ClearEmptyParents(parent);
                     }
-                    else if (_selectedTreeViewItem.SourceFolder.IsRoot)
+                    else if (SelectedTreeItem.SourceFolder.IsRoot)
                     {
-                        SourceTreeItems.Remove(_selectedTreeViewItem);
+                        SourceTreeItems.Remove(SelectedTreeItem);
                     }
 
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
