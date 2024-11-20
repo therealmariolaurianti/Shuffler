@@ -11,8 +11,3 @@ public class SettingsContainer
         Settings = settings;
     }
 }
-
-public class AccessKeysContainer
-{
-    public string? GeniusToken { get; set; }
-}

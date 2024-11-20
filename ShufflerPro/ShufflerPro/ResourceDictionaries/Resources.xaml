@@ -1,17 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <BitmapImage x:Key="MuteImage" UriSource="/Images/mute.png" />
-    <BitmapImage x:Key="NextImage" UriSource="/Images/next.png" />
-    <BitmapImage x:Key="PauseImage" UriSource="/Images/pause.png" />
-    <BitmapImage x:Key="PlayImage" UriSource="/Images/play.png" />
-    <BitmapImage x:Key="PreviousImage" UriSource="/Images/previous.png" />
-    <BitmapImage x:Key="VolumeLoudImage" UriSource="/Images/volume_loud.png" />
-    <BitmapImage x:Key="VolumeSoftImage" UriSource="/Images/volume_soft.png" />
-    <BitmapImage x:Key="ReplayImage" UriSource="/Images/replay.png" />
-    <BitmapImage x:Key="ShuffleImage" UriSource="/Images/shuffle.png" />
     <BitmapImage x:Key="ServerGif" UriSource="/Images/Server.gif" />
-
     <Style x:Key="MyFocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -28,23 +18,6 @@
                             Height="{TemplateBinding ActualHeight}"
                             BorderThickness="1"
                             CornerRadius="2" />
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-    <Style
-        x:Key="GridContentAlign"
-        TargetType="{x:Type DataGridCell}">
-        <Setter
-            Property="Template">
-            <Setter.Value>
-                <ControlTemplate
-                    TargetType="{x:Type DataGridCell}">
-                    <Grid
-                        Background="{TemplateBinding Background}">
-                        <ContentPresenter
-                            VerticalAlignment="Center" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

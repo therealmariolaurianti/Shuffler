@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
     xmlns:gif="http://wpfanimatedgif.codeplex.com"
-    xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     xmlns:attachedProperties="clr-namespace:ShufflerPro.Framework.WPF.AttachedProperties"
     mc:Ignorable="d"
     attachedProperties:ScreenNameAttachedProperty.Name="ShufflerPro"
