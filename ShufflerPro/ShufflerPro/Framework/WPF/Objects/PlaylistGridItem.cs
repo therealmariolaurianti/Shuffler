@@ -1,7 +1,7 @@
 ﻿using Caliburn.Micro;
 using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Framework.WPF;
+namespace ShufflerPro.Framework.WPF.Objects;
 
 public class PlaylistGridItem(Playlist playlist) : PropertyChangedBase
 {

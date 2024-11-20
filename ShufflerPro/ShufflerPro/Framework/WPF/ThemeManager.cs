@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ShufflerPro.Framework.WPF.Objects;
 using Theme = ShufflerPro.Client.Entities.Theme;
 
 namespace ShufflerPro.Framework.WPF;

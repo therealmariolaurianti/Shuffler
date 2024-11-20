@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Framework.WPF.Objects;
 
 namespace ShufflerPro.Framework.WPF.Controls;
 

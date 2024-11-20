@@ -24,6 +24,7 @@ using ShufflerPro.Controllers;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
+using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
 using ShufflerPro.Web;
 using DragDropEffects = System.Windows.DragDropEffects;

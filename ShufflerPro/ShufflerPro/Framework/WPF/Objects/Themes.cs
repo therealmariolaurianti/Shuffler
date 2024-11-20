@@ -1,6 +1,6 @@
 ﻿using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Framework.WPF;
+namespace ShufflerPro.Framework.WPF.Objects;
 
 public static class Themes
 {

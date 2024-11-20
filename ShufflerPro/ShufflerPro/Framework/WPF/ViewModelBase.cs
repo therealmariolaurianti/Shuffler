@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using Caliburn.Micro;
 using ShufflerPro.Client.Attributes;
+using ShufflerPro.Framework.WPF.AttachedProperties;
 using Action = System.Action;
 
 namespace ShufflerPro.Framework.WPF;
@@ -20,7 +21,7 @@ public abstract class ViewModelBase : Screen
         if (view is not FrameworkElement d)
             return;
 
-        var displayName = ScreenName.GetName(d);
+        var displayName = ScreenNameAttachedProperty.GetName(d);
         if (displayName != null)
             DisplayName = displayName;
 

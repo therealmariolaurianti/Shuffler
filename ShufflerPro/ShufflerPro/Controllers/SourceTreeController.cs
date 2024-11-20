@@ -4,6 +4,7 @@ using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Radio;
 using ShufflerPro.Client.States;
 using ShufflerPro.Framework.WPF;
+using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
 using ShufflerPro.Web;
 

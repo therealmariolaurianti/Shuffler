@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 
-namespace ShufflerPro.Framework.WPF;
+namespace ShufflerPro.Framework.WPF.AttachedProperties;
 
-public class ScreenName
+public class ScreenNameAttachedProperty
 {
     public static readonly DependencyProperty DisplayNameProperty =
         DependencyProperty.RegisterAttached("DisplayName", typeof(string),
-            typeof(ScreenName), new PropertyMetadata(null));
+            typeof(ScreenNameAttachedProperty), new PropertyMetadata(null));
 
     public static string? GetName(DependencyObject obj)
     {

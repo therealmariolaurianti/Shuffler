@@ -1,7 +1,7 @@
 ﻿using System.Windows.Controls;
 using ShufflerPro.Client.Entities;
 
-namespace ShufflerPro.Framework.WPF;
+namespace ShufflerPro.Framework.WPF.Objects;
 
 public class SourceTreeViewItem : TreeViewItem
 {
