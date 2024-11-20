@@ -215,6 +215,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(Albums));
 
+            SearchText = null;
             HandleFilterSongs(value?.Name);
         }
     }
@@ -228,6 +229,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             _selectedAlbum = value;
             NotifyOfPropertyChange();
 
+            SearchText = null;
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
@@ -779,6 +781,12 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         Task.Run(() =>
         {
+            if (string.IsNullOrEmpty(SearchText))
+            {
+                HandleFilterSongs();
+                return;
+            }
+
             Songs = LibrarySearchType switch
             {
                 LibrarySearchType.Artist => _songFilterController.SearchSongs(AllSongs, SearchText, null, null),
