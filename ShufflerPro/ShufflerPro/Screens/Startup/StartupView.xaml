@@ -8,7 +8,7 @@
     xmlns:gif="http://wpfanimatedgif.codeplex.com"
     xmlns:wpf="clr-namespace:ShufflerPro.Framework.WPF"
     mc:Ignorable="d"
-    wpf:ScreenName.Name="Shuffler Pro"
+    wpf:ScreenName.Name="ShufflerPro"
     Height="300"
     Width="300"
     WindowStartupLocation="CenterScreen"
