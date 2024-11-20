@@ -28,28 +28,35 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid>
+        <Grid
+            Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <mah:ToggleSwitch
                 IsOn="{Binding IsDarkModeEnabled}"
                 OffContent="Light"
-                Margin="2"
+                Margin="30,2,2,2"
                 OnContent="Dark" />
             <controls:ThemeComboBox
                 ThemeId="{Binding ThemeId}"
-                Grid.Row="1"
+                Grid.Row="0"
+                Grid.Column="1"
                 Width="85"
                 Margin="2"
                 HorizontalAlignment="Left" />
             <Button
-                Grid.Row="2"
+                Grid.Row="1"
                 Grid.Column="0"
+                Grid.ColumnSpan="2"
                 Name="LaunchExcludedSongs"
                 Cursor="Hand"
+                VerticalAlignment="Top"
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                 Width="125"
                 Margin="10"
