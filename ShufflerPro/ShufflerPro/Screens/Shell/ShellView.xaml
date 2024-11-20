@@ -338,7 +338,7 @@
                             Margin="20">
                             <watermark:WatermarkService.Watermark>
                                 <Label
-                                    Foreground="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Left"
                                     Content="Search" />

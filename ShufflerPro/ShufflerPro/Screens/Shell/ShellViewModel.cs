@@ -168,18 +168,21 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    public ObservableCollection<Album> Albums
+    public ReadOnlyCollection<Album> Albums
     {
         get
         {
             if (_sourceTreeState is not null)
-                return [];
+                return new ReadOnlyCollection<Album>(new List<Album>());
+
+            if (SearchText is not null)
+                return Songs!.Select(s => s.CreatedAlbum!).Distinct().ToReadOnlyCollection();
 
             if (_playlistState is not null)
-                return _playlistState.FilterAlbums(SelectedArtist);
+                return _playlistState.FilterAlbums(SelectedArtist).ToReadOnlyCollection();
 
-            return SelectedArtist?.Albums.Distinct().OrderBy(a => a.Name).ToObservableCollection() ??
-                   AllAlbums.Distinct().OrderBy(a => a.Name).ToObservableCollection();
+            return SelectedArtist?.Albums.Distinct().OrderBy(a => a.Name).ToReadOnlyCollection() ??
+                   AllAlbums.Distinct().OrderBy(a => a.Name).ToReadOnlyCollection();
         }
     }
 
@@ -189,6 +192,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (_sourceTreeState is not null)
                 return [];
+
+            if (SearchText is not null)
+                return Songs!.Select(s => s.CreatedAlbum!.Artist).Distinct().ToReadOnlyCollection();
 
             return _playlistState?.Artists ?? _library
                 .Artists
@@ -545,7 +551,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         $"ShufflerPro (v{Assembly.GetExecutingAssembly().GetName().Version})";
 
     public string? NetworkUsage => _playerController.NetworkUsage;
-    public bool ShowNetworkUsage => true;
 
     public void Dispose()
     {
@@ -812,7 +817,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         _currentSongTime = _currentSongTime.Tick();
         SetElapsedRunTimeDisplay(_currentSongTime);
-        
+
         NotifyOfPropertyChange(nameof(NetworkUsage));
     }
 
@@ -836,7 +841,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(SongSelectionSummary));
         NotifyOfPropertyChange(nameof(SourceFolders));
         NotifyOfPropertyChange(nameof(NetworkUsage));
-        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     protected override async Task OnInitializeAsync(CancellationToken cancellationToken)
@@ -1031,7 +1035,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(AlbumArt));
         NotifyOfPropertyChange(nameof(HasAlbumArt));
         NotifyOfPropertyChange(nameof(NetworkUsage));
-        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     private NewResult<NewUnit> HandleSelectedSong()

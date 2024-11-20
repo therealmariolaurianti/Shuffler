@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using ShufflerPro.Client.Entities;
 
 namespace ShufflerPro.Client.Extensions;
 
