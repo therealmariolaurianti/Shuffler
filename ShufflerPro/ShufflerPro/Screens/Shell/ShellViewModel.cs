@@ -778,11 +778,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
             _timer = new CountDownTimer();
 
-            if (!CurrentSong?.IsStatic ?? false)
-            {
-                _timer.SetTime(CurrentSong!.Duration!.Value);
-            }
-            
+            if (!CurrentSong?.IsStatic ?? false) _timer.SetTime(CurrentSong!.Duration!.Value);
+
             _timer.TimeChanged += OnTimeChanged;
             _timer.Start();
 
@@ -989,16 +986,19 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
-                    _playerController.PlaySong(_songQueue!);
+                    Task.Run(() =>
+                    {
+                        _playerController.PlaySong(_songQueue!);
 
-                    var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
-                    if (playingNow is not null)
-                        playingNow.IsPlaying = false;
+                        var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
+                        if (playingNow is not null)
+                            playingNow.IsPlaying = false;
 
-                    CurrentSong!.IsPlaying = true;
+                        CurrentSong!.IsPlaying = true;
 
-                    NotifyInterfaceChanged();
-                    LoadSongLyrics();
+                        NotifyInterfaceChanged();
+                        LoadSongLyrics();
+                    });
                 }));
     }
 
