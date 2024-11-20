@@ -14,13 +14,13 @@ public class PlayerController(
 {
     private AudioFileReader? _audioFileReader;
     private Equalizer? _equalizer;
+    private bool _isPlayingStaticSong;
     private WaveOutEvent? _outEvent = outEvent;
     private ISongQueue? _songQueue;
     private PausableTimer? _timer;
 
     public required Action PlayerDisposed;
     public required Action<Song> SongChanged;
-    private bool _isPlayingStaticSong;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing || radioController.IsPlaying;
     public bool IsCompleted { get; set; }
@@ -76,7 +76,7 @@ public class PlayerController(
     {
         ReInitialize();
     }
-    
+
     public void PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
@@ -95,7 +95,7 @@ public class PlayerController(
             {
                 _isPlayingStaticSong = false;
                 radioController.StopStation();
-                
+
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
                 _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
 
@@ -106,7 +106,6 @@ public class PlayerController(
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }
-            
         }
         catch (Exception)
         {
@@ -165,14 +164,22 @@ public class PlayerController(
             _outEvent?.Pause();
             _timer?.Pause();
         }
-        
+
         IsPaused = true;
     }
 
     public void Resume()
     {
-        _outEvent?.Play();
-        _timer?.Resume();
+        if (_isPlayingStaticSong)
+        {
+            radioController.StartStation(_songQueue!.CurrentSong!.Path!);
+        }
+        else
+        {
+            _outEvent?.Play();
+            _timer?.Resume();
+        }
+
         IsPaused = false;
     }
 

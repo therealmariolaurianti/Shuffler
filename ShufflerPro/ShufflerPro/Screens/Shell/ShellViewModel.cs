@@ -775,14 +775,15 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (_timer?.IsRunning ?? false)
                 _timer.Stop();
-            if(CurrentSong?.Duration is null)
-                return NewUnit.Default;
 
             _timer = new CountDownTimer();
-            
-            _timer.SetTime(CurrentSong!.Duration.Value);
-            _timer.TimeChanged += OnTimeChanged;
 
+            if (!CurrentSong?.IsStatic ?? false)
+            {
+                _timer.SetTime(CurrentSong!.Duration!.Value);
+            }
+            
+            _timer.TimeChanged += OnTimeChanged;
             _timer.Start();
 
             return NewUnit.Default;
@@ -952,9 +953,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         return NewResultExtensions.Try(() =>
         {
-            if (_sourceTreeState is not null)
+            if (_sourceTreeState is not null && currentSong.IsStatic)
                 return _songQueueFactory.Create(_sourceTreeState);
-            
+
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 
@@ -1117,7 +1118,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     if (SelectedTreeItem.Parent is SourceTreeViewItem parent)
                     {
                         parent.Items.Remove(SelectedTreeItem);
-                        if(!parent.IsTopLevelItem)
+                        if (!parent.IsTopLevelItem)
                             ClearEmptyParents(parent);
                     }
                     else if (SelectedTreeItem.SourceFolder.IsRoot)
@@ -1147,7 +1148,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     {
                         if (sourceTreeViewItem.IsTopLevelItem)
                             break;
-                        
+
                         SourceTreeItems.Remove(sourceTreeViewItem);
                     }
                         break;
