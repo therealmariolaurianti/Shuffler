@@ -24,6 +24,7 @@ public class JumpToItemAttachedProperty
         {
             grid.UpdateLayout();
             grid.ScrollIntoView(song, null);
+            grid.SelectedItem = song;
         });
     }
 
