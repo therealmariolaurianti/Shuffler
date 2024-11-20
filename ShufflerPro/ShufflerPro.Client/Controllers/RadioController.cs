@@ -1,8 +1,8 @@
 ﻿using NAudio.Wave;
+using ShufflerPro.Client.Radio;
 using ShufflerPro.Result;
-using ShufflerPro.Web.Radio;
 
-namespace ShufflerPro.Web;
+namespace ShufflerPro.Client.Controllers;
 
 public class RadioController
 {
@@ -13,9 +13,9 @@ public class RadioController
         _radioStations = radioStations;
     }
 
-    public void StartStation(IRadioStation radioStation)
+    public void StartStation(string url)
     {
-        using (var mediaFoundationReader = new MediaFoundationReader(radioStation.Url))
+        using (var mediaFoundationReader = new MediaFoundationReader(url))
         using (var wasapiOut = new WasapiOut())
         {
             wasapiOut.Init(mediaFoundationReader);

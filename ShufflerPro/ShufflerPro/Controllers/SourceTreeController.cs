@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Client.Radio;
+using ShufflerPro.Client.States;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
 using ShufflerPro.Web;
-using ShufflerPro.Web.Radio;
 
 namespace ShufflerPro.Controllers;
 
@@ -105,7 +107,8 @@ public class SourceTreeController
             {
                 Title = sourceTreeViewItem.SourceFolder.Header,
                 Artist = sourceTreeViewItem.SourceFolder.FullPath,
-                Track = 1
+                Track = 1,
+                IsStatic = true
             };
             staticSongs.Add(song);
         }

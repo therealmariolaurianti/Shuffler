@@ -10,7 +10,6 @@ using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Framework;
 using ShufflerPro.Screens.Exceptions;
 using ShufflerPro.Screens.Startup;
-using ShufflerPro.Web.Bootstrapper;
 
 namespace ShufflerPro.Bootstrapper;
 
@@ -62,7 +61,6 @@ public class AppBootstrapper : BootstrapperBase
 
         Bootstrap.Bootstrapper
             .Including.ShufflerProDatabase()
-            .Including.ShufflerProWeb()
             .With.Ninject().WithContainer(_kernel)
             .With.StartupTasks()
             .With.AutoMapper()

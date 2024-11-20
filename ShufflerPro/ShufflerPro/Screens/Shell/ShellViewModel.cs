@@ -775,10 +775,12 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (_timer?.IsRunning ?? false)
                 _timer.Stop();
+            if(CurrentSong?.Duration is null)
+                return NewUnit.Default;
 
             _timer = new CountDownTimer();
-
-            _timer.SetTime(CurrentSong!.Duration!.Value);
+            
+            _timer.SetTime(CurrentSong!.Duration.Value);
             _timer.TimeChanged += OnTimeChanged;
 
             _timer.Start();
@@ -950,6 +952,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         return NewResultExtensions.Try(() =>
         {
+            if (_sourceTreeState is not null)
+                return _songQueueFactory.Create(_sourceTreeState);
+            
             if (IsShuffleChecked)
                 return ShuffleSongs(currentSong, isSourceGrid);
 

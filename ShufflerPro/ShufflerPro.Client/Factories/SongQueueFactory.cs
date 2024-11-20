@@ -34,7 +34,7 @@ public class SongQueueFactory
         var nextSong = songs?.Skip(index.Value).FirstOrDefault();
         if (nextSong?.Artist != currentSong.Artist)
         {
-            if (!repeatState.IsRepeatChecked) 
+            if (!repeatState.IsRepeatChecked)
                 return nextSong;
 
             if (repeatState.RepeatType == RepeatType.Album)
@@ -62,5 +62,15 @@ public class SongQueueFactory
         if (index is null)
             return null;
         return index == -1 ? null : songs?.Skip(index.Value).FirstOrDefault();
+    }
+
+    public ISongQueue Create(SourceTreeState sourceTreeState)
+    {
+        return new SongQueue
+        {
+            PreviousSong = null,
+            CurrentSong = sourceTreeState.Songs.First(),
+            NextSong = null
+        };
     }
 }

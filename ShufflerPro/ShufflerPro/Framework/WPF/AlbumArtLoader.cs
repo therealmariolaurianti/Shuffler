@@ -3,20 +3,20 @@ using TagLib;
 
 namespace ShufflerPro.Framework.WPF;
 
-public class AlbumArtLoader
+public class AlbumArtLoader(BinaryHelper binaryHelper)
 {
-    private readonly BinaryHelper _binaryHelper;
-
-    public AlbumArtLoader(BinaryHelper binaryHelper)
-    {
-        _binaryHelper = binaryHelper;
-    }
-
     public BitmapImage? Load(string? currentSongPath)
     {
         if (currentSongPath is null)
             return null;
-        var albumArt = File.Create(currentSongPath).Tag.Pictures.FirstOrDefault();
-        return _binaryHelper.ToImage(albumArt?.Data.Data);
+        try
+        {
+            var albumArt = File.Create(currentSongPath).Tag.Pictures.FirstOrDefault();
+            return binaryHelper.ToImage(albumArt?.Data.Data);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
     }
 }

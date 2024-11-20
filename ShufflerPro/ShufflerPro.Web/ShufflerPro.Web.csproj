@@ -7,11 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Bootstrapper.Ninject" Version="2.0.3.13" />
       <PackageReference Include="GeniusLyrics.NET" Version="1.0.0" />
       <PackageReference Include="HtmlAgilityPack" Version="1.11.71" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-      <PackageReference Include="Ninject.Extensions.Conventions" Version="3.3.0" />
     </ItemGroup>
 
     <ItemGroup>

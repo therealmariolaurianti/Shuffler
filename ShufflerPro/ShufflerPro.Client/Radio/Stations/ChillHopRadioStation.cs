@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Web.Radio.Stations;
+﻿namespace ShufflerPro.Client.Radio.Stations;
 
 public class ChillHopRadioStation : IRadioStation
 {

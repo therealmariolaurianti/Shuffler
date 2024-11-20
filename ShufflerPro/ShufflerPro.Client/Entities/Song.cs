@@ -98,4 +98,6 @@ public class Song : EntityBase
             OnPropertyChanged();
         }
     }
+
+    public bool IsStatic { get; set; } = false;
 }

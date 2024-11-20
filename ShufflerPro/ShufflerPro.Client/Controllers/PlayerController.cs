@@ -9,7 +9,8 @@ namespace ShufflerPro.Client.Controllers;
 
 public class PlayerController(
     WaveOutEvent outEvent,
-    IEqualizerBandContainer equalizerBandContainer) : IDisposable
+    IEqualizerBandContainer equalizerBandContainer,
+    RadioController radioController) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
     private Equalizer? _equalizer;
@@ -74,7 +75,7 @@ public class PlayerController(
     {
         ReInitialize();
     }
-
+    
     public void PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
@@ -84,15 +85,21 @@ public class PlayerController(
 
         try
         {
-            _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-            _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
+            if (_songQueue.CurrentSong.IsStatic)
+                radioController.StartStation(_songQueue.CurrentSong.Path!);
+            else
+            {
+                _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
+                _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
 
-            _outEvent ??= new WaveOutEvent();
-            _outEvent.Init(_equalizer);
+                _outEvent ??= new WaveOutEvent();
+                _outEvent.Init(_equalizer);
 
-            _outEvent.Play();
+                _outEvent.Play();
 
-            DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
+                DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
+            }
+            
         }
         catch (Exception)
         {

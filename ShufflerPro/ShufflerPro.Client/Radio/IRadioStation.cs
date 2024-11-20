@@ -1,4 +1,4 @@
-﻿namespace ShufflerPro.Web.Radio;
+﻿namespace ShufflerPro.Client.Radio;
 
 public interface IRadioStation
 {
