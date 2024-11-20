@@ -22,7 +22,6 @@
     WindowStyle="ThreeDBorderWindow"
     ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
-    wpf:ScreenName.Name="ShufflerPro"
     Width="1300"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"

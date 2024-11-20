@@ -12,6 +12,7 @@
         <RootNamespace>ShufflerPro</RootNamespace>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <Version>1.0.2</Version>
     </PropertyGroup>
 
     <ItemGroup>

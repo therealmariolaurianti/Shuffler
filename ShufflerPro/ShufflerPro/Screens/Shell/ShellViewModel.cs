@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -531,6 +532,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
+    public override string? DisplayName { get; set; } =
+        $"ShufflerPro (v{Assembly.GetExecutingAssembly().GetName().Version})";
+
     public void Dispose()
     {
         _playerController.Dispose();
@@ -538,7 +542,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _timer?.Dispose();
         _hotKeyListener.Dispose();
     }
-
 
     void IDropTarget.DragOver(IDropInfo dropInfo)
     {
@@ -778,7 +781,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
             _timer = new CountDownTimer();
 
-            if (!CurrentSong?.IsStatic ?? false) _timer.SetTime(CurrentSong!.Duration!.Value);
+            if (!CurrentSong?.IsStatic ?? false)
+                _timer.SetTime(CurrentSong!.Duration!.Value);
 
             _timer.TimeChanged += OnTimeChanged;
             _timer.Start();
