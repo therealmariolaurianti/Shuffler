@@ -215,9 +215,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyOfPropertyChange();
             NotifyOfPropertyChange(nameof(Albums));
 
-            if(!string.IsNullOrEmpty(SearchText))
+            if (!string.IsNullOrEmpty(SearchText))
                 SearchText = null;
-            
+
             HandleFilterSongs(value?.Name);
         }
     }
@@ -231,9 +231,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             _selectedAlbum = value;
             NotifyOfPropertyChange();
 
-            if(!string.IsNullOrEmpty(SearchText))
+            if (!string.IsNullOrEmpty(SearchText))
                 SearchText = null;
-            
+
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
     }
@@ -553,10 +553,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    public override string? DisplayName { get; set; } =
-        $"ShufflerPro (v{Assembly.GetExecutingAssembly().GetName().Version})";
-
     public bool ShowNetworkUsage => _playerController.IsPlayingStaticSong;
+    public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
     public void Dispose()
     {
@@ -676,8 +674,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                         IsLoadingLyrics = false;
                     });
             }
-            else 
+            else
+            {
                 SongLyrics = "No lyrics.";
+            }
         });
     }
 

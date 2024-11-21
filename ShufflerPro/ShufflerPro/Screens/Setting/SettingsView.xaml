@@ -27,6 +27,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid
             Margin="10">
@@ -62,10 +63,20 @@
                 Margin="10"
                 Content="Excluded Songs" />
         </Grid>
+        <StackPanel 
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Grid.Row="1">
+            <TextBlock
+                Margin="10">
+                <Run Text="Version:"></Run>
+                <Run Text="{Binding CurrentVersion, FallbackValue='', Mode=OneTime}"/>
+            </TextBlock>
+        </StackPanel>
         <StackPanel
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Grid.Row="1"
+            Grid.Row="2"
             Orientation="Horizontal">
             <Button
                 Name="Save"

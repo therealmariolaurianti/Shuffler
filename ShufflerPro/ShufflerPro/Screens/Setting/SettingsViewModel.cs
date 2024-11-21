@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
@@ -110,6 +111,8 @@ public class SettingsViewModel : ViewModelBase
         _itemTracker.Revert();
         SetTheme();
     }
+
+    public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
     [UsedImplicitly]
     public void LaunchExcludedSongs()
