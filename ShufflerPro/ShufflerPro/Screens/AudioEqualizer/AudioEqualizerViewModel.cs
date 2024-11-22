@@ -121,4 +121,9 @@ public class AudioEqualizerViewModel : ViewModelBase
         _playerController.UpdateEqualizer();
         NotifyOfPropertyChange(string.Empty);
     }
+
+    public void Close()
+    {
+        TryCloseAsync(false);
+    }
 }

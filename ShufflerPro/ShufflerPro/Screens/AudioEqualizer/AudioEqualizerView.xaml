@@ -230,6 +230,6 @@
             Width="100"
             Margin="10"
             Height="30"
-            Content="Cancel" />
+            Content="Close" />
     </Grid>
 </mah:MetroWindow>

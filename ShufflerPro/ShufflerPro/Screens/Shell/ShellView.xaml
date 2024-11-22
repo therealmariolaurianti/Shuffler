@@ -21,10 +21,9 @@
     attachedProperties:ScreenNameAttachedProperty.Name="ShufflerPro"
     WindowStartupLocation="CenterScreen"
     WindowStyle="ThreeDBorderWindow"
-    TitleAlignment="Center"
     ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
-    Width="1300"
+    Width="1400"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
@@ -94,7 +93,7 @@
             </Grid.RowDefinitions>
             <Grid
                 MaxWidth="1350"
-                Margin="2,5,2,5">
+                Margin="2,2,2,5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1.25*" MinWidth="275" />
                     <ColumnDefinition Width="3*" />
@@ -307,8 +306,12 @@
                                             <Trigger.EnterActions>
                                                 <BeginStoryboard>
                                                     <Storyboard RepeatBehavior="Forever">
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:01" BeginTime="00:00:00" From="0.0" To="1.0" />
-                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity" Duration="00:00:01" BeginTime="00:00:01" From="1.0" To="0.0" />
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         Duration="00:00:01" BeginTime="00:00:00"
+                                                                         From="0.0" To="1.0" />
+                                                        <DoubleAnimation Storyboard.TargetProperty="Opacity"
+                                                                         Duration="00:00:01" BeginTime="00:00:01"
+                                                                         From="1.0" To="0.0" />
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </Trigger.EnterActions>
@@ -328,15 +331,16 @@
                     Background="{DynamicResource MahApps.Brushes.Control.Background}"
                     BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                     BorderThickness="1">
-                    <Grid
-                        VerticalAlignment="Center">
+                    <Grid>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition />
                         </Grid.RowDefinitions>
                         <StackPanel
                             Margin="5"
                             HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
                             Grid.Row="0"
                             Orientation="Horizontal">
                             <RadioButton
@@ -365,7 +369,7 @@
                             Grid.Column="0"
                             VerticalContentAlignment="Center"
                             Padding="5"
-                            Margin="20">
+                            Margin="20,0,20,0">
                             <watermark:WatermarkService.Watermark>
                                 <Label
                                     Foreground="{DynamicResource MahApps.Brushes.ThemeForeground}"
@@ -374,6 +378,28 @@
                                     Content="Search" />
                             </watermark:WatermarkService.Watermark>
                         </TextBox>
+                        <Grid
+                            Grid.Row="2">
+                            <StackPanel
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal">
+                                <ToggleButton
+                                    Cursor="Hand"
+                                    Margin="2"
+                                    BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                    IsChecked="{Binding IsShuffleChecked}"
+                                    Width="75"
+                                    FontSize="10"
+                                    Content="SHUFFLE"/>
+                                <controls:RepeatToggleButton
+                                    IsChecked="{Binding IsRepeatChecked}"
+                                    RepeatType="{Binding RepeatType}"
+                                    Width="75"
+                                    Content="REPEAT"
+                                    FontSize="10"/>
+                            </StackPanel>
+                        </Grid>
                     </Grid>
                 </Border>
             </Grid>
@@ -381,7 +407,7 @@
                 Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="6" />
+                    <ColumnDefinition Width="7" />
                     <ColumnDefinition Width="3.5*" />
                 </Grid.ColumnDefinitions>
                 <Grid>
@@ -406,8 +432,8 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="2"
-                                    FontSize="16"
+                                    FontSize="15"
+                                    Padding="2"
                                     TextAlignment="Center"
                                     FontWeight="SemiBold"
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
@@ -475,9 +501,9 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Separator
-                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                                    Grid.Row="0" />
+                                <!-- <Separator -->
+                                <!--     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" -->
+                                <!--     Grid.Row="0" /> -->
                                 <Grid
                                     Grid.Row="1">
                                     <Grid
@@ -487,14 +513,14 @@
                                             <RowDefinition />
                                         </Grid.RowDefinitions>
                                         <TextBlock
-                                            Margin="2,0,2,2"
-                                            FontSize="16"
+                                            FontSize="15"
+                                            Padding="2"
                                             TextAlignment="Center"
                                             FontWeight="SemiBold"
                                             Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                             Text="Sources" />
                                         <TreeView
-                                            Margin="2,0,2,2"
+                                            Padding="2"
                                             Grid.Row="1"
                                             ItemsSource="{Binding SourceTreeItems}">
                                             <b:Interaction.Behaviors>
@@ -523,8 +549,8 @@
                                         </Border>
                                         <TextBlock
                                             Grid.Row="0"
-                                            Margin="2,0,2,2"
-                                            FontSize="16"
+                                            FontSize="15"
+                                            Padding="2"
                                             TextAlignment="Center"
                                             FontWeight="SemiBold"
                                             Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
@@ -540,10 +566,10 @@
                                             IsReadOnly="True" />
                                     </Grid>
                                 </Grid>
-                                <Separator
-                                    Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                                    Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
-                                    Grid.Row="2" />
+                                <!-- <Separator -->
+                                <!--     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}" -->
+                                <!--     Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}" -->
+                                <!--     Grid.Row="2" /> -->
                                 <Expander
                                     IsExpanded="True"
                                     Visibility="{calcBinding:Binding HasAlbumArt, FalseToVisibility=Collapsed}"
@@ -585,7 +611,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <Border
-                            Margin="2,0,0,0"
+                            Margin="2,0,2,0"
                             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
                             <Grid>
@@ -594,8 +620,8 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="2"
-                                    FontSize="16"
+                                    FontSize="15"
+                                    Padding="2"
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     TextAlignment="Center"
                                     FontWeight="SemiBold"
@@ -634,7 +660,7 @@
                             </Grid>
                         </Border>
                         <Border
-                            Margin="0,0,2,0"
+                            Margin="2,0,2,0"
                             Grid.Column="1"
                             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                             BorderThickness="1">
@@ -644,8 +670,8 @@
                                     <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <TextBlock
-                                    Margin="2"
-                                    FontSize="16"
+                                    FontSize="15"
+                                    Padding="2"
                                     TextAlignment="Center"
                                     Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                                     FontWeight="SemiBold"
@@ -777,50 +803,6 @@
                         VerticalAlignment="Center"
                         Orientation="Horizontal"
                         HorizontalAlignment="Left">
-                        <controls:RepeatToggleButton
-                            IsChecked="{Binding IsRepeatChecked}"
-                            RepeatType="{Binding RepeatType}">
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                                <iconPacks:PackIconFontaudio
-                                    Width="20"
-                                    Height="20"
-                                    Kind="Repeat" />
-                            </StackPanel>
-                        </controls:RepeatToggleButton>
-                        <ToggleButton
-                            Cursor="Hand"
-                            ToolTip="Shuffle"
-                            Margin="2"
-                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                            IsChecked="{Binding IsShuffleChecked}"
-                            Width="50">
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                                <iconPacks:PackIconFontaudio
-                                    Width="20"
-                                    Height="20"
-                                    Kind="Shuffle" />
-                            </StackPanel>
-                        </ToggleButton>
-                        <ToggleButton
-                            Cursor="Hand"
-                            ToolTip="Show Lyrics Panel"
-                            Margin="2"
-                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
-                            IsChecked="{Binding IsShowLyricsChecked}"
-                            Width="50">
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center">
-                                <iconPacks:PackIconModern
-                                    Width="20"
-                                    Height="20"
-                                    Kind="Newspaper" />
-                            </StackPanel>
-                        </ToggleButton>
                         <Button
                             Name="LaunchAudioEqualizer"
                             Cursor="Hand"
@@ -837,6 +819,22 @@
                                     Kind="Headphones" />
                             </StackPanel>
                         </Button>
+                        <ToggleButton
+                            Cursor="Hand"
+                            ToolTip="Show Lyrics Panel"
+                            Margin="2"
+                            BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                            IsChecked="{Binding IsShowLyricsChecked}"
+                            Width="50">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center">
+                                <iconPacks:PackIconModern
+                                    Width="20"
+                                    Height="20"
+                                    Kind="Newspaper" />
+                            </StackPanel>
+                        </ToggleButton>
                     </StackPanel>
                     <TextBlock
                         TextAlignment="Center"

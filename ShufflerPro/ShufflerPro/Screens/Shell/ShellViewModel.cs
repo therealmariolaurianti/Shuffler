@@ -634,6 +634,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             return;
         }
 
+        SelectedArtist = null;
+        SelectedAlbum = null;
+        SelectedPlaylist = null;
+
         if (_sourceTreeController.IsStaticSource(SelectedTreeItem))
         {
             var items = SelectedTreeItem.Parent is null
@@ -928,24 +932,27 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     [UsedImplicitly]
     public void PlayPause()
     {
-        if (_songQueue?.CurrentSong is null)
+        Task.Run(() =>
         {
-            PlaySong();
-            return;
-        }
+            if (_songQueue?.CurrentSong is null)
+            {
+                PlaySong();
+                return;
+            }
 
-        if (_playerController.Playing)
-        {
-            _timer?.Pause();
-            _playerController.Pause();
-        }
-        else
-        {
-            _timer?.Start();
-            _playerController.Resume();
-        }
+            if (_playerController.Playing)
+            {
+                _timer?.Pause();
+                _playerController.Pause();
+            }
+            else
+            {
+                _timer?.Start();
+                _playerController.Resume();
+            }
 
-        NotifyOfPropertyChange(nameof(IsPlaying));
+            NotifyOfPropertyChange(nameof(IsPlaying));
+        });
     }
 
     [UsedImplicitly]
