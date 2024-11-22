@@ -26,7 +26,9 @@ using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.Shell.Visualizer;
 using ShufflerPro.Web;
+using WPFSoundVisualizationLib;
 using DragDropEffects = System.Windows.DragDropEffects;
 using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using MessageBox = System.Windows.MessageBox;
@@ -85,6 +87,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
     private SourceTreeState? _sourceTreeState;
+    private SpectrumAnalyzer _spectrumAnalyzer;
     private double _startingSongTime;
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
@@ -554,6 +557,18 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     }
 
     public bool ShowNetworkUsage => _playerController.IsPlayingStaticSong;
+
+    public SpectrumAnalyzer SpectrumAnalyzer
+    {
+        get => _spectrumAnalyzer;
+        set
+        {
+            if (Equals(value, _spectrumAnalyzer)) return;
+            _spectrumAnalyzer = value;
+            NotifyOfPropertyChange();
+        }
+    }
+
     public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
     public void Dispose()
@@ -870,6 +885,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         StartLibrary();
         NotifyCollectionsChanged();
 
+        SpectrumAnalyzer = new SpectrumAnalyzer
+        {
+            BarCount = 16
+        };
+        
+        SpectrumAnalyzer.RegisterSoundPlayer(NAudioEngine.Instance);
+
         await base.OnInitializeAsync(cancellationToken);
     }
 
@@ -1056,6 +1078,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(AlbumArt));
         NotifyOfPropertyChange(nameof(HasAlbumArt));
         NotifyOfPropertyChange(nameof(ShowNetworkUsage));
+        NotifyOfPropertyChange(nameof(SpectrumAnalyzer));
     }
 
     private NewResult<NewUnit> HandleSelectedSong()

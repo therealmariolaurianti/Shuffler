@@ -1,11 +1,14 @@
 ﻿using System.Timers;
 using NAudio.Wave;
+using ShufflerPro.Client;
 using ShufflerPro.Client.AudioEqualizer;
+using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Result;
+using ShufflerPro.Screens.Shell.Visualizer;
 
-namespace ShufflerPro.Client.Controllers;
+namespace ShufflerPro.Controllers;
 
 public class PlayerController(
     WaveOutEvent outEvent,
@@ -100,11 +103,16 @@ public class PlayerController(
 
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
                 _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
-
+                
                 _outEvent ??= new WaveOutEvent();
-                _outEvent.Init(_equalizer);
+                //_outEvent.Init(_equalizer);
 
+                var inputStream = NAudioEngine.Instance
+                    .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!);
+                _outEvent.Init(inputStream);
+                
                 _outEvent.Play();
+                NAudioEngine.Instance.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }

@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using ShufflerPro.Client.AudioEqualizer;
 using ShufflerPro.Client.Controllers;
+using ShufflerPro.Controllers;
 using ShufflerPro.Framework.WPF;
 
 namespace ShufflerPro.Screens.AudioEqualizer;

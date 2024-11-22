@@ -3,6 +3,7 @@ using Caliburn.Micro;
 using NAudio.Wave;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
+using ShufflerPro.Controllers;
 using ShufflerPro.Result;
 using ShufflerPro.Screens.AudioEqualizer;
 using ShufflerPro.Screens.EditSong.Multiple;
