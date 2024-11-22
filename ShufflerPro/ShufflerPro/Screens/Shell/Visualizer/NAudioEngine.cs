@@ -17,6 +17,7 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
     private readonly DispatcherTimer _positionTimer = new(DispatcherPriority.ApplicationIdle);
     private readonly BackgroundWorker _waveformGenerateWorker = new();
     private WaveStream? _activeStream;
+    private WaveChannel32 _inputStream;
     private bool _isPlaying;
     private SampleAggregator _sampleAggregator;
     private SampleAggregator _waveformAggregator;
@@ -31,7 +32,6 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
     private string pendingWaveformPath;
     private TimeSpan repeatStart;
     private TimeSpan repeatStop;
-    private WaveChannel32 _inputStream;
 
     private NAudioEngine()
     {
@@ -254,10 +254,8 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
         waveformMp3Stream.Dispose();
     }
 
-    public WaveChannel32 StartVisualizer(AudioFileReader activeStream, string path)
+    public IWaveProvider StartVisualizer(AudioFileReader activeStream, string path)
     {
-        _activeStream = activeStream;
-
         if (_activeStream != null)
         {
             SelectionBegin = TimeSpan.Zero;
@@ -265,15 +263,17 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
             ChannelPosition = 0;
         }
 
+        _activeStream = activeStream;
+
         try
         {
             _sampleAggregator = new SampleAggregator(_fftDataSize);
             _inputStream = new WaveChannel32(_activeStream);
 
             _inputStream.Sample += inputStream_Sample;
-            
+
             ChannelLength = _inputStream.TotalTime.TotalSeconds;
-            
+
             GenerateWaveformData(path);
         }
         catch

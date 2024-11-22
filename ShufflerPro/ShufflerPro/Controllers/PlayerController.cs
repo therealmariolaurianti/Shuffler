@@ -16,7 +16,7 @@ public class PlayerController(
     RadioController radioController) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
-    private Equalizer? _equalizer;
+    //private Equalizer? _equalizer;
     private bool _isPlayingStaticSong;
     private WaveOutEvent? _outEvent = outEvent;
     private ISongQueue? _songQueue;
@@ -24,6 +24,7 @@ public class PlayerController(
 
     public required Action PlayerDisposed;
     public required Action<Song> SongChanged;
+    private Equalizer? _equalizer;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing || radioController.IsPlaying;
     public bool IsCompleted { get; set; }
@@ -102,16 +103,15 @@ public class PlayerController(
                 radioController.StopStation();
 
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-                _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
-                
                 _outEvent ??= new WaveOutEvent();
-                //_outEvent.Init(_equalizer);
 
                 var inputStream = NAudioEngine.Instance
                     .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!);
-                _outEvent.Init(inputStream);
+                _equalizer = new Equalizer(inputStream, equalizerBandContainer.Bands);
                 
+                _outEvent.Init(_equalizer);
                 _outEvent.Play();
+                
                 NAudioEngine.Instance.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);

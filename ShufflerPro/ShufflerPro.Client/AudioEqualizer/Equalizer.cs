@@ -1,4 +1,5 @@
-﻿using NAudio.Dsp;
+﻿using System;
+using NAudio.Dsp;
 using NAudio.Wave;
 
 namespace ShufflerPro.Client.AudioEqualizer;
@@ -11,21 +12,25 @@ namespace ShufflerPro.Client.AudioEqualizer;
 /// </summary>
 public class Equalizer : ISampleProvider
 {
-    private readonly int bandCount;
     private readonly EqualizerBand[] _bands;
+    private readonly IWaveProvider _sampleProvider;
+    private readonly int bandCount;
     private readonly int channels;
+
     private readonly BiQuadFilter[,] filters;
-    private readonly ISampleProvider _sourceProvider;
+
+    //private readonly ISampleProvider _sourceProvider;
     private bool updated;
 
     /// <summary>
     ///     Creates a new Equalizer
     /// </summary>
-    public Equalizer(ISampleProvider sourceProvider, EqualizerBand[] bands)
+    public Equalizer(IWaveProvider sampleProvider, EqualizerBand[] bands)
     {
-        _sourceProvider = sourceProvider;
+        _sampleProvider = sampleProvider;
+        WaveFormat = sampleProvider.WaveFormat;
         _bands = bands;
-        channels = sourceProvider.WaveFormat.Channels;
+        channels = WaveFormat.Channels;
         bandCount = bands.Length;
         filters = new BiQuadFilter[channels, bands.Length];
         CreateFilters();
@@ -34,14 +39,17 @@ public class Equalizer : ISampleProvider
     /// <summary>
     ///     Gets the WaveFormat of this Sample Provider
     /// </summary>
-    public WaveFormat WaveFormat => _sourceProvider.WaveFormat;
+    public WaveFormat WaveFormat { get; }
 
     /// <summary>
     ///     Reads samples from this Sample Provider
     /// </summary>
     public int Read(float[] buffer, int offset, int count)
     {
-        var samplesRead = _sourceProvider.Read(buffer, offset, count);
+        var byteBuffer = new byte[buffer.Length * 4];
+        var bytesRead = _sampleProvider.Read(byteBuffer, offset * 4, count * 4);
+        var samplesRead = bytesRead / 4;
+        Buffer.BlockCopy(byteBuffer, 0, buffer, offset * 4, bytesRead);
 
         if (updated)
         {
@@ -67,10 +75,10 @@ public class Equalizer : ISampleProvider
             var band = _bands[bandIndex];
             for (var n = 0; n < channels; n++)
                 if (filters[n, bandIndex] == null)
-                    filters[n, bandIndex] = BiQuadFilter.PeakingEQ(_sourceProvider.WaveFormat.SampleRate, band.Frequency,
+                    filters[n, bandIndex] = BiQuadFilter.PeakingEQ(WaveFormat.SampleRate, band.Frequency,
                         band.Bandwidth, band.Gain);
                 else
-                    filters[n, bandIndex].SetPeakingEq(_sourceProvider.WaveFormat.SampleRate, band.Frequency,
+                    filters[n, bandIndex].SetPeakingEq(WaveFormat.SampleRate, band.Frequency,
                         band.Bandwidth, band.Gain);
         }
     }
