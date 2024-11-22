@@ -1000,7 +1000,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         return NewResultExtensions.Try(() =>
             {
                 if (_playerController.Playing || _playerController.IsPaused)
+                {
                     _playerController.Cancel();
+                    NAudioEngine.Instance.IsPlaying = false;
+                }
 
                 ElapsedRunningTime = 0;
 
