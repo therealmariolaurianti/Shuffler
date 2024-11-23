@@ -890,7 +890,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             BarCount = 16
         };
         
-        SpectrumAnalyzer.RegisterSoundPlayer(NAudioEngine.Instance);
+        SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
 
         await base.OnInitializeAsync(cancellationToken);
     }
@@ -1002,7 +1002,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 if (_playerController.Playing || _playerController.IsPaused)
                 {
                     _playerController.Cancel();
-                    NAudioEngine.Instance.IsPlaying = false;
+                    VisualizerEngine.Instance.Stop();
                 }
 
                 ElapsedRunningTime = 0;

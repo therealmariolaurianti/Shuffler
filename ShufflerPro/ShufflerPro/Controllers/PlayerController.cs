@@ -71,7 +71,7 @@ public class PlayerController(
     public void ReInitialize()
     {
         Dispose();
-
+        
         _outEvent = new WaveOutEvent();
         IsCompleted = false;
     }
@@ -101,18 +101,18 @@ public class PlayerController(
             {
                 _isPlayingStaticSong = false;
                 radioController.StopStation();
-
+                
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-                _outEvent ??= new WaveOutEvent();
-
-                var inputStream = NAudioEngine.Instance
+                var inputStream = VisualizerEngine.Instance
                     .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!);
+                
                 _equalizer = new Equalizer(inputStream, equalizerBandContainer.Bands);
                 
+                _outEvent ??= new WaveOutEvent();
                 _outEvent.Init(_equalizer);
                 _outEvent.Play();
                 
-                NAudioEngine.Instance.IsPlaying = true;
+                VisualizerEngine.Instance.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }

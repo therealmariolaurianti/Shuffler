@@ -846,6 +846,11 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
+                        <ContentControl
+                            Width="100"
+                            Margin="2,2,20,2"
+                            VerticalAlignment="Stretch"
+                            Content="{Binding SpectrumAnalyzer}" />
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
@@ -866,10 +871,5 @@
                 </Grid>
             </Border>
         </Grid>
-        <ContentControl
-            Grid.Row="1"
-            Width="100"
-            Height="100"
-            Content="{Binding SpectrumAnalyzer}" />
     </Grid>
 </mah:MetroWindow>

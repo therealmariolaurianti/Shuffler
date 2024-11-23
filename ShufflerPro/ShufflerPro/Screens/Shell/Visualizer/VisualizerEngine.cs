@@ -7,23 +7,22 @@ using WPFSoundVisualizationLib;
 
 namespace ShufflerPro.Screens.Shell.Visualizer;
 
-public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
+public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
 {
     private const int _waveformCompressedPointCount = 2000;
     private const int _repeatThreshold = 200;
+    private const int _fftDataSize = (int)FFTDataSize.FFT2048;
 
-    private static NAudioEngine? _instance;
-    private readonly int _fftDataSize = (int)FFTDataSize.FFT2048;
+    private static VisualizerEngine? _instance;
     private readonly DispatcherTimer _positionTimer = new(DispatcherPriority.ApplicationIdle);
     private readonly BackgroundWorker _waveformGenerateWorker = new();
     private WaveStream? _activeStream;
-    private WaveChannel32 _inputStream;
+    private double _channelLength;
+    private WaveChannel32? _inputStream;
     private bool _isPlaying;
     private SampleAggregator _sampleAggregator;
     private SampleAggregator _waveformAggregator;
     private float[] _waveformData;
-
-    private double channelLength;
     private double channelPosition;
     private bool inChannelSet;
     private bool inChannelTimerUpdate;
@@ -33,7 +32,7 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
     private TimeSpan repeatStart;
     private TimeSpan repeatStop;
 
-    private NAudioEngine()
+    private VisualizerEngine()
     {
         _positionTimer.Interval = TimeSpan.FromMilliseconds(50);
         _positionTimer.Tick += positionTimer_Tick;
@@ -43,7 +42,7 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
         _waveformGenerateWorker.WorkerSupportsCancellation = true;
     }
 
-    public static NAudioEngine Instance => _instance ??= new NAudioEngine();
+    public static VisualizerEngine Instance => _instance ??= new VisualizerEngine();
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -126,34 +125,42 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
 
     public double ChannelLength
     {
-        get => channelLength;
+        get => _channelLength;
         protected set
         {
-            var oldValue = channelLength;
-            channelLength = value;
-            if (oldValue != channelLength)
-                NotifyPropertyChanged();
+            if (_channelLength == value)
+                return;
+            _channelLength = value;
+            NotifyPropertyChanged();
         }
     }
 
     public double ChannelPosition
     {
         get => channelPosition;
-        set
+        set => SetChannel(value);
+    }
+
+    private void SetChannel(double value)
+    {
+        if (!inChannelSet)
         {
-            if (!inChannelSet)
-            {
-                inChannelSet = true; // Avoid recursion
-                var oldValue = channelPosition;
-                var position = Math.Max(0, Math.Min(value, ChannelLength));
-                if (!inChannelTimerUpdate && _activeStream != null)
-                    _activeStream.Position =
-                        (long)(position / _activeStream.TotalTime.TotalSeconds * _activeStream.Length);
-                channelPosition = position;
-                if (oldValue != channelPosition)
-                    NotifyPropertyChanged();
-                inChannelSet = false;
-            }
+            if (_activeStream is null)
+                return;
+
+            inChannelSet = true; // Avoid recursion
+
+            var oldValue = channelPosition;
+            var position = Math.Max(0, Math.Min(value, ChannelLength));
+
+            if (!inChannelTimerUpdate && _activeStream != null)
+                _activeStream.Position = (long)(position / _activeStream.TotalTime.TotalSeconds * _activeStream.Length);
+
+            channelPosition = position;
+            if (oldValue != channelPosition)
+                NotifyPropertyChanged();
+
+            inChannelSet = false;
         }
     }
 
@@ -187,10 +194,10 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
 
     private void waveformGenerateWorker_DoWork(object? sender, DoWorkEventArgs e)
     {
-        if (!(e.Argument is WaveformGenerationParams waveformParams))
+        if (e.Argument is not WaveformGenerationParams waveformParams)
             return;
 
-        var waveformMp3Stream = new Mp3FileReader(waveformParams.Path);
+        var waveformMp3Stream = new AudioFileReader(waveformParams.Path);
         var waveformInputStream = new WaveChannel32(waveformMp3Stream);
         waveformInputStream.Sample += waveStream_Sample;
 
@@ -254,16 +261,28 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
         waveformMp3Stream.Dispose();
     }
 
+    public void Stop()
+    {
+        IsPlaying = false;
+        SelectionBegin = TimeSpan.Zero;
+        SelectionEnd = TimeSpan.Zero;
+    }
+
+    public void Reset()
+    {
+        Stop();
+
+        _inputStream?.Close();
+        _inputStream = null;
+        _activeStream = null;
+    }
+
     public IWaveProvider StartVisualizer(AudioFileReader activeStream, string path)
     {
-        if (_activeStream != null)
-        {
-            SelectionBegin = TimeSpan.Zero;
-            SelectionEnd = TimeSpan.Zero;
-            ChannelPosition = 0;
-        }
+        Reset();
 
         _activeStream = activeStream;
+        ChannelPosition = 0;
 
         try
         {
@@ -281,7 +300,7 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
             _activeStream = null;
         }
 
-        return _inputStream;
+        return _inputStream!;
     }
 
     private void inputStream_Sample(object? sender, SampleEventArgs e)
@@ -310,19 +329,14 @@ public class NAudioEngine : ISpectrumPlayer, IWaveformPlayer
             return;
 
         inChannelTimerUpdate = true;
-        ChannelPosition = _activeStream.Position / (double)_activeStream.Length * _activeStream.TotalTime.TotalSeconds;
+        ChannelPosition = _activeStream?.Position / (double?)_activeStream?.Length *
+            _activeStream?.TotalTime.TotalSeconds ?? 0;
         inChannelTimerUpdate = false;
     }
+}
 
-    private class WaveformGenerationParams
-    {
-        public WaveformGenerationParams(int points, string path)
-        {
-            Points = points;
-            Path = path;
-        }
-
-        public int Points { get; }
-        public string Path { get; }
-    }
+internal class WaveformGenerationParams(int points, string path)
+{
+    public int Points { get; } = points;
+    public string Path { get; } = path;
 }
