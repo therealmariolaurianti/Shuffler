@@ -17,10 +17,7 @@ public class PlayerController(
     ShufflerWindowManager windowManager) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
-
     private Equalizer? _equalizer;
-
-    //private Equalizer? _equalizer;
     private bool _isPlayingStaticSong;
     private WaveOutEvent? _outEvent = outEvent;
     private ISongQueue? _songQueue;
@@ -97,7 +94,6 @@ public class PlayerController(
         {
             if (_songQueue.CurrentSong.IsStatic)
             {
-                //TODO: get visualizer working with this
                 radioController.StartStation(_songQueue.CurrentSong.Path!);
                 _isPlayingStaticSong = true;
             }
