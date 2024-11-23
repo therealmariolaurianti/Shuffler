@@ -887,7 +887,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         SpectrumAnalyzer = new SpectrumAnalyzer
         {
-            BarCount = 16
+            BarCount = 16,
         };
         
         SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);

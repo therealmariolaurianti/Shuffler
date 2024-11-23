@@ -847,8 +847,8 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
                         <ContentControl
-                            Width="100"
-                            Margin="2,2,20,2"
+                            Width="150"
+                            Margin="0,0,20,0"
                             VerticalAlignment="Stretch"
                             Content="{Binding SpectrumAnalyzer}" />
                         <Button

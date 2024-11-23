@@ -94,6 +94,7 @@ public class PlayerController(
         {
             if (_songQueue.CurrentSong.IsStatic)
             {
+                //TODO: get visualizer working with this
                 radioController.StartStation(_songQueue.CurrentSong.Path!);
                 _isPlayingStaticSong = true;
             }
