@@ -1,7 +1,5 @@
 ﻿using System.Windows.Media.Imaging;
 using Caliburn.Micro;
-using NAudio.Wave;
-using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Controllers;
 using ShufflerPro.Result;
@@ -65,8 +63,8 @@ public class ShufflerWindowManager : WindowManager
     public async Task<NewResult<NewUnit>> ShowException(Exception exception)
     {
         var viewModel = _exceptionViewModelFactory.Create(exception);
-        var dialogAsync = await ShowDialogAsync(viewModel);
-        return dialogAsync.CreateFromDialogResult();
+        Execute.OnUIThread(() => ShowDialogAsync(viewModel));
+        return await NewUnit.DefaultAsync;
     }
 
     public async Task<NewResult<NewUnit>> ShowExcludedSongs(Library library)

@@ -1057,9 +1057,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
-                    Task.Run(() =>
+                    Task.Run(async () =>
                     {
-                        _playerController.PlaySong(_songQueue!);
+                        await _playerController.PlaySong(_songQueue!);
 
                         var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
                         if (playingNow is not null)

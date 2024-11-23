@@ -1,8 +1,9 @@
 ﻿using NAudio.Wave;
 using ShufflerPro.Client.Radio;
+using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Result;
 
-namespace ShufflerPro.Client.Controllers;
+namespace ShufflerPro.Controllers;
 
 public class RadioController(
     IEnumerable<IRadioStation> radioStations)
@@ -14,13 +15,15 @@ public class RadioController(
     {
         StopStation();
 
-        using (var mediaFoundationReader = new MediaFoundationReader(url))
-        {
-            _wasapiOut = new WasapiOut();
+        var mediaFoundationReader = new MediaFoundationReader(url);
 
-            _wasapiOut.Init(mediaFoundationReader);
-            _wasapiOut.Play();
-        }
+         var inputStream = VisualizerEngine.Instance
+             .StartVisualizer(mediaFoundationReader, url, true);
+
+        _wasapiOut ??= new WasapiOut();
+
+        _wasapiOut.Init(inputStream);
+        _wasapiOut.Play();
     }
 
     public NewResult<List<IRadioStation>> GetStations()

@@ -2,9 +2,9 @@
 using NAudio.Wave;
 using ShufflerPro.Client;
 using ShufflerPro.Client.AudioEqualizer;
-using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
+using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Result;
 
@@ -13,9 +13,13 @@ namespace ShufflerPro.Controllers;
 public class PlayerController(
     WaveOutEvent outEvent,
     IEqualizerBandContainer equalizerBandContainer,
-    RadioController radioController) : IDisposable
+    RadioController radioController,
+    ShufflerWindowManager windowManager) : IDisposable
 {
     private AudioFileReader? _audioFileReader;
+
+    private Equalizer? _equalizer;
+
     //private Equalizer? _equalizer;
     private bool _isPlayingStaticSong;
     private WaveOutEvent? _outEvent = outEvent;
@@ -24,11 +28,12 @@ public class PlayerController(
 
     public required Action PlayerDisposed;
     public required Action<Song> SongChanged;
-    private Equalizer? _equalizer;
 
     public bool Playing => _outEvent?.PlaybackState == PlaybackState.Playing || radioController.IsPlaying;
     public bool IsCompleted { get; set; }
     public bool IsPaused { get; private set; }
+
+    public bool IsPlayingStaticSong => radioController.IsPlaying;
 
     public void Dispose()
     {
@@ -71,7 +76,7 @@ public class PlayerController(
     public void ReInitialize()
     {
         Dispose();
-        
+
         _outEvent = new WaveOutEvent();
         IsCompleted = false;
     }
@@ -80,10 +85,8 @@ public class PlayerController(
     {
         ReInitialize();
     }
-    
-    public bool IsPlayingStaticSong => radioController.IsPlaying;
 
-    public void PlaySong(ISongQueue? songQueue)
+    public async Task PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
             return;
@@ -102,25 +105,25 @@ public class PlayerController(
             {
                 _isPlayingStaticSong = false;
                 radioController.StopStation();
-                
+
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
                 var inputStream = VisualizerEngine.Instance
-                    .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!);
-                
+                    .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!, false);
+
                 _equalizer = new Equalizer(inputStream, equalizerBandContainer.Bands);
-                
+
                 _outEvent ??= new WaveOutEvent();
                 _outEvent.Init(_equalizer);
                 _outEvent.Play();
-                
+
                 VisualizerEngine.Instance.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            // ignored
+            await windowManager.ShowException(e);
         }
     }
 

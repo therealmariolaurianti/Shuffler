@@ -21,18 +21,19 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
     private WaveStream? _activeStream;
     private double _channelLength;
     private WaveChannel32? _inputStream;
+
+    private bool _inRepeatSet;
     private bool _isPlaying;
+    private bool _isStreaming;
+    private string _pendingWaveformPath;
+    private TimeSpan _repeatStart;
+    private TimeSpan _repeatStop;
     private SampleAggregator _sampleAggregator;
     private SampleAggregator _waveformAggregator;
     private float[] _waveformData;
     private double channelPosition;
     private bool inChannelSet;
     private bool inChannelTimerUpdate;
-
-    private bool inRepeatSet;
-    private string pendingWaveformPath;
-    private TimeSpan repeatStart;
-    private TimeSpan repeatStop;
 
     private VisualizerEngine()
     {
@@ -81,34 +82,34 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
 
     public TimeSpan SelectionBegin
     {
-        get => repeatStart;
+        get => _repeatStart;
         set
         {
-            if (!inRepeatSet)
+            if (!_inRepeatSet)
             {
-                inRepeatSet = true;
-                var oldValue = repeatStart;
-                repeatStart = value;
-                if (oldValue != repeatStart)
+                _inRepeatSet = true;
+                var oldValue = _repeatStart;
+                _repeatStart = value;
+                if (oldValue != _repeatStart)
                     NotifyPropertyChanged();
-                inRepeatSet = false;
+                _inRepeatSet = false;
             }
         }
     }
 
     public TimeSpan SelectionEnd
     {
-        get => repeatStop;
+        get => _repeatStop;
         set
         {
             if (!inChannelSet)
             {
-                inRepeatSet = true;
-                var oldValue = repeatStop;
-                repeatStop = value;
-                if (oldValue != repeatStop)
+                _inRepeatSet = true;
+                var oldValue = _repeatStop;
+                _repeatStop = value;
+                if (oldValue != _repeatStop)
                     NotifyPropertyChanged();
-                inRepeatSet = false;
+                _inRepeatSet = false;
             }
         }
     }
@@ -155,8 +156,10 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
             var oldValue = channelPosition;
             var position = Math.Max(0, Math.Min(value, ChannelLength));
 
-            if (!inChannelTimerUpdate && _activeStream != null)
+            if (!inChannelTimerUpdate && !_isStreaming)
                 _activeStream.Position = (long)(position / _activeStream.TotalTime.TotalSeconds * _activeStream.Length);
+            else if (_isStreaming)
+                _activeStream.Position = 0;
 
             channelPosition = position;
             if (oldValue != channelPosition)
@@ -176,12 +179,12 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
         switch (_waveformGenerateWorker.IsBusy)
         {
             case true:
-                pendingWaveformPath = path;
+                _pendingWaveformPath = path;
                 _waveformGenerateWorker.CancelAsync();
                 return;
             case false when _waveformCompressedPointCount != 0:
                 _waveformGenerateWorker.RunWorkerAsync(new WaveformGenerationParams(_waveformCompressedPointCount,
-                    path));
+                    path, _isStreaming));
                 break;
         }
     }
@@ -190,8 +193,9 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
     {
         if (e.Cancelled)
             if (!_waveformGenerateWorker.IsBusy && _waveformCompressedPointCount != 0)
-                _waveformGenerateWorker.RunWorkerAsync(new WaveformGenerationParams(_waveformCompressedPointCount,
-                    pendingWaveformPath));
+                _waveformGenerateWorker.RunWorkerAsync(
+                    new WaveformGenerationParams(_waveformCompressedPointCount,
+                        _pendingWaveformPath, _isStreaming));
     }
 
     private void waveformGenerateWorker_DoWork(object? sender, DoWorkEventArgs e)
@@ -199,8 +203,13 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
         if (e.Argument is not WaveformGenerationParams waveformParams)
             return;
 
-        var waveformMp3Stream = new AudioFileReader(waveformParams.Path);
-        var waveformInputStream = new WaveChannel32(waveformMp3Stream);
+        WaveStream reader;
+        if (waveformParams.IsStreaming)
+            reader = new MediaFoundationReader(waveformParams.Path);
+        else
+            reader = new AudioFileReader(waveformParams.Path);
+
+        var waveformInputStream = new WaveChannel32(reader);
         waveformInputStream.Sample += waveStream_Sample;
 
         var frameLength = _fftDataSize;
@@ -259,8 +268,8 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
         waveformInputStream.Close();
         waveformInputStream.Dispose();
 
-        waveformMp3Stream.Close();
-        waveformMp3Stream.Dispose();
+        reader.Close();
+        reader.Dispose();
     }
 
     public void Stop()
@@ -279,11 +288,14 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
         _activeStream = null;
     }
 
-    public IWaveProvider StartVisualizer(AudioFileReader activeStream, string path)
+    public IWaveProvider StartVisualizer(WaveStream activeStream, string path,
+        bool isStreaming)
     {
         Reset();
 
         _activeStream = activeStream;
+        _isStreaming = isStreaming;
+        
         ChannelPosition = 0;
 
         try
@@ -294,7 +306,6 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
             _inputStream.Sample += inputStream_Sample;
 
             ChannelLength = _inputStream.TotalTime.TotalSeconds;
-
             GenerateWaveformData(path);
         }
         catch
@@ -337,8 +348,9 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
     }
 }
 
-internal class WaveformGenerationParams(int points, string path)
+internal class WaveformGenerationParams(int points, string path, bool isStreaming)
 {
     public int Points { get; } = points;
     public string Path { get; } = path;
+    public bool IsStreaming { get; } = isStreaming;
 }
