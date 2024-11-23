@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿//taken and refactored from: Jacob Johnston - https://github.com/jacobjohnston/wpfsvl
+
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Threading;
