@@ -1,6 +1,6 @@
 ﻿using NAudio.Dsp;
 
-namespace ShufflerPro.Screens.Shell.Visualizer;
+namespace ShufflerPro.Framework.WPF.Controls.Visualizer;
 
 public class SampleAggregator
 {

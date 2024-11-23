@@ -7,7 +7,7 @@ using System.Windows.Threading;
 using NAudio.Wave;
 using WPFSoundVisualizationLib;
 
-namespace ShufflerPro.Screens.Shell.Visualizer;
+namespace ShufflerPro.Framework.WPF.Controls.Visualizer;
 
 public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
 {

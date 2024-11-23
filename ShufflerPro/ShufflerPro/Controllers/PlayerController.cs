@@ -5,8 +5,8 @@ using ShufflerPro.Client.AudioEqualizer;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
+using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Result;
-using ShufflerPro.Screens.Shell.Visualizer;
 
 namespace ShufflerPro.Controllers;
 
