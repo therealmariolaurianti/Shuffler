@@ -94,7 +94,7 @@
                     <ColumnDefinition Width="1.25*" MinWidth="275" />
                 </Grid.ColumnDefinitions>
                 <Border
-                    Margin="0,0,10,0"
+                    Margin="0,0,5,0"
                     Background="{DynamicResource MahApps.Brushes.Control.Background}"
                     BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
                     BorderThickness="1">
@@ -206,7 +206,7 @@
                 </Border>
                 <Border
                     x:Name="SongBorder"
-                    Margin="0,0,10,0"
+                    Margin="0,0,5,0"
                     Grid.Column="1"
                     cal:Message.Attach="[Event MouseDown] = [Action JumpToCurrentSong()]"
                     Background="{DynamicResource MahApps.Brushes.Control.Background}"
@@ -400,7 +400,7 @@
             <Grid
                 Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width=".85*" />
                     <ColumnDefinition Width="7" />
                     <ColumnDefinition Width="3.5*" />
                 </Grid.ColumnDefinitions>

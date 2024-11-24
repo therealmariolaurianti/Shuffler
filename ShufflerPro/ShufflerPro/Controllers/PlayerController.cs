@@ -175,6 +175,7 @@ public class PlayerController(
         }
         else
         {
+            VisualizerEngine.Instance.IsPlaying = false;
             _outEvent?.Pause();
             _timer?.Pause();
         }
@@ -190,6 +191,7 @@ public class PlayerController(
         }
         else
         {
+            VisualizerEngine.Instance.IsPlaying = true;
             _outEvent?.Play();
             _timer?.Resume();
         }

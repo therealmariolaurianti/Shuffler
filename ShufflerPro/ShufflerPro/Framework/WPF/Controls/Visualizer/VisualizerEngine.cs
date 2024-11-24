@@ -250,7 +250,7 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
             if (readCount % 3000 == 0)
             {
                 var clonedData = (float[])waveformCompressedPoints.Clone();
-                Application.Current.Dispatcher.Invoke(() => { WaveformData = clonedData; });
+                Application.Current.Dispatcher.InvokeAsync(() => { WaveformData = clonedData; });
             }
 
             if (_waveformGenerateWorker.CancellationPending)
@@ -263,7 +263,7 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
         }
 
         var finalClonedData = (float[])waveformCompressedPoints.Clone();
-        Application.Current.Dispatcher.Invoke(() => { WaveformData = finalClonedData; });
+        Application.Current.Dispatcher.InvokeAsync(() => { WaveformData = finalClonedData; });
 
         waveformInputStream.Close();
         waveformInputStream.Dispose();
@@ -295,7 +295,7 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
 
         _activeStream = activeStream;
         _isStreaming = isStreaming;
-        
+
         ChannelPosition = 0;
 
         try
