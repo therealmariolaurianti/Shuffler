@@ -675,13 +675,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         Task.Run(async () =>
         {
-            if (SelectedSong is { Title: not null })
+            if (CurrentSong is { Title: not null })
             {
                 SongLyrics = string.Empty;
                 IsLoadingLyrics = true;
 
                 await _lyricsController
-                    .Load(SelectedSong.Artist, SelectedSong.Title)
+                    .Load(CurrentSong.Artist, CurrentSong.Title)
                     .IfSuccess(songLyrics =>
                     {
                         SongLyrics = songLyrics;
