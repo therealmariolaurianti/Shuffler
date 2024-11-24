@@ -54,6 +54,7 @@ public class PlayerController(
     {
         if (songQueue?.NextSong is null)
         {
+            VisualizerEngine.Instance.Reset();
             Dispose();
             return NewResultExtensions.CreateFail<NewUnit>("Player disposed.");
         }
