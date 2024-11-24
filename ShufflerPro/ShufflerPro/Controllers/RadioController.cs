@@ -23,12 +23,9 @@ public class RadioController(
             StopStation();
 
             var mediaFoundationReader = new MediaFoundationReader(url);
-
-            var inputStream = VisualizerEngine.Instance
-                .StartVisualizer(mediaFoundationReader, url, true);
+            var inputStream = VisualizerEngine.Instance.StartVisualizer(mediaFoundationReader, url, true);
 
             _equalizer = new Equalizer(inputStream, equalizerBandContainer.Bands);
-
             _wasapiOut ??= new WasapiOut();
 
             _wasapiOut.Init(_equalizer);
