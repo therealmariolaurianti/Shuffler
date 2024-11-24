@@ -34,6 +34,8 @@ public class PlayerController(
 
     public void Dispose()
     {
+        VisualizerEngine.Instance.Reset();
+        
         _outEvent?.Stop();
         _outEvent?.Dispose();
 
@@ -48,13 +50,14 @@ public class PlayerController(
         _audioFileReader = null;
 
         PlayerDisposed.Invoke();
+        
+        GC.SuppressFinalize(this);
     }
 
     private NewResult<NewUnit> StartNextSong(ISongQueue? songQueue)
     {
         if (songQueue?.NextSong is null)
         {
-            VisualizerEngine.Instance.Reset();
             Dispose();
             return NewResultExtensions.CreateFail<NewUnit>("Player disposed.");
         }
