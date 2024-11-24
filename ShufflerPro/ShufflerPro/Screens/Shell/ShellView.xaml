@@ -20,14 +20,13 @@
     mc:Ignorable="d"
     attachedProperties:ScreenNameAttachedProperty.Name="ShufflerPro"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="ThreeDBorderWindow"
     ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
     Width="1250"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
-    <mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button
                 cal:Message.Attach="LaunchGitHubSite"
@@ -38,10 +37,6 @@
                     Height="22"
                     Kind="SocialGithubOctocat" />
             </Button>
-        </mah:WindowCommands>
-    </mah:MetroWindow.LeftWindowCommands>
-    <mah:MetroWindow.RightWindowCommands>
-        <mah:WindowCommands>
             <Button
                 Cursor="Hand"
                 cal:Message.Attach="LaunchSettings"
@@ -79,8 +74,8 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition  />
-            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid
             IsSharedSizeScope="True"
