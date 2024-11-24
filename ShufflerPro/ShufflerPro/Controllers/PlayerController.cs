@@ -87,7 +87,7 @@ public class PlayerController(
         ReInitialize();
     }
 
-    public async Task PlaySong(ISongQueue? songQueue)
+    public void PlaySong(ISongQueue? songQueue)
     {
         if (songQueue?.CurrentSong is null)
             return;
@@ -123,7 +123,7 @@ public class PlayerController(
         }
         catch (Exception e)
         {
-            await windowManager.ShowException(e);
+            windowManager.ShowException(e);
         }
     }
 

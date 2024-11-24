@@ -709,7 +709,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         RunAsync(async () => await _playlistController
             .MoveSong(_playlistState, source, index)
-            .IfFailAsync(async exception => await _windowManager.ShowException(exception)));
+            .IfFail(exception => _windowManager.ShowException(exception)));
     }
 
     private void HandleDropSongOnPlaylist(PlaylistGridItem playlistGridItem, List<Song> songs)
@@ -887,9 +887,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         SpectrumAnalyzer = new SpectrumAnalyzer
         {
-            BarCount = 16,
+            BarCount = 16
         };
-        
+
         SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
 
         await base.OnInitializeAsync(cancellationToken);
@@ -1057,9 +1057,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
-                    Task.Run(async () =>
+                    Task.Run(() =>
                     {
-                        await _playerController.PlaySong(_songQueue!);
+                        _playerController.PlaySong(_songQueue!);
 
                         var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
                         if (playingNow is not null)
@@ -1185,7 +1185,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         if (messageResult == MessageBoxResult.Yes)
             RunAsync(async () => await _sourceFolderController.Remove(_library, SelectedTreeItem.SourceFolder)
-                .IfFailAsync(async exception => await _windowManager.ShowException(exception))
+                .IfFail(exception => _windowManager.ShowException(exception))
                 .IfSuccess(_ =>
                 {
                     if (SelectedTreeItem.Parent is SourceTreeViewItem parent)
@@ -1400,7 +1400,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             var songs = SelectedSongs!.Cast<Song>().ToList();
             await _songController
                 .Remove(songs, _library, _playlistState)
-                .IfFailAsync(async exception => await _windowManager.ShowException(exception))
+                .IfFail(exception => _windowManager.ShowException(exception))
                 .IfSuccess(_ =>
                 {
                     HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);

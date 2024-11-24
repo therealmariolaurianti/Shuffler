@@ -135,7 +135,7 @@ public class EditSongViewModel : ViewModelBase
         RunAsync(async () => await _songController
             .Update(new UpdateSongsState([_song], _itemTracker.PropertyDifferences,
                 new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged), _library))
-            .IfFailAsync(async exception => await _windowManager.ShowException(exception))
+            .IfFail(exception => _windowManager.ShowException(exception))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
 

@@ -60,11 +60,12 @@ public class ShufflerWindowManager : WindowManager
         return dialogAsync.CreateFromDialogResult();
     }
 
-    public async Task<NewResult<NewUnit>> ShowException(Exception exception)
+    public NewResult<NewUnit> ShowException(Exception exception)
     {
         var viewModel = _exceptionViewModelFactory.Create(exception);
         Execute.OnUIThread(() => ShowDialogAsync(viewModel));
-        return await NewUnit.DefaultAsync;
+
+        return NewUnit.Default;
     }
 
     public async Task<NewResult<NewUnit>> ShowExcludedSongs(Library library)

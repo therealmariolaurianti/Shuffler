@@ -46,7 +46,10 @@ public class UpdateController
         var updateProcess = Process.Start(processStartInfo);
 
         if (updateProcess != null)
-            updateProcess.WaitForExit();
+        {
+            //TODO close application
+            //updateProcess.WaitForExit();
+        }
         else
             return NewResultExtensions.CreateFail<NewUnit>(new Exception("Update process is null."));
 

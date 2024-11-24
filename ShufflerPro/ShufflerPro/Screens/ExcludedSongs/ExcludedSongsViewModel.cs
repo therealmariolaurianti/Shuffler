@@ -77,7 +77,7 @@ public class ExcludedSongsViewModel : ViewModelBase
         RunAsync(async () =>
         {
             await _songController.RemoveExcludedSongs(_songs, _library)
-                .IfFailAsync(async exception => await _windowManager.ShowException(exception))
+                .IfFail(exception => _windowManager.ShowException(exception))
                 .IfSuccessAsync(async _ =>
                 {
                     foreach (var selectedSong in _songs)

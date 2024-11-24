@@ -204,7 +204,7 @@ public class EditSongsViewModel : ViewModelBase
             .Update(new UpdateSongsState(_songs, _itemTracker.PropertyDifferences,
                 new AlbumArtState(_binaryHelper.ToBytes(AlbumArt), _albumArtChanged), _library))
             .Do(_ => SetCollectionProperties())
-            .IfFailAsync(async exception => await _windowManager.ShowException(exception))
+            .IfFail(exception => _windowManager.ShowException(exception))
             .IfSuccessAsync(async _ => await TryCloseAsync(true)));
     }
 
