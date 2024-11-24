@@ -41,6 +41,8 @@ public class RadioController(
 
     public void StopStation()
     {
+        VisualizerEngine.Instance.Reset();
+        
         _wasapiOut?.Stop();
         _wasapiOut?.Dispose();
 
