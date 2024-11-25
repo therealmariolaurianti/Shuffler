@@ -28,7 +28,8 @@ public class SettingsViewModel : ViewModelBase
         ISettings settings,
         ItemTracker<Settings> itemTracker,
         SettingsController settingsController,
-        ShufflerWindowManager windowManager, IUpdateStatus updateStatus)
+        ShufflerWindowManager windowManager, 
+        IUpdateStatus updateStatus)
     {
         _library = library;
         _settings = settings;

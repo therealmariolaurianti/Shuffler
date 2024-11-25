@@ -83,7 +83,6 @@ public class UpdateController
         try
         {
             using var client = new HttpClient();
-
             var page = await client.GetStringAsync(_versionCheckLink);
 
             var htmlDoc = new HtmlDocument();
