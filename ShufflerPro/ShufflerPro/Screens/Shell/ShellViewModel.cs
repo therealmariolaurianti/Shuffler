@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -13,7 +12,6 @@ using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
-using ShufflerPro.Bootstrapper.StartupTasks;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -46,7 +44,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private readonly HotKeyListener _hotKeyListener;
     private readonly Library _library;
     private readonly LibraryController _libraryController;
-    private IUpdateStatus _updateStatus;
     private readonly LyricsController _lyricsController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
@@ -58,6 +55,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private readonly SongStack _songStack;
     private readonly SourceFolderController _sourceFolderController;
     private readonly SourceTreeController _sourceTreeController;
+    private readonly IUpdateStatus _updateStatus;
     private readonly ShufflerWindowManager _windowManager;
     private double _applicationVolumeLevel;
     private Song? _currentSong;
@@ -176,8 +174,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    [UsedImplicitly]
-    public bool IsUpdateAvailable => _updateStatus.IsUpdateAvailable;
+    [UsedImplicitly] public bool IsUpdateAvailable => _updateStatus.IsUpdateAvailable;
 
     public ReadOnlyCollection<Album> Albums
     {
@@ -342,7 +339,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyOfPropertyChange();
         }
     }
-
+    
     public bool IsPlaying => _playerController.Playing;
 
     public BitmapImage? AlbumArt => _albumArtLoader.Load(CurrentSong?.Path);
@@ -577,8 +574,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
-
     public void Dispose()
     {
         _playerController.Dispose();
@@ -812,7 +807,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void OnSearchTextChanged()
     {
-        Task.Run(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             if (string.IsNullOrEmpty(SearchText))
             {
@@ -862,11 +857,14 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void SetElapsedRunTimeDisplay(TimeSpan timeSpan)
     {
-        if (!IsSliderBeingDragged)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            ElapsedRunningTime = timeSpan.TotalSeconds;
-            ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
-        }
+            if (!IsSliderBeingDragged)
+            {
+                ElapsedRunningTime = timeSpan.TotalSeconds;
+                ElapsedRunningTimeDisplay = timeSpan.ToString("mm':'ss");
+            }
+        });
     }
 
     private void NotifyCollectionsChanged()
@@ -891,7 +889,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         StartLibrary();
         NotifyCollectionsChanged();
         StartSpectrumAnalyzer();
-        
+
         NotifyOfPropertyChange(nameof(IsUpdateAvailable));
 
         await base.OnInitializeAsync(cancellationToken);
@@ -923,7 +921,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void ResetCurrentElapsed()
     {
-        Task.Run(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             ElapsedRunningTime = 0;
             ElapsedRunningTimeDisplay = TimeSpan.Zero.ToString("mm':'ss");
@@ -1036,10 +1034,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 return ShuffleSongs(currentSong, isSourceGrid);
 
             var observableCollection = _playlistState is null
-                ? _songFilterController.FilterSongs(AllSongs, null, null)
+                ? AllSongs
                 : _playlistState.Songs;
 
-            return _songQueueFactory.Create(currentSong, observableCollection,
+            return _songQueueFactory.Create(currentSong, observableCollection!.ToObservableCollection(),
                 new RepeatState(IsRepeatChecked, RepeatType));
         }).Do(songQueue =>
         {
@@ -1072,12 +1070,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         _playerController.PlaySong(_songQueue!);
-
-                        var playingNow = AllSongs.SingleOrDefault(s => s.IsPlaying);
-                        if (playingNow is not null)
-                            playingNow.IsPlaying = false;
-
-                        CurrentSong!.IsPlaying = true;
 
                         NotifyInterfaceChanged();
                         LoadSongLyrics();

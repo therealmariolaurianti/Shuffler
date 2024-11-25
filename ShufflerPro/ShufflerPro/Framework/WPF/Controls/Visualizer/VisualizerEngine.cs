@@ -290,28 +290,30 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
     public IWaveProvider StartVisualizer(WaveStream activeStream, string path,
         bool isStreaming)
     {
-        Reset();
-
-        _activeStream = activeStream;
-        _isStreaming = isStreaming;
-
-        ChannelPosition = 0;
-
-        try
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            _sampleAggregator = new SampleAggregator(_fftDataSize);
-            _inputStream = new WaveChannel32(_activeStream);
+            Reset();
 
-            _inputStream.Sample += inputStream_Sample;
+            _activeStream = activeStream;
+            _isStreaming = isStreaming;
 
-            ChannelLength = _inputStream.TotalTime.TotalSeconds;
-            GenerateWaveformData(path);
-        }
-        catch
-        {
-            _activeStream = null;
-        }
+            ChannelPosition = 0;
 
+            try
+            {
+                _sampleAggregator = new SampleAggregator(_fftDataSize);
+                _inputStream = new WaveChannel32(_activeStream);
+
+                _inputStream.Sample += inputStream_Sample;
+
+                ChannelLength = _inputStream.TotalTime.TotalSeconds;
+                GenerateWaveformData(path);
+            }
+            catch
+            {
+                _activeStream = null;
+            }
+        }, DispatcherPriority.Background);
         return _inputStream!;
     }
 

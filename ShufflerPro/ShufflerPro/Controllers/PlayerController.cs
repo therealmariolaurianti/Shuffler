@@ -78,7 +78,7 @@ public class PlayerController(
     {
         Dispose();
 
-        _outEvent = new WaveOutEvent();
+        _outEvent = null;
         IsCompleted = false;
     }
 
@@ -105,6 +105,8 @@ public class PlayerController(
             {
                 _isPlayingStaticSong = false;
                 radioController.StopStation();
+                
+                songQueue.CurrentSong.IsPlaying = true;
 
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
                 var inputStream = VisualizerEngine.Instance
@@ -117,6 +119,7 @@ public class PlayerController(
                 _outEvent.Play();
 
                 VisualizerEngine.Instance.IsPlaying = true;
+                songQueue.CurrentSong.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }
