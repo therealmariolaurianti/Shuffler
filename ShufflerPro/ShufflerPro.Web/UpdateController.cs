@@ -79,8 +79,7 @@ public class UpdateController
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(page);
-
-            // Use XPath to select the element with the specific ID
+            
             var stringValue = htmlDoc.DocumentNode.SelectSingleNode("//*[@id='current-version']").InnerHtml;
             var version = stringValue.Replace("Current Version: ", "").Trim();
 

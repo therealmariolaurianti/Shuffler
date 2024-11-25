@@ -312,7 +312,6 @@
                             HorizontalAlignment="Left"
                             VerticalAlignment="Top"
                             Visibility="{calcBinding:Binding ShowNetworkUsage, FalseToVisibility=Collapsed}"
-                            ToolTip="Streaming"
                             Margin="5">
                             <StackPanel.Style>
                                 <Style TargetType="{x:Type StackPanel}">
@@ -336,6 +335,7 @@
                             </StackPanel.Style>
                             <iconPacks:PackIconModern
                                 Height="15"
+                                ToolTip="Streaming"
                                 Width="15"
                                 Kind="MusicWifi" />
                         </StackPanel>
@@ -344,10 +344,10 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
                             Visibility="{calcBinding:Binding IsUpdateAvailable, FalseToVisibility=Collapsed}"
-                            ToolTip="Update is ready"
                             Margin="5">
                             <iconPacks:PackIconOcticons
                                 Height="15"
+                                ToolTip="Update is ready"
                                 Width="15"
                                 Kind="Alert" />
                         </StackPanel>
