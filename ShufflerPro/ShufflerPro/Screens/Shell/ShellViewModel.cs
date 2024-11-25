@@ -29,6 +29,7 @@ using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
 using ShufflerPro.Web;
 using WPFSoundVisualizationLib;
+using Application = System.Windows.Application;
 using DragDropEffects = System.Windows.DragDropEffects;
 using IDropTarget = GongSolutions.Wpf.DragDrop.IDropTarget;
 using MessageBox = System.Windows.MessageBox;
@@ -673,7 +674,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         if (!IsShowLyricsChecked)
             return;
 
-        Task.Run(async () =>
+        Application.Current.Dispatcher.InvokeAsync(async () =>
         {
             if (CurrentSong is { Title: not null })
             {
@@ -1057,7 +1058,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             .IfSuccess(_ => InitializePlaySong(isSourceGrid)
                 .IfSuccess(_ =>
                 {
-                    Task.Run(() =>
+                    Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         _playerController.PlaySong(_songQueue!);
 

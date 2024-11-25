@@ -16,7 +16,7 @@ public class VisualizerEngine : ISpectrumPlayer, IWaveformPlayer
     private const int _fftDataSize = (int)FFTDataSize.FFT2048;
 
     private static VisualizerEngine? _instance;
-    private readonly DispatcherTimer _positionTimer = new(DispatcherPriority.ApplicationIdle);
+    private readonly DispatcherTimer _positionTimer = new(DispatcherPriority.Background);
     private readonly BackgroundWorker _worker = new();
     private WaveStream? _activeStream;
     private double _channelLength;
