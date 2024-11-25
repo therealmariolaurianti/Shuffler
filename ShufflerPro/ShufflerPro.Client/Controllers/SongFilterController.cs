@@ -42,10 +42,10 @@ public class SongFilterController
             .ToObservableCollection();
     }
 
-    public ObservableCollection<Song> SearchSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album,
-        string? song)
+    public ObservableCollection<Song> SearchSongs(IReadOnlyCollection<Song> allSongs, string? artist,
+        string? album, string? song)
     {
-        var filteredSongs = allSongs.AsEnumerable();
+        var filteredSongs = Enumerable.Empty<Song>();
 
         if (artist != null)
             filteredSongs = allSongs.Where(s => s.Artist.Contains(artist, StringComparison.OrdinalIgnoreCase));
@@ -64,7 +64,7 @@ public class SongFilterController
         if ((artist is null && album is null) || playlistSongs is null)
             return playlistSongs;
 
-        var filteredSongs = playlistSongs.AsEnumerable();
+        var filteredSongs = Enumerable.Empty<Song>();
         if (artist != null && album == null)
             filteredSongs = playlistSongs.Where(s => s.Artist == artist);
         if (artist == null && album != null)

@@ -885,15 +885,19 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         InitializeApplicationVolume();
         StartLibrary();
         NotifyCollectionsChanged();
+        StartSpectrumAnalyzer();
 
+        await base.OnInitializeAsync(cancellationToken);
+    }
+
+    private void StartSpectrumAnalyzer()
+    {
         SpectrumAnalyzer = new SpectrumAnalyzer
         {
             BarCount = 16
         };
 
         SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
-
-        await base.OnInitializeAsync(cancellationToken);
     }
 
     private void StartLibrary()

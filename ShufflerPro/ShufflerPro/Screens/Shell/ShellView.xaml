@@ -110,8 +110,8 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <Button
-                                Width="45"
-                                Height="45"
+                                Width="40"
+                                Height="40"
                                 Margin="2"
                                 Name="PreviousSong"
                                 Cursor="Hand"
@@ -153,8 +153,8 @@
                                 </StackPanel>
                             </Button>
                             <Button
-                                Width="60"
-                                Height="60"
+                                Width="55"
+                                Height="55"
                                 Margin="2"
                                 Name="StopSong"
                                 Cursor="Hand"
@@ -171,8 +171,8 @@
                                 </StackPanel>
                             </Button>
                             <Button
-                                Width="45"
-                                Height="45"
+                                Width="40"
+                                Height="40"
                                 Margin="2"
                                 Cursor="Hand"
                                 Name="NextSong"
