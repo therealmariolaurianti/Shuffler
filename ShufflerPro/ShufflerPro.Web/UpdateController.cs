@@ -7,7 +7,7 @@ namespace ShufflerPro.Web;
 
 public class UpdateController
 {
-    private const string _updateLink = "https://link.testfile.org/500MB"; //todo path to new exe
+    private const string _updateLink = "https://github.com/therealmariolaurianti/Shuffler/releases/download/Release/shufflersetup.exe";
     private const string _versionCheckLink = "https://link.testfile.org/500MB"; //todo path to current version
     private static readonly Version? _currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
     private string _rootPath = string.Empty;

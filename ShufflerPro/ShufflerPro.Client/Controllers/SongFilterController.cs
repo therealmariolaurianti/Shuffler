@@ -6,21 +6,14 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Client.Controllers;
 
-public class SongFilterController
+public class SongFilterController(PlaylistController playlistController)
 {
-    private readonly PlaylistController _playlistController;
-
-    public SongFilterController(PlaylistController playlistController)
-    {
-        _playlistController = playlistController;
-    }
-
     public NewResult<PlaylistState> FilterSongs(IReadOnlyCollection<Song> allSongs, Playlist playlist)
     {
         var songIds = playlist.Indexes.Select(i => i.SongId);
         var songs = allSongs.Where(a => songIds.Contains(a.Id)).ToList();
 
-        return new PlaylistState(_playlistController.IndexSongs(playlist, songs), playlist);
+        return new PlaylistState(playlistController.IndexSongs(playlist, songs), playlist);
     }
 
     public ObservableCollection<Song> FilterSongs(IReadOnlyCollection<Song> allSongs, string? artist, string? album)
@@ -72,7 +65,7 @@ public class SongFilterController
         if (artist != null && album != null)
             filteredSongs = playlistSongs.Where(s => s.Artist == artist && s.Album == album);
 
-        var observableCollection = _playlistController.IndexSongs(playlistState.Playlist, filteredSongs.ToList());
+        var observableCollection = playlistController.IndexSongs(playlistState.Playlist, filteredSongs.ToList());
         return observableCollection;
     }
 }
