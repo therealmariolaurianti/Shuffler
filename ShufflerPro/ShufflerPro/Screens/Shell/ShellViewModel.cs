@@ -178,7 +178,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (_sourceTreeState is not null)
                 return new ReadOnlyCollection<Album>(new List<Album>());
 
-            if (SearchText is not null)
+            if (!string.IsNullOrEmpty(SearchText))
                 return Songs!.Select(s => s.CreatedAlbum!).Distinct().ToReadOnlyCollection();
 
             if (_playlistState is not null)
@@ -196,7 +196,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             if (_sourceTreeState is not null)
                 return [];
 
-            if (SearchText is not null)
+            if (!string.IsNullOrEmpty(SearchText) && SelectedArtist is null)
                 return Songs!.Select(s => s.CreatedAlbum!.Artist).Distinct().ToReadOnlyCollection();
 
             return _playlistState?.Artists ?? _library
@@ -220,8 +220,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
             if (!string.IsNullOrEmpty(SearchText))
                 SearchText = null;
-
-            HandleFilterSongs(value?.Name);
+            else
+                HandleFilterSongs(value?.Name);
         }
     }
 
@@ -234,8 +234,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             _selectedAlbum = value;
             NotifyOfPropertyChange();
 
-            if (!string.IsNullOrEmpty(SearchText))
-                SearchText = null;
+            // if (!string.IsNullOrEmpty(SearchText))
+            //     SearchText = null;
 
             HandleFilterSongs(SelectedArtist?.Name, value?.Name);
         }
@@ -808,7 +808,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         {
             if (string.IsNullOrEmpty(SearchText))
             {
-                HandleFilterSongs();
+                HandleFilterSongs(SelectedArtist?.Name, SelectedAlbum?.Name);
                 return;
             }
 
@@ -1291,6 +1291,13 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _timer?.Stop();
         ResetCurrentElapsed();
         NotifyInterfaceChanged();
+    }
+
+    [UsedImplicitly]
+    public void StopSong()
+    {
+        _playerController.Stop();
+        EndPlaySong();
     }
 
     [UsedImplicitly]

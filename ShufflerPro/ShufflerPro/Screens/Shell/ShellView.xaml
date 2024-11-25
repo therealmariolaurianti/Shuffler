@@ -23,6 +23,7 @@
     ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
     Width="1250"
+    SaveWindowPosition="True"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
@@ -109,8 +110,8 @@
                             VerticalAlignment="Center"
                             Orientation="Horizontal">
                             <Button
-                                Width="55"
-                                Height="55"
+                                Width="45"
+                                Height="45"
                                 Margin="2"
                                 Name="PreviousSong"
                                 Cursor="Hand"
@@ -120,10 +121,10 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <iconPacks:PackIconModern
-                                        Width="20"
-                                        Height="20"
-                                        Kind="ControlRewind" />
+                                    <iconPacks:PackIconMaterialDesign
+                                        Width="15"
+                                        Height="15"
+                                        Kind="SkipPrevious" />
                                 </StackPanel>
                             </Button>
                             <Button
@@ -138,22 +139,40 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <iconPacks:PackIconModern
-                                        Width="25"
-                                        Height="25"
+                                    <iconPacks:PackIconMaterial
+                                        Width="30"
+                                        Height="30"
                                         Margin="5,0,0,0"
                                         Visibility="{calcBinding:Binding '!IsPlaying'}"
-                                        Kind="ControlPlay" />
-                                    <iconPacks:PackIconModern
-                                        Width="25"
-                                        Height="25"
+                                        Kind="Play" />
+                                    <iconPacks:PackIconMaterialDesign
+                                        Width="30"
+                                        Height="30"
                                         Visibility="{calcBinding:Binding 'IsPlaying'}"
-                                        Kind="ControlPause" />
+                                        Kind="Pause" />
                                 </StackPanel>
                             </Button>
                             <Button
-                                Width="55"
-                                Height="55"
+                                Width="60"
+                                Height="60"
+                                Margin="2"
+                                Name="StopSong"
+                                Cursor="Hand"
+                                Background="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background.MouseOver}"
+                                BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                                Style="{DynamicResource MahApps.Styles.Button.Circle}">
+                                <StackPanel
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <iconPacks:PackIconMaterialDesign
+                                        Width="15"
+                                        Height="15"
+                                        Kind="Stop" />
+                                </StackPanel>
+                            </Button>
+                            <Button
+                                Width="45"
+                                Height="45"
                                 Margin="2"
                                 Cursor="Hand"
                                 Name="NextSong"
@@ -163,10 +182,10 @@
                                 <StackPanel
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                                    <iconPacks:PackIconModern
-                                        Width="20"
-                                        Height="20"
-                                        Kind="ControlFastforward" />
+                                    <iconPacks:PackIconMaterialDesign
+                                        Width="15"
+                                        Height="15"
+                                        Kind="SkipNext" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
@@ -179,12 +198,13 @@
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <iconPacks:PackIconModern
-                                Width="20"
-                                Height="20"
+                            <iconPacks:PackIconMaterialLight
+                                Width="18"
+                                Height="18"
+                                Margin="2,2,0,2"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Kind="SoundMute" />
+                                Kind="VolumeMinus" />
                             <Slider
                                 Width="100"
                                 Grid.Column="1"
@@ -194,13 +214,14 @@
                                 Maximum="10"
                                 Height="13"
                                 Margin="5" />
-                            <iconPacks:PackIconModern
+                            <iconPacks:PackIconMaterialLight
                                 Grid.Column="2"
-                                Width="20"
-                                Height="20"
+                                Margin="2"
+                                Width="18"
+                                Height="18"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Kind="Sound3" />
+                                Kind="VolumePlus" />
                         </Grid>
                     </Grid>
                 </Border>
@@ -746,13 +767,13 @@
                                     IsReadOnly="True">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>
-                                            <iconPacks:PackIconModern
+                                            <iconPacks:PackIconMaterialLight
                                                 Visibility="{calcBinding:Binding 'IsPlaying'}"
                                                 Width="13"
                                                 Height="13"
                                                 VerticalAlignment="Center"
                                                 HorizontalAlignment="Center"
-                                                Kind="Sound3" />
+                                                Kind="Volume" />
                                         </DataTemplate>
                                     </DataGridTemplateColumn.CellTemplate>
                                 </DataGridTemplateColumn>
@@ -807,10 +828,10 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <iconPacks:PackIconFontaudio
+                                <iconPacks:PackIconPhosphorIcons
                                     Width="20"
                                     Height="20"
-                                    Kind="Headphones" />
+                                    Kind="Faders" />
                             </StackPanel>
                         </Button>
                         <ToggleButton
@@ -823,10 +844,10 @@
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
-                                <iconPacks:PackIconModern
+                                <iconPacks:PackIconMaterialDesign
                                     Width="20"
                                     Height="20"
-                                    Kind="Newspaper" />
+                                    Kind="LyricsOutline" />
                             </StackPanel>
                         </ToggleButton>
                     </StackPanel>

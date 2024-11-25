@@ -11,7 +11,7 @@
     Height="300"
     Width="500"
     attachedProperties:ScreenNameAttachedProperty.Name="Error"
-    WindowStartupLocation="CenterOwner"
+    WindowStartupLocation="CenterScreen"
     TitleCharacterCasing="Normal"
     WindowStyle="ToolWindow"
     ResizeMode="NoResize">

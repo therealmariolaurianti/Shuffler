@@ -213,4 +213,9 @@ public class PlayerController(
     {
         _equalizer?.Update();
     }
+
+    public void Stop()
+    {
+        Dispose();
+    }
 }
