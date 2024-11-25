@@ -8,6 +8,7 @@ using ShufflerPro.Client.Interfaces;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.WPF;
 using ShufflerPro.Result;
+using ShufflerPro.Updates;
 
 namespace ShufflerPro.Screens.Setting;
 
@@ -17,6 +18,7 @@ public class SettingsViewModel : ViewModelBase
     private readonly Library _library;
     private readonly ISettings _settings;
     private readonly SettingsController _settingsController;
+    private readonly IUpdateStatus _updateStatus;
     private readonly ShufflerWindowManager _windowManager;
     private bool _canSave;
     private bool _saving;
@@ -26,13 +28,14 @@ public class SettingsViewModel : ViewModelBase
         ISettings settings,
         ItemTracker<Settings> itemTracker,
         SettingsController settingsController,
-        ShufflerWindowManager windowManager)
+        ShufflerWindowManager windowManager, IUpdateStatus updateStatus)
     {
         _library = library;
         _settings = settings;
         _itemTracker = itemTracker;
         _settingsController = settingsController;
         _windowManager = windowManager;
+        _updateStatus = updateStatus;
 
         _itemTracker.Attach((Settings)settings);
     }
@@ -61,11 +64,6 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
-    private void SetTheme()
-    {
-        ThemeManager.ChangeTheme(ThemeId, IsDarkModeEnabled);
-    }
-
     public bool CanSave
     {
         get => _canSave;
@@ -75,6 +73,15 @@ public class SettingsViewModel : ViewModelBase
             _canSave = value;
             NotifyOfPropertyChange();
         }
+    }
+
+    public bool IsUpdateAvailable => _updateStatus.IsUpdateAvailable;
+
+    public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
+
+    private void SetTheme()
+    {
+        ThemeManager.ChangeTheme(ThemeId, IsDarkModeEnabled);
     }
 
     public override void NotifyOfPropertyChange([CallerMemberName] string? propertyName = null)
@@ -111,8 +118,6 @@ public class SettingsViewModel : ViewModelBase
         _itemTracker.Revert();
         SetTheme();
     }
-
-    public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
 
     [UsedImplicitly]
     public void LaunchExcludedSongs()

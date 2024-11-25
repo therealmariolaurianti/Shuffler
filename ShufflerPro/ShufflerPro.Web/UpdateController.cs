@@ -31,11 +31,9 @@ public class UpdateController
                 if (doesUpdateExist)
                     return true;
 
-                var newResult = await GetLatestVersion()
+                return await GetLatestVersion()
                     .Bind(VerifyVersion)
-                    .Bind(async _ => await DownloadUpdateAsync(_updateLink)
-                        .Map(isUpdateAvailable => isUpdateAvailable));
-                return newResult;
+                    .Bind(async _ => await DownloadUpdateAsync(_updateLink));
             });
     }
 
@@ -72,17 +70,15 @@ public class UpdateController
         return NewUnit.Default;
     }
 
-    private NewResult<NewUnit> VerifyVersion(Version latestVersion)
+    private static NewResult<NewUnit> VerifyVersion(Version latestVersion)
     {
-        return NewUnit.Default;
-
         var verifyVersion = _currentVersion != latestVersion
             ? NewUnit.Default
             : NewResultExtensions.CreateFail<NewUnit>("Up to date");
         return verifyVersion;
     }
 
-    private async Task<NewResult<Version>> GetLatestVersion()
+    private static async Task<NewResult<Version>> GetLatestVersion()
     {
         try
         {
@@ -116,7 +112,7 @@ public class UpdateController
             var response = await client.GetStreamAsync(downloadUrl);
             await using (var fileStream = new FileStream(_updatePath, FileMode.OpenOrCreate))
             {
-                await response.CopyToAsync(fileStream);
+                await response.CopyToAsync(fileStream).ConfigureAwait(true);
             }
 
             return true;

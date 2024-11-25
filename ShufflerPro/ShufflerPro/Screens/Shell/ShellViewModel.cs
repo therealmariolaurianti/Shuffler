@@ -892,6 +892,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         StartLibrary();
         NotifyCollectionsChanged();
         StartSpectrumAnalyzer();
+        
+        NotifyOfPropertyChange(nameof(IsUpdateAvailable));
 
         await base.OnInitializeAsync(cancellationToken);
     }
