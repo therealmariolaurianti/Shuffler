@@ -9,7 +9,7 @@ public class CheckForUpdateStartupTask(UpdateController updateController, IUpdat
 {
     public void Run()
     {
-        Task.Run(async () => await updateController.CheckForUpdate()
+        Task.Run(async () => await updateController.CheckIfUpdateIsAvailable()
             .Do(isUpdateAvailable => updateStatus.IsUpdateAvailable = isUpdateAvailable));
     }
 

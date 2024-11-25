@@ -23,12 +23,25 @@ public class UpdateController
 
     private string _updatePath => _rootPath + @"\shufflersetup.exe";
 
-    public async Task<NewResult<bool>> CheckForUpdate()
+    public async Task<NewResult<bool>> CheckIfUpdateIsAvailable()
     {
-        return await GetLatestVersion()
-            .Bind(VerifyVersion)
-            .Bind(async _ => await DownloadUpdateAsync(_updateLink)
-                .Map(isUpdateAvailable => isUpdateAvailable));
+        return await CheckForDownloadedUpdate()
+            .Bind(async doesUpdateExist =>
+            {
+                if (doesUpdateExist)
+                    return true;
+
+                var newResult = await GetLatestVersion()
+                    .Bind(VerifyVersion)
+                    .Bind(async _ => await DownloadUpdateAsync(_updateLink)
+                        .Map(isUpdateAvailable => isUpdateAvailable));
+                return newResult;
+            });
+    }
+
+    private NewResult<bool> CheckForDownloadedUpdate()
+    {
+        return File.Exists(_updatePath);
     }
 
     public NewResult<NewUnit> ApplyUpdate()
@@ -79,7 +92,7 @@ public class UpdateController
 
             var htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(page);
-            
+
             var stringValue = htmlDoc.DocumentNode.SelectSingleNode("//*[@id='current-version']").InnerHtml;
             var version = stringValue.Replace("Current Version: ", "").Trim();
 
