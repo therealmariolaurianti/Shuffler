@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ShufflerPro.Client;
+using ShufflerPro.Client.Attributes;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
 using ShufflerPro.Client.Interfaces;
@@ -76,6 +77,7 @@ public class SettingsViewModel : ViewModelBase
         }
     }
 
+    [IgnoreTracking]
     public bool IsUpdateAvailable => _updateStatus.IsUpdateAvailable;
 
     public static Version? CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version;
