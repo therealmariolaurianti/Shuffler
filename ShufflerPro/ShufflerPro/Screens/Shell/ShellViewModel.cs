@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
@@ -704,7 +705,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             {
                 SongLyrics = "No lyrics.";
             }
-        });
+        }, DispatcherPriority.Background);
     }
 
     private void HandleMoveSongInPlaylist(Song target, Song source)
@@ -857,8 +858,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
         _currentSongTime = _currentSongTime.Tick();
         SetElapsedRunTimeDisplay(_currentSongTime);
-
-        NotifyOfPropertyChange(nameof(ShowNetworkUsage));
     }
 
     private void SetElapsedRunTimeDisplay(TimeSpan timeSpan)

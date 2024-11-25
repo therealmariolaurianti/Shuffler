@@ -68,7 +68,7 @@ public class PlayerController(
 
     private void StartPreviousSong(ISongQueue songQueue)
     {
-        if (songQueue.NextSong is null)
+        if (songQueue.PreviousSong is null)
             Dispose();
         else
             SongChanged.Invoke(songQueue.PreviousSong!);
