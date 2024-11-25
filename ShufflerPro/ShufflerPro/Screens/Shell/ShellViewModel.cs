@@ -12,6 +12,7 @@ using Caliburn.Micro;
 using GongSolutions.Wpf.DragDrop;
 using JetBrains.Annotations;
 using Microsoft.Xaml.Behaviors.Core;
+using ShufflerPro.Bootstrapper.StartupTasks;
 using ShufflerPro.Client;
 using ShufflerPro.Client.Controllers;
 using ShufflerPro.Client.Entities;
@@ -27,6 +28,7 @@ using ShufflerPro.Framework.WPF;
 using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
+using ShufflerPro.Updates;
 using ShufflerPro.Web;
 using WPFSoundVisualizationLib;
 using Application = System.Windows.Application;
@@ -43,7 +45,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private readonly HotKeyListener _hotKeyListener;
     private readonly Library _library;
     private readonly LibraryController _libraryController;
-
+    private IUpdateStatus _updateStatus;
     private readonly LyricsController _lyricsController;
     private readonly MediaController _mediaController;
     private readonly PlayerController _playerController;
@@ -111,7 +113,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         IEventAggregator eventAggregator,
         HotKeyListener hotKeyListener,
         LyricsController lyricsController,
-        SourceTreeController sourceTreeController)
+        SourceTreeController sourceTreeController, IUpdateStatus updateStatus)
     {
         _playerController = playerController;
         _sourceFolderController = sourceFolderController;
@@ -129,6 +131,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         _hotKeyListener = hotKeyListener;
         _lyricsController = lyricsController;
         _sourceTreeController = sourceTreeController;
+        _updateStatus = updateStatus;
         _library = library;
 
         TimeSpan = new TimeSpan();
@@ -171,6 +174,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyCollectionsChanged();
         }
     }
+
+    [UsedImplicitly]
+    public bool IsUpdateAvailable => _updateStatus.IsUpdateAvailable;
 
     public ReadOnlyCollection<Album> Albums
     {

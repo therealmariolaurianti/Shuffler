@@ -43,8 +43,8 @@
                 cal:Message.Attach="LaunchSettings"
                 ToolTip="Change Settings">
                 <iconPacks:PackIconModern
-                    Width="20"
-                    Height="20"
+                    Width="18"
+                    Height="18"
                     Kind="Settings" />
             </Button>
         </mah:WindowCommands>
@@ -338,6 +338,18 @@
                                 Height="15"
                                 Width="15"
                                 Kind="MusicWifi" />
+                        </StackPanel>
+                        <StackPanel
+                            Grid.Row="0"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Top"
+                            Visibility="{calcBinding:Binding IsUpdateAvailable, FalseToVisibility=Collapsed}"
+                            ToolTip="Update is ready"
+                            Margin="5">
+                            <iconPacks:PackIconOcticons
+                                Height="15"
+                                Width="15"
+                                Kind="Alert" />
                         </StackPanel>
                     </Grid>
                 </Border>

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
+using HtmlAgilityPack;
 using ShufflerPro.Database;
 using ShufflerPro.Result;
 
@@ -7,7 +8,9 @@ namespace ShufflerPro.Web;
 
 public class UpdateController
 {
-    private const string _updateLink = "https://github.com/therealmariolaurianti/Shuffler/releases/download/Release/shufflersetup.exe";
+    private const string _updateLink =
+        "https://github.com/therealmariolaurianti/Shuffler/releases/download/Release/shufflersetup.exe";
+
     private const string _versionCheckLink = "https://therealmariolaurianti.github.io/Shuffler/Web/version.html";
     private static readonly Version? _currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
     private string _rootPath = string.Empty;
@@ -15,19 +18,17 @@ public class UpdateController
     public UpdateController()
     {
         RootFinder.FindRoot()
-            .Do(rootPath => _rootPath = rootPath);
+            .Do(rootPath => _rootPath = $@"{rootPath}\Update");
     }
-
-    public bool IsUpdateReady { get; internal set; }
 
     private string _updatePath => _rootPath + @"\shufflersetup.exe";
 
-    public async Task<NewResult<NewUnit>> CheckForUpdate()
+    public async Task<NewResult<bool>> CheckForUpdate()
     {
         return await GetLatestVersion()
             .Bind(VerifyVersion)
-            .IfFailAsync(async _ => await DownloadUpdateAsync(_updateLink)
-                .IfSuccess(_ => IsUpdateReady = true));
+            .Bind(async _ => await DownloadUpdateAsync(_updateLink)
+                .Map(isUpdateAvailable => isUpdateAvailable));
     }
 
     public NewResult<NewUnit> ApplyUpdate()
@@ -51,16 +52,21 @@ public class UpdateController
             //updateProcess.WaitForExit();
         }
         else
+        {
             return NewResultExtensions.CreateFail<NewUnit>(new Exception("Update process is null."));
+        }
 
         return NewUnit.Default;
     }
 
     private NewResult<NewUnit> VerifyVersion(Version latestVersion)
     {
-        return _currentVersion != latestVersion
-            ? NewResultExtensions.CreateFail<NewUnit>(new Exception("New version available."))
-            : NewUnit.Default;
+        return NewUnit.Default;
+
+        var verifyVersion = _currentVersion != latestVersion
+            ? NewUnit.Default
+            : NewResultExtensions.CreateFail<NewUnit>("Up to date");
+        return verifyVersion;
     }
 
     private async Task<NewResult<Version>> GetLatestVersion()
@@ -69,8 +75,16 @@ public class UpdateController
         {
             using var client = new HttpClient();
 
-            var response = await client.GetStringAsync(_versionCheckLink);
-            return new Version(response);
+            var page = await client.GetStringAsync(_versionCheckLink);
+
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(page);
+
+            // Use XPath to select the element with the specific ID
+            var stringValue = htmlDoc.DocumentNode.SelectSingleNode("//*[@id='current-version']").InnerHtml;
+            var version = stringValue.Replace("Current Version: ", "").Trim();
+
+            return new Version(version);
         }
         catch (Exception ex)
         {
@@ -78,10 +92,13 @@ public class UpdateController
         }
     }
 
-    private async Task<NewResult<NewUnit>> DownloadUpdateAsync(string downloadUrl)
+    private async Task<NewResult<bool>> DownloadUpdateAsync(string downloadUrl)
     {
         try
         {
+            if (!Directory.Exists(_rootPath))
+                Directory.CreateDirectory(_rootPath);
+
             using var client = new HttpClient();
 
             var response = await client.GetStreamAsync(downloadUrl);
@@ -90,11 +107,11 @@ public class UpdateController
                 await response.CopyToAsync(fileStream);
             }
 
-            return await NewUnit.DefaultAsync;
+            return true;
         }
         catch (Exception ex)
         {
-            return NewResultExtensions.CreateFail<NewUnit>(ex);
+            return NewResultExtensions.CreateFail<bool>(ex);
         }
     }
 }

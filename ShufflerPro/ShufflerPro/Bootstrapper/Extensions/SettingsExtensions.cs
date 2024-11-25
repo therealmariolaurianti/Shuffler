@@ -14,13 +14,3 @@ public static class SettingsExtensions
         container.Bind<ISettings>().ToMethod(_ => SettingsContainer.Settings);
     }
 }
-
-public static class AccessTokensExtensions
-{
-    public static AccessKeysContainer AccessKeysContainer { get; } = new();
-
-    public static void BindAccessTokens(this IKernel container)
-    {
-        container.Bind<AccessKeysContainer>().ToConstant(AccessKeysContainer).InSingletonScope();
-    }
-}

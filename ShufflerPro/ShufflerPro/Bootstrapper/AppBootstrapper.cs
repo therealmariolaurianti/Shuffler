@@ -6,10 +6,12 @@ using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
 using ShufflerPro.Bootstrapper.Extensions;
+using ShufflerPro.Bootstrapper.StartupTasks;
 using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Framework;
 using ShufflerPro.Screens.Exceptions;
 using ShufflerPro.Screens.Startup;
+using ShufflerPro.Updates;
 
 namespace ShufflerPro.Bootstrapper;
 
@@ -53,6 +55,7 @@ public class AppBootstrapper : BootstrapperBase
         _kernel.Bind<IWindowManager>().To<WindowManager>().InSingletonScope();
         _kernel.Bind<IEventAggregator>().To<EventAggregator>().InSingletonScope();
         _kernel.Bind<HotKeyListener>().ToSelf().InSingletonScope();
+        _kernel.Bind<IUpdateStatus>().To<UpdateStatus>().InSingletonScope();
 
         _kernel.BindLogging();
         _kernel.BindSettings();
