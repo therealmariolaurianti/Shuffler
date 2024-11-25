@@ -1344,7 +1344,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         RunAsync(async () =>
         {
             await _playlistController
-                .RemoveSong(SelectedPlaylist!.Item, _playlistState!, SelectedSong!)
+                .RemoveSongs(SelectedPlaylist!.Item, _playlistState!, SelectedSongs!.Cast<Song>().ToList())
                 .Do(_ =>
                 {
                     NotifyOfPropertyChange(nameof(Songs));

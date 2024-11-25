@@ -233,7 +233,7 @@ public class SongController
         var playlists = library.Playlists.Where(p => p.Indexes.Select(i => i.SongId).Contains(selectedSong.Id));
         foreach (var playlist in playlists)
         {
-            var result = await _playlistController.RemoveSong(playlist, playlistState, selectedSong);
+            var result = await _playlistController.RemoveSongs(playlist, playlistState, [selectedSong]);
             if (result.Fail)
                 return result;
         }

@@ -76,11 +76,18 @@ public class PlaylistController(DatabaseController databaseController)
         return await databaseController.DeletePlaylist(item);
     }
 
-    public async Task<NewResult<NewUnit>> RemoveSong(Playlist playlist, PlaylistState? playlistState,
-        Song selectedSong)
+    public async Task<NewResult<NewUnit>> RemoveSongs(Playlist playlist, PlaylistState? playlistState,
+        List<Song> selectedSongs)
     {
-        playlistState?.Songs?.Remove(selectedSong);
-        return await DeletePlaylistIndex(playlist, selectedSong);
+        foreach (var selectedSong in selectedSongs)
+        {
+            playlistState?.Songs?.Remove(selectedSong);
+            var result = await DeletePlaylistIndex(playlist, selectedSong);
+            if (result.Fail)
+                return result;
+        }
+
+        return await NewUnit.DefaultAsync;
     }
 
     private async Task<NewResult<NewUnit>> DeletePlaylistIndex(Playlist playlist, Song selectedSong)
