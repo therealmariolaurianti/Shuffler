@@ -7,6 +7,6 @@ public partial class StartupView
     public StartupView()
     {
         InitializeComponent();
-        WindowHelper.WindowsRoundCorners(GetWindow(this)!);
+        WindowHelper.WindowsRoundCorners(GetWindow(this));
     }
 }

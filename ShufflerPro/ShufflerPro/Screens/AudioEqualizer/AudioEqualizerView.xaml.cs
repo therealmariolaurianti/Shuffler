@@ -7,6 +7,6 @@ public partial class AudioEqualizerView
     public AudioEqualizerView()
     {
         InitializeComponent();
-        WindowHelper.WindowsRoundCorners(GetWindow(this)!);
+        WindowHelper.WindowsRoundCorners(GetWindow(this));
     }
 }

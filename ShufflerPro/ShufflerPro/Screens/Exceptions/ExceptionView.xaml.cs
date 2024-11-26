@@ -7,6 +7,6 @@ public partial class ExceptionView
     public ExceptionView()
     {
         InitializeComponent();
-        WindowHelper.WindowsRoundCorners(GetWindow(this)!);
+        WindowHelper.WindowsRoundCorners(GetWindow(this));
     }
 }

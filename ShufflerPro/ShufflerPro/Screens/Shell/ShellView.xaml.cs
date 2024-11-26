@@ -9,7 +9,7 @@ public partial class ShellView
     public ShellView()
     {
         InitializeComponent();
-        WindowHelper.WindowsRoundCorners(GetWindow(this)!);
+        WindowHelper.WindowsRoundCorners(GetWindow(this));
     }
 
     private void UIElement_OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

@@ -6,9 +6,11 @@ namespace ShufflerPro.Framework.WPF.Windows;
 
 public static class WindowHelper
 {
-    public static void WindowsRoundCorners(Window window)
+    public static void WindowsRoundCorners(Window? window)
     {
-#if WINDOWS7_0_OR_GREATER
+        if (window == null)
+            return;
+
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
         {
             var hWnd = new WindowInteropHelper(window).EnsureHandle();
@@ -17,6 +19,5 @@ public static class WindowHelper
             WinImport.DwmSetWindowAttribute(hWnd, DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE, ref preference,
                 sizeof(uint));
         }), DispatcherPriority.Background);
-#endif
     }
 }

@@ -7,6 +7,6 @@ public partial class EditSongsView
     public EditSongsView()
     {
         InitializeComponent();
-        WindowHelper.WindowsRoundCorners(GetWindow(this)!);
+        WindowHelper.WindowsRoundCorners(GetWindow(this));
     }
 }
