@@ -1009,7 +1009,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         return NewResultExtensions.Try(() =>
             {
-                if (_playerController.Playing || _playerController.IsPaused) _playerController.Cancel();
+                if (_playerController.Playing || _playerController.IsPaused)
+                    _playerController.Cancel();
+
                 //VisualizerEngine.Instance.Stop();
                 ElapsedRunningTime = 0;
 
@@ -1065,9 +1067,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 {
                     Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        if (CurrentSong is not null)
-                            CurrentSong.IsPlaying = false;
-
                         _playerController.PlaySong(_songQueue!);
 
                         NotifyInterfaceChanged();
@@ -1085,6 +1084,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         NotifyOfPropertyChange(nameof(HasAlbumArt));
         NotifyOfPropertyChange(nameof(ShowNetworkUsage));
         NotifyOfPropertyChange(nameof(SpectrumAnalyzer));
+        NotifyOfPropertyChange(nameof(CurrentSong));
     }
 
     private NewResult<NewUnit> HandleSelectedSong()

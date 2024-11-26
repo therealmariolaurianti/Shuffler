@@ -35,7 +35,7 @@ public class PlayerController(
     public void Dispose()
     {
         VisualizerEngine.Instance.Reset();
-        
+
         _outEvent?.Stop();
         _outEvent?.Dispose();
 
@@ -49,8 +49,11 @@ public class PlayerController(
         _outEvent = null;
         _audioFileReader = null;
 
+        if (_songQueue?.CurrentSong != null)
+            _songQueue.CurrentSong.IsPlaying = false;
+
         PlayerDisposed.Invoke();
-        
+
         GC.SuppressFinalize(this);
     }
 
@@ -73,7 +76,7 @@ public class PlayerController(
             Dispose();
             return NewResultExtensions.CreateFail<NewUnit>("At the beginning of songs.");
         }
-        
+
         SongChanged.Invoke(songQueue.PreviousSong!);
         return NewUnit.Default;
     }
@@ -82,7 +85,6 @@ public class PlayerController(
     {
         Dispose();
 
-        _outEvent = null;
         IsCompleted = false;
     }
 
@@ -109,7 +111,7 @@ public class PlayerController(
             {
                 _isPlayingStaticSong = false;
                 radioController.StopStation();
-                
+
                 songQueue.CurrentSong.IsPlaying = true;
 
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
