@@ -105,6 +105,8 @@ public class PlayerController(
             if (_songQueue.CurrentSong.IsStatic)
             {
                 radioController.StartStation(_songQueue.CurrentSong.Path!);
+                
+                songQueue.CurrentSong.IsPlaying = true;
                 _isPlayingStaticSong = true;
             }
             else
