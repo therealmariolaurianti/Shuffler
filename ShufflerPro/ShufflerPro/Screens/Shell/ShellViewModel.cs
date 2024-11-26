@@ -981,7 +981,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 _timer?.Start();
                 _playerController.Resume();
             }
-            
+
             NotifyOfPropertyChange(nameof(IsPlaying));
             NotifyOfPropertyChange(nameof(ShowNetworkUsage));
         });
@@ -1065,6 +1065,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 {
                     Application.Current.Dispatcher.InvokeAsync(() =>
                     {
+                        if (CurrentSong is not null)
+                            CurrentSong.IsPlaying = false;
+
                         _playerController.PlaySong(_songQueue!);
 
                         NotifyInterfaceChanged();
