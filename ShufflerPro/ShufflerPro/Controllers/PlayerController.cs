@@ -30,7 +30,7 @@ public class PlayerController(
     public bool IsCompleted { get; set; }
     public bool IsPaused { get; private set; }
 
-    public bool IsPlayingStaticSong => radioController.IsPlaying;
+    public bool IsStaticSongPlaying => radioController.IsPlaying;
 
     public void Dispose()
     {

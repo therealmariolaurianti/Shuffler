@@ -341,7 +341,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     public bool IsPlaying => _playerController.Playing;
 
-    public BitmapImage? AlbumArt => _albumArtLoader.Load(CurrentSong?.Path);
+    public BitmapImage? AlbumArt => !CurrentSong?.IsStatic ?? false ? _albumArtLoader.Load(CurrentSong?.Path) : null;
 
     public double ApplicationVolumeLevel
     {
@@ -560,7 +560,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
         }
     }
 
-    public bool ShowNetworkUsage => _playerController.IsPlayingStaticSong;
+    public bool ShowNetworkUsage => _playerController.IsStaticSongPlaying;
 
     public SpectrumAnalyzer SpectrumAnalyzer
     {
@@ -963,7 +963,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     [UsedImplicitly]
     public void PlayPause()
     {
-        Task.Run(() =>
+        Application.Current.Dispatcher.Invoke(() =>
         {
             if (_songQueue?.CurrentSong is null)
             {
@@ -981,8 +981,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 _timer?.Start();
                 _playerController.Resume();
             }
-
+            
             NotifyOfPropertyChange(nameof(IsPlaying));
+            NotifyOfPropertyChange(nameof(ShowNetworkUsage));
         });
     }
 
@@ -1085,7 +1086,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private NewResult<NewUnit> HandleSelectedSong()
     {
-        if (CurrentSong is null)
+        if (CurrentSong is null && SelectedSong is null)
         {
             var firstSong = Songs?.FirstOrDefault();
             if (firstSong is null)
