@@ -34,8 +34,6 @@ public class PlayerController(
 
     public void Dispose()
     {
-        //VisualizerEngine.Instance.Reset();
-
         _outEvent?.Stop();
         _outEvent?.Dispose();
 

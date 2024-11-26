@@ -88,7 +88,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private ObservableCollection<Song>? _songs;
     private ObservableCollection<SourceTreeViewItem> _sourceTreeItems;
     private SourceTreeState? _sourceTreeState;
-    private SpectrumAnalyzer _spectrumAnalyzer;
     private double _startingSongTime;
     private CountDownTimer? _timer;
     private double _volumeLevelBeforeMute;
@@ -562,17 +561,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     public bool ShowNetworkUsage => _playerController.IsStaticSongPlaying;
 
-    public SpectrumAnalyzer SpectrumAnalyzer
-    {
-        get => _spectrumAnalyzer;
-        set
-        {
-            if (Equals(value, _spectrumAnalyzer)) return;
-            _spectrumAnalyzer = value;
-            NotifyOfPropertyChange();
-        }
-    }
-
     public void Dispose()
     {
         _playerController.Dispose();
@@ -896,12 +884,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private void StartSpectrumAnalyzer()
     {
-        SpectrumAnalyzer = new SpectrumAnalyzer
-        {
-            BarCount = 16
-        };
-
-        //SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
     }
 
     private void StartLibrary()
@@ -1011,7 +993,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             {
                 _playerController.Cancel();
                 //VisualizerEngine.Instance.Stop();
-                
+
                 return SelectedSong;
             })
             .Bind(currentSong => BuildSongQueue(currentSong!, isSourceGrid)

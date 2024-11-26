@@ -874,11 +874,6 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center">
-                        <ContentControl
-                            Width="150"
-                            Margin="0,0,20,0"
-                            VerticalAlignment="Stretch"
-                            Content="{Binding SpectrumAnalyzer}" />
                         <Button
                             Name="AddSource"
                             Cursor="Hand"
