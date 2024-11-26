@@ -13,6 +13,9 @@ public static class WindowHelper
 
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
         {
+            if (!window.IsActive)
+                return;
+            
             var hWnd = new WindowInteropHelper(window).EnsureHandle();
             var preference = DWM_WINDOW_CORNER_PREFERENCE.DWMWCP_ROUND;
 
