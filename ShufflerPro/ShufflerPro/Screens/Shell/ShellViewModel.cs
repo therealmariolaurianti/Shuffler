@@ -24,7 +24,6 @@ using ShufflerPro.Controllers;
 using ShufflerPro.Framework;
 using ShufflerPro.Framework.Actions;
 using ShufflerPro.Framework.WPF;
-using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Framework.WPF.Objects;
 using ShufflerPro.Result;
 using ShufflerPro.Updates;
@@ -339,7 +338,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             NotifyOfPropertyChange();
         }
     }
-    
+
     public bool IsPlaying => _playerController.Playing;
 
     public BitmapImage? AlbumArt => _albumArtLoader.Load(CurrentSong?.Path);
@@ -902,7 +901,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             BarCount = 16
         };
 
-        SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
+        //SpectrumAnalyzer.RegisterSoundPlayer(VisualizerEngine.Instance);
     }
 
     private void StartLibrary()
@@ -1009,12 +1008,8 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         return NewResultExtensions.Try(() =>
             {
-                if (_playerController.Playing || _playerController.IsPaused)
-                {
-                    _playerController.Cancel();
-                    VisualizerEngine.Instance.Stop();
-                }
-
+                if (_playerController.Playing || _playerController.IsPaused) _playerController.Cancel();
+                //VisualizerEngine.Instance.Stop();
                 ElapsedRunningTime = 0;
 
                 return SelectedSong;
@@ -1034,10 +1029,10 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                 return ShuffleSongs(currentSong, isSourceGrid);
 
             var observableCollection = _playlistState is null
-                ? AllSongs
+                ? _songFilterController.FilterSongs(AllSongs, null, null)
                 : _playlistState.Songs;
 
-            return _songQueueFactory.Create(currentSong, observableCollection!.ToObservableCollection(),
+            return _songQueueFactory.Create(currentSong, observableCollection,
                 new RepeatState(IsRepeatChecked, RepeatType));
         }).Do(songQueue =>
         {
@@ -1070,7 +1065,6 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         _playerController.PlaySong(_songQueue!);
-
                         NotifyInterfaceChanged();
                         LoadSongLyrics();
                     });
@@ -1090,7 +1084,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
 
     private NewResult<NewUnit> HandleSelectedSong()
     {
-        if (SelectedSong is null)
+        if (CurrentSong is null)
         {
             var firstSong = Songs?.FirstOrDefault();
             if (firstSong is null)
@@ -1274,7 +1268,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             OnSongChanged(CurrentSong);
 
         _playingPrevious = true;
-        _playerController.Previous(_songQueue);
+        _playerController
+            .Previous(_songQueue)
+            .IfFail(_ => EndPlaySong());
     }
 
     [UsedImplicitly]
@@ -1293,6 +1289,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     private void EndPlaySong()
     {
         _timer?.Stop();
+        _songQueue?.Clear();
         ResetCurrentElapsed();
         NotifyInterfaceChanged();
     }

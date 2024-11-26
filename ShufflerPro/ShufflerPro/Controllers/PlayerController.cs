@@ -59,19 +59,23 @@ public class PlayerController(
         if (songQueue?.NextSong is null)
         {
             Dispose();
-            return NewResultExtensions.CreateFail<NewUnit>("Player disposed.");
+            return NewResultExtensions.CreateFail<NewUnit>("End of songs.");
         }
 
         SongChanged.Invoke(songQueue.NextSong);
         return NewUnit.Default;
     }
 
-    private void StartPreviousSong(ISongQueue songQueue)
+    private NewResult<NewUnit> StartPreviousSong(ISongQueue songQueue)
     {
         if (songQueue.PreviousSong is null)
+        {
             Dispose();
-        else
-            SongChanged.Invoke(songQueue.PreviousSong!);
+            return NewResultExtensions.CreateFail<NewUnit>("At the beginning of songs.");
+        }
+        
+        SongChanged.Invoke(songQueue.PreviousSong!);
+        return NewUnit.Default;
     }
 
     public void ReInitialize()
@@ -109,17 +113,16 @@ public class PlayerController(
                 songQueue.CurrentSong.IsPlaying = true;
 
                 _audioFileReader = new AudioFileReader(songQueue.CurrentSong.Path);
-                var inputStream = VisualizerEngine.Instance
-                    .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!, false);
+                // var inputStream = VisualizerEngine.Instance
+                //     .StartVisualizer(_audioFileReader, _songQueue.CurrentSong.Path!, false);
 
-                _equalizer = new Equalizer(inputStream, equalizerBandContainer.Bands);
+                _equalizer = new Equalizer(_audioFileReader, equalizerBandContainer.Bands);
 
-                _outEvent ??= new WaveOutEvent();
+                _outEvent = new WaveOutEvent();
                 _outEvent.Init(_equalizer);
                 _outEvent.Play();
 
-                VisualizerEngine.Instance.IsPlaying = true;
-                songQueue.CurrentSong.IsPlaying = true;
+                //VisualizerEngine.Instance.IsPlaying = true;
 
                 DelayAction(songQueue.CurrentSong.Duration!.Value.TotalMilliseconds);
             }
@@ -178,7 +181,7 @@ public class PlayerController(
         }
         else
         {
-            VisualizerEngine.Instance.IsPlaying = false;
+            //VisualizerEngine.Instance.IsPlaying = false;
             _outEvent?.Pause();
             _timer?.Pause();
         }
@@ -194,7 +197,7 @@ public class PlayerController(
         }
         else
         {
-            VisualizerEngine.Instance.IsPlaying = true;
+            //VisualizerEngine.Instance.IsPlaying = true;
             _outEvent?.Play();
             _timer?.Resume();
         }
@@ -207,9 +210,9 @@ public class PlayerController(
         return StartNextSong(songQueue);
     }
 
-    public void Previous(ISongQueue songQueue)
+    public NewResult<NewUnit> Previous(ISongQueue songQueue)
     {
-        StartPreviousSong(songQueue);
+        return StartPreviousSong(songQueue);
     }
 
     public void UpdateEqualizer()

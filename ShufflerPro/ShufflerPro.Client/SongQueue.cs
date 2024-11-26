@@ -8,4 +8,11 @@ public class SongQueue : ISongQueue
     public Song? PreviousSong { get; set; }
     public Song? CurrentSong { get; set; }
     public Song? NextSong { get; set; }
+    
+    public void Clear()
+    {
+        PreviousSong = null;
+        CurrentSong = null;
+        NextSong = null;
+    }
 }
