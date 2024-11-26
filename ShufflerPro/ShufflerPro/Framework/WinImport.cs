@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices;
+using ShufflerPro.Framework.WPF.Windows;
 
 namespace ShufflerPro.Framework;
 
@@ -17,4 +18,10 @@ public static partial class WinImport
     [LibraryImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool UnregisterHotKey(IntPtr hWnd, int id);
+    
+    [DllImport("dwmapi.dll", CharSet = CharSet.Unicode, PreserveSig = false)]
+    internal static extern void DwmSetWindowAttribute(IntPtr hwnd,
+        DWMWINDOWATTRIBUTE attribute,
+        ref DWM_WINDOW_CORNER_PREFERENCE pvAttribute,
+        uint cbAttribute);
 }
