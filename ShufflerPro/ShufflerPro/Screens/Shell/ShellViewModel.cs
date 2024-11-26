@@ -699,7 +699,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             {
                 SongLyrics = "No lyrics.";
             }
-        }, DispatcherPriority.Background);
+        }, DispatcherPriority.ApplicationIdle);
     }
 
     private void HandleMoveSongInPlaylist(Song target, Song source)
@@ -1065,6 +1065,7 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
                     Application.Current.Dispatcher.InvokeAsync(() =>
                     {
                         _playerController.PlaySong(_songQueue!);
+
                         NotifyInterfaceChanged();
                         LoadSongLyrics();
                     });
