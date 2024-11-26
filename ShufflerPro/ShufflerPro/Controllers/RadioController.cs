@@ -1,18 +1,12 @@
 ﻿using NAudio.Wave;
-using ShufflerPro.Client.AudioEqualizer;
 using ShufflerPro.Client.Radio;
 using ShufflerPro.Framework;
-using ShufflerPro.Framework.WPF.Controls.Visualizer;
 using ShufflerPro.Result;
 
 namespace ShufflerPro.Controllers;
 
-public class RadioController(
-    IEnumerable<IRadioStation> radioStations,
-    IEqualizerBandContainer equalizerBandContainer,
-    ShufflerWindowManager windowManager)
+public class RadioController(IEnumerable<IRadioStation> radioStations, ShufflerWindowManager windowManager)
 {
-    private Equalizer? _equalizer;
     private WasapiOut? _wasapiOut;
     public bool IsPlaying => _wasapiOut?.PlaybackState == PlaybackState.Playing;
 
@@ -24,17 +18,11 @@ public class RadioController(
 
             using (var mediaFoundationReader = new MediaFoundationReader(url))
             {
-                //var inputStream = VisualizerEngine.Instance.StartVisualizer(mediaFoundationReader, url, true);
-                //_equalizer = new Equalizer(mediaFoundationReader, equalizerBandContainer.Bands);
-                
                 _wasapiOut = new WasapiOut();
-                
+
                 _wasapiOut.Init(mediaFoundationReader);
                 _wasapiOut.Play();
             }
-
-            //TODO 
-            //VisualizerEngine.Instance.IsPlaying = true;
         }
         catch (Exception e)
         {
@@ -49,12 +37,8 @@ public class RadioController(
 
     public void StopStation()
     {
-        //VisualizerEngine.Instance.Reset();
-
         _wasapiOut?.Stop();
         _wasapiOut?.Dispose();
-
-        _equalizer = null;
         _wasapiOut = null;
     }
 }

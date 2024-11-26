@@ -1009,12 +1009,9 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
     {
         return NewResultExtensions.Try(() =>
             {
-                if (_playerController.Playing || _playerController.IsPaused)
-                    _playerController.Cancel();
-
+                _playerController.Cancel();
                 //VisualizerEngine.Instance.Stop();
-                ElapsedRunningTime = 0;
-
+                
                 return SelectedSong;
             })
             .Bind(currentSong => BuildSongQueue(currentSong!, isSourceGrid)
