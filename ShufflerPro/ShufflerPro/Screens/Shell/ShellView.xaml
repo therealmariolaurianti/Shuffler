@@ -18,15 +18,30 @@
     xmlns:behaviors="clr-namespace:ShufflerPro.Framework.WPF.Behaviors"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     mc:Ignorable="d"
-    attachedProperties:ScreenNameAttachedProperty.Name="ShufflerPro"
+    attachedProperties:ScreenNameAttachedProperty.Name="ShufflerPro   "
     WindowStartupLocation="CenterScreen"
     ResizeMode="CanResizeWithGrip"
     TitleCharacterCasing="Normal"
+    ShowIconOnTitleBar="True"
+    TitleAlignment="Center"
     Width="1250"
     SaveWindowPosition="True"
     Background="{DynamicResource MahApps.Brushes.Gray10}"
     Height="825"
     d:DataContext="{d:DesignInstance shell:ShellViewModel}">
+    <mah:MetroWindow.IconTemplate>
+        <DataTemplate>
+            <Grid
+                Width="{TemplateBinding Width}"
+                Height="{TemplateBinding Height}"
+                Margin="0,4,0,4"
+                Background="Transparent"
+                RenderOptions.EdgeMode="Aliased"
+                RenderOptions.BitmapScalingMode="HighQuality">
+                <Image Source="{StaticResource AppIcon}" />
+            </Grid>
+        </DataTemplate>
+    </mah:MetroWindow.IconTemplate>
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
             <Button
@@ -84,7 +99,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="150" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="60" />
+                <RowDefinition Height="55" />
             </Grid.RowDefinitions>
             <Grid
                 MaxWidth="1350"
@@ -823,6 +838,7 @@
                 Grid.Row="2"
                 Background="{DynamicResource MahApps.Brushes.Control.Background}"
                 BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
+                CornerRadius="0,0,5,5"
                 BorderThickness="1">
                 <Grid>
                     <StackPanel

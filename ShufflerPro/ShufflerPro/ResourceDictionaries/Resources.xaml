@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:svl="clr-namespace:WPFSoundVisualizationLib;assembly=WPFSoundVisualizationLib">
     <BitmapImage x:Key="ServerGif" UriSource="/Images/Server.gif" />
+    <BitmapImage x:Key="AppIcon" UriSource="/Images/favicon.ico" />
     <!-- Region: SpectrumAnalyzer -->
     <LinearGradientBrush x:Key="SpectrumBarBrush"
                          EndPoint="0.5,0"

@@ -71,6 +71,7 @@
         <None Remove="Images\Server.gif" />
         <Resource Include="Images\Server.gif" />
         <None Remove="Images\music.png" />
+        <Resource Include="Images\favicon.ico" />
     </ItemGroup>
 
 </Project>
