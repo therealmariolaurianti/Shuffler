@@ -2,7 +2,7 @@
 
 public static class ExceptionExtensions
 {
-    public static IEnumerable<string> Messages(this Exception ex)
+    public static IEnumerable<string> Messages(this Exception? ex)
     {
         while (ex != null)
         {

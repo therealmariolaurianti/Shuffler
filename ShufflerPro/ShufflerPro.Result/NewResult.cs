@@ -1,27 +1,24 @@
-﻿namespace ShufflerPro.Result;
+﻿#pragma warning disable CS8618, CS9264
+#pragma warning disable CS8601 // Possible null reference assignment.
+namespace ShufflerPro.Result;
 
 public class NewResult<T>
 {
     public NewResult(T item)
     {
         Item = item;
-        Exceptions = new List<Exception>();
+        Exceptions = [];
     }
 
     public NewResult()
     {
         Item = default;
-        Exceptions = new List<Exception>();
+        Exceptions = [];
     }
 
     public NewResult(Exception exception)
     {
-        Exceptions = new List<Exception> { exception };
-    }
-
-    private NewResult(IEnumerable<Exception> exceptions)
-    {
-        Exceptions = exceptions.ToList();
+        Exceptions = [exception];
     }
 
     public List<Exception> Exceptions { get; }
@@ -83,7 +80,7 @@ public class NewResult<T>
     {
         return !Success ? NewResultExtensions.CreateFail<T1>(FirstException) : await func(Item);
     }
-    
+
     public async Task IfFailAsync(Func<Exception, Task> func)
     {
         if (!Success)
@@ -96,7 +93,7 @@ public class NewResult<T>
             func(FirstException);
         return this;
     }
-    
+
     public NewResult<T> BindFail(Func<Exception, NewResult<T>> func)
     {
         return Fail ? func(FirstException) : this;

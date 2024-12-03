@@ -123,7 +123,7 @@ public class AudioEqualizerViewModel : ViewModelBase
         NotifyOfPropertyChange(string.Empty);
     }
 
-    public void Close()
+    public void CloseWindow()
     {
         TryCloseAsync(false);
     }

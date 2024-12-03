@@ -19,11 +19,11 @@ public class PlaylistState
         .Distinct()
         .ToReadOnlyCollection();
 
-    public ObservableCollection<Album> Albums => Songs
+    public ObservableCollection<Album> Albums => Songs?
         .Where(s => s.CreatedAlbum != null)
         .Select(s => s.CreatedAlbum!)
         .Distinct()
-        .ToObservableCollection();
+        .ToObservableCollection() ?? [];
 
     public ObservableCollection<Song>? Songs { get; set; }
     public List<PlaylistIndex> Indexes => Playlist.Indexes;

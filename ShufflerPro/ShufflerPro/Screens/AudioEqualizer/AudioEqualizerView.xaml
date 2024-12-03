@@ -224,7 +224,7 @@
             Grid.Column="0"
             Grid.Row="2"
             Grid.ColumnSpan="2"
-            Name="Close"
+            Name="CloseWindow"
             Cursor="Hand"
             BorderBrush="{DynamicResource MahApps.Brushes.DataGrid.Selection.Background}"
             Width="100"
