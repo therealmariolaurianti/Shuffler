@@ -49,6 +49,10 @@ body {
   
 }
 
+.version{
+  margin-top: 5px;
+}
+
 .hero p {
   font-size: 1.5rem;
   margin-bottom: 20px;
