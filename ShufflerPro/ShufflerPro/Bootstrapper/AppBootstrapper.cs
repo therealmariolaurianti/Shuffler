@@ -6,7 +6,6 @@ using Bootstrap.Ninject;
 using Caliburn.Micro;
 using Ninject;
 using ShufflerPro.Bootstrapper.Extensions;
-using ShufflerPro.Bootstrapper.StartupTasks;
 using ShufflerPro.Database.Bootstrapper;
 using ShufflerPro.Framework;
 using ShufflerPro.Screens.Exceptions;
