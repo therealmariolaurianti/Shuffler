@@ -71,7 +71,7 @@ public class UpdateController
     }
 
     private static NewResult<NewUnit> VerifyVersion(Version latestVersion)
-    {
+    {   
         var verifyVersion = _currentVersion != latestVersion
             ? NewUnit.Default
             : NewResultExtensions.CreateFail<NewUnit>("Up to date");
