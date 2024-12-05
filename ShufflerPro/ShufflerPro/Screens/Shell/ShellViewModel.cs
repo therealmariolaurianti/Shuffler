@@ -1249,12 +1249,16 @@ public class ShellViewModel : ViewModelBase, IHandle<SongAction>, IDisposable, I
             return;
 
         if (ElapsedRunningTime >= 5)
+        {
             OnSongChanged(CurrentSong);
-
-        _playingPrevious = true;
-        _playerController
-            .Previous(_songQueue)
-            .IfFail(_ => EndPlaySong());
+        }
+        else
+        {
+            _playingPrevious = true;
+            _playerController
+                .Previous(_songQueue)
+                .IfFail(_ => EndPlaySong());
+        }
     }
 
     [UsedImplicitly]
