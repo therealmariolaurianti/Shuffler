@@ -6,9 +6,11 @@ namespace ShufflerPro.Framework.WPF.Windows;
 
 public static class WindowHelper
 {
+    private static bool _isWindowsEleven => Environment.OSVersion.Version.Build >= 22000;
+
     public static void WindowsRoundCorners(Window? window)
     {
-        if (window == null || IsNotWindowsEleven())
+        if (window == null || !_isWindowsEleven)
             return;
 
         Application.Current.Dispatcher.BeginInvoke(new Action(() =>
@@ -22,16 +24,5 @@ public static class WindowHelper
             WinImport.DwmSetWindowAttribute(hWnd, DWMWINDOWATTRIBUTE.DWMWA_WINDOW_CORNER_PREFERENCE, ref preference,
                 sizeof(uint));
         }), DispatcherPriority.Background);
-    }
-
-    private static bool IsNotWindowsEleven()
-    {
-        var version = Environment.OSVersion.Version;
-
-        return version.Major switch
-        {
-            10 when version.Build >= 22000 => false,
-            _ => true
-        };
     }
 }
