@@ -5,7 +5,7 @@
 #define MyAppVersion "1.0.2.0"
 #define MyAppPublisher "Mario Laurianti"
 #define MyAppExeName "ShufflerPro.exe"
-#define BuildVersion "154"
+#define BuildVersion "156"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
