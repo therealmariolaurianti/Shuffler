@@ -18,9 +18,17 @@ public class LyricsController(AccessKeysContainer accessKeysContainer)
     private async Task<NewResult<string>> LoadLyrics(string artist, string title)
     {
         var genius = new GeniusClient(accessKeysContainer.GeniusToken!);
-        var song = await genius.GetSong(title, artist, true);
 
-        return Format(song) ?? NewResultExtensions.CreateFail<string>(new Exception("Error fetching song data."));
+        try
+        {
+            var song = await genius.GetSong(title, artist, true);
+
+            return Format(song) ?? NewResultExtensions.CreateFail<string>(new Exception("Error fetching song data."));
+        }
+        catch (Exception e)
+        {
+            return NewResultExtensions.CreateFail<string>(e);
+        }
     }
 
     private static string? Format(Song? song)
