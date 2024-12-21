@@ -6,7 +6,7 @@ using ShufflerPro.Result;
 
 namespace ShufflerPro.Web;
 
-public class LyricsController(AccessKeysContainer accessKeysContainer)
+public partial class LyricsController(AccessKeysContainer accessKeysContainer)
 {
     public async Task<NewResult<string>> Load(string artist, string title)
     {
@@ -36,7 +36,10 @@ public class LyricsController(AccessKeysContainer accessKeysContainer)
         if (song?.Lyrics is null)
             return null;
 
-        var rawLyrics = Regex.Replace(song.Lyrics, @"(\[.*?\])", Environment.NewLine + "$1" + Environment.NewLine);
+        var rawLyrics = CleanLyricsRegex().Replace(song.Lyrics, Environment.NewLine + "$1" + Environment.NewLine);
         return rawLyrics.Trim();
     }
+
+    [GeneratedRegex(@"(\[.*?\])")]
+    private static partial Regex CleanLyricsRegex();
 }

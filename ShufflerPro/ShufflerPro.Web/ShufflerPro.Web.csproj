@@ -13,6 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\GeniusLyrics.NET\GeniusLyrics.NET.csproj" />
       <ProjectReference Include="..\ShufflerPro.Client\ShufflerPro.Client.csproj" />
       <ProjectReference Include="..\ShufflerPro.Result\ShufflerPro.Result.csproj" />
     </ItemGroup>
